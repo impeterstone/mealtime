@@ -27,10 +27,10 @@
   #ifdef USE_LOCALHOST
     #define API_BASE_URL [NSString stringWithFormat:@"http://localhost:3000/%@", API_VERSION]
   #else
-    #define API_BASE_URL [NSString stringWithFormat:@"http://bubbles.ohsnaplabs.com:3000/%@", API_VERSION]
+    #define API_BASE_URL [NSString stringWithFormat:@"http://bubbles.sevenminutelabs.com:3000/%@", API_VERSION]
   #endif
 #else
-  #define API_BASE_URL [NSString stringWithFormat:@"http://ohsnaplabs.com/%@", API_VERSION]
+  #define API_BASE_URL [NSString stringWithFormat:@"http://bubbles.sevenminutelabs.com/%@", API_VERSION]
 #endif
 
 // API Endpoints
@@ -44,12 +44,12 @@
   #define SNAPS_ENDPOINT @"snaps"
 #endif
 
-#define S3_PHOTOS_URL @"http://s3.amazonaws.com/scrapboard/kupos/photos"
-#define S3_VIDEOS_URL @"http://s3.amazonaws.com/scrapboard/kupos/videos"
+#define S3_PHOTOS_URL @"http://s3.amazonaws.com/sevenminutelabs/kupos/photos"
+#define S3_VIDEOS_URL @"http://s3.amazonaws.com/sevenminutelabs/kupos/videos"
 
 // Seven Minute Apps
-#define TERMS_URL @"http://www.sevenminuteapps.com/terms"
-#define PRIVACY_URL @"http://www.sevenminuteapps.com/privacy"
+#define TERMS_URL @"http://www.sevenminutelabs.com/terms"
+#define PRIVACY_URL @"http://www.sevenminutelabs.com/privacy"
 
 // Facebook
 #define FB_AUTHORIZE_URL @"https://m.facebook.com/dialog/oauth"

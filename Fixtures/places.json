@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "code": 200
+  },
+  "data": [
+           {
+           "id": 1,
+           "position": 1,
+           "metadata": {
+           "name": "CAFE Zoë",
+           "picture": "http://profile.ak.fbcdn.net/hprofile-ak-snc4/50256_57167660895_1422855_s.jpg",
+           "phone": "650-322-1926",
+           "location": {
+           "street": "1929 Menalto Ave",
+           "city": "Menlo Park",
+           "state": "CA",
+           "country": "United States",
+           "zip": "94025",
+           "latitude": 37.459097,
+           "longitude": -122.152712
+           }
+           }
+           },
+           {
+           "id": 2,
+           "position": 2,
+           "metadata": {
+           "name": "Verde Tea Cafe",
+           "picture": "http://profile.ak.fbcdn.net/static-ak/rsrc.php/v1/yz/r/1g-WdounkUL.png",
+           "phone": "408-873-2868",
+           "location": {
+           "street": "19620 Stevens Creek Blvd",
+           "city": "Cupertino",
+           "state": "CA",
+           "country": "United States",
+           "zip": "95014-2485",
+           "latitude": 37.322308740691,
+           "longitude": -122.01696447014
+           }
+           }
+           }
+           ]
+}

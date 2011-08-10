@@ -12,7 +12,9 @@
 
 @interface PlaceCell : PSCell <PSImageViewDelegate> {
   PSURLCacheImageView *_photoView;
-  
+  UIImageView *_disclosureView;
+  UILabel *_nameLabel;
+  UILabel *_distanceLabel;
 }
 
 @end

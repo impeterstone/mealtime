@@ -13,6 +13,10 @@
 @interface ProductCell : PSCell <PSImageViewDelegate> {
   NSDictionary *_product;
   PSURLCacheImageView *_photoView;
+  UIView *_captionView;
+  
+  UILabel *_nameLabel;
+  UILabel *_priceLabel;
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "RootViewController.h"
 #import "PlaceCell.h"
 #import "PlaceDataCenter.h"
+#import "DetailViewController.h"
 
 @implementation RootViewController
 
@@ -42,6 +43,7 @@
   [self loadDataSource];
 }
 
+#pragma mark - State Machine
 - (void)loadDataSource {
   [super loadDataSource];
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
@@ -63,6 +65,17 @@
 }
 
 #pragma mark - TableView
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 30)] autorelease];
+//  headerView.autoresizingMask = ~UIViewAutoresizingNone;
+//  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
+//  return headerView;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//  return 30.0;
+//}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
   return [PlaceCell rowHeight];
 }
@@ -86,5 +99,12 @@
   return cell;
 }
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+  [tableView deselectRowAtIndexPath:indexPath animated:YES];
+  
+  DetailViewController *dvc = [[DetailViewController alloc] initWithNibName:nil bundle:nil];
+  [self.navigationController pushViewController:dvc animated:YES];
+  [dvc release];
+}
 
 @end

@@ -56,6 +56,24 @@
            "longitude": -122.01696447014
            }
            }
+           },
+           {
+           "id": 4,
+           "position": 4,
+           "metadata": {
+           "name": "Fu Lam Mum",
+           "picture": "http://dl.dropbox.com/u/10689279/victoriaharbour.png",
+           "phone": "408-873-2868",
+           "location": {
+           "street": "19620 Stevens Creek Blvd",
+           "city": "Cupertino",
+           "state": "CA",
+           "country": "United States",
+           "zip": "95014-2485",
+           "latitude": 37.322308740691,
+           "longitude": -122.01696447014
+           }
+           }
            }
            ]
 }

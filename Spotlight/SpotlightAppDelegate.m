@@ -7,14 +7,44 @@
 //
 
 #import "SpotlightAppDelegate.h"
+#import "PSConstants.h"
+
+#import "RootViewController.h"
+
+@interface SpotlightAppDelegate (Private)
+
++ (void)setupDefaults;
+
+@end
 
 @implementation SpotlightAppDelegate
 
 @synthesize window = _window;
 
++ (void)initialize {
+  [self setupDefaults];
+}
+
+#pragma mark - Initial Defaults
++ (void)setupDefaults {
+  if ([self class] == [SpotlightAppDelegate class]) {
+    NSString *initialDefaultsPath = [[NSBundle mainBundle] pathForResource:@"InitialDefaults" ofType:@"plist"];
+    assert(initialDefaultsPath != nil);
+    
+    NSDictionary *initialDefaults = [NSDictionary dictionaryWithContentsOfFile:initialDefaultsPath];
+    assert(initialDefaults != nil);
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:initialDefaults];
+  }
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  // Override point for customization after application launch.
+  // Initialize RootViewController
+  RootViewController *rvc = [[[RootViewController alloc] init] autorelease];
+  _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];
+  
+  [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];
   return YES;
 }
@@ -60,6 +90,7 @@
 
 - (void)dealloc
 {
+  [_navigationController release];
   [_window release];
   [super dealloc];
 }

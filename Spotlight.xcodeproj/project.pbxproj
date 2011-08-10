@@ -99,6 +99,11 @@
 		28F7404013F1F1640056D111 /* whiteArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7403713F1F1640056D111 /* whiteArrow.png */; };
 		28F7404113F1F1640056D111 /* whiteArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7403813F1F1640056D111 /* whiteArrow@2x.png */; };
 		28F7490F13F202430056D111 /* PSDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F7490D13F202430056D111 /* PSDataCenter.m */; };
+		28F7491A13F207220056D111 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F7491913F207220056D111 /* RootViewController.m */; };
+		28F7491D13F207AC0056D111 /* InitialDefaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28F7491C13F207AC0056D111 /* InitialDefaults.plist */; };
+		28F7492113F2095C0056D111 /* UINavigationBar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F7492013F2095C0056D111 /* UINavigationBar+Custom.m */; };
+		28F7492513F209A00056D111 /* bg_navigationbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7492313F209A00056D111 /* bg_navigationbar.png */; };
+		28F7492613F209A00056D111 /* bg_navigationbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7492413F209A00056D111 /* bg_navigationbar@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -280,6 +285,13 @@
 		28F7490C13F202430056D111 /* PSDataCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSDataCenter.h; sourceTree = "<group>"; };
 		28F7490D13F202430056D111 /* PSDataCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSDataCenter.m; sourceTree = "<group>"; };
 		28F7490E13F202430056D111 /* PSDataCenterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSDataCenterDelegate.h; sourceTree = "<group>"; };
+		28F7491813F207220056D111 /* RootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RootViewController.h; sourceTree = "<group>"; };
+		28F7491913F207220056D111 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
+		28F7491C13F207AC0056D111 /* InitialDefaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InitialDefaults.plist; sourceTree = "<group>"; };
+		28F7491F13F2095C0056D111 /* UINavigationBar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationBar+Custom.h"; sourceTree = "<group>"; };
+		28F7492013F2095C0056D111 /* UINavigationBar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationBar+Custom.m"; sourceTree = "<group>"; };
+		28F7492313F209A00056D111 /* bg_navigationbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_navigationbar.png; sourceTree = "<group>"; };
+		28F7492413F209A00056D111 /* bg_navigationbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_navigationbar@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -480,6 +492,7 @@
 		28A1B26613F1CFAF00EB971E = {
 			isa = PBXGroup;
 			children = (
+				28F7492213F209840056D111 /* Resources */,
 				28A1B29813F1D0EA00EB971E /* Submodules */,
 				28A1B29713F1D0DC00EB971E /* Vendor */,
 				28A1B27B13F1CFB000EB971E /* Spotlight */,
@@ -517,6 +530,7 @@
 		28A1B27B13F1CFB000EB971E /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				28F7491E13F209510056D111 /* Categories */,
 				28A1B29613F1D0BB00EB971E /* Models */,
 				28A1B29513F1D0B900EB971E /* Views */,
 				28A1B29413F1D0B700EB971E /* Controllers */,
@@ -532,6 +546,7 @@
 			children = (
 				28B014FF13F1E3E2004813B2 /* Constants.h */,
 				28B0150013F1E3F2004813B2 /* NetworkConstants.h */,
+				28F7491C13F207AC0056D111 /* InitialDefaults.plist */,
 				28A1B27D13F1CFB000EB971E /* Spotlight-Info.plist */,
 				28A1B27E13F1CFB000EB971E /* InfoPlist.strings */,
 				28A1B28113F1CFB000EB971E /* main.m */,
@@ -544,6 +559,8 @@
 		28A1B29413F1D0B700EB971E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				28F7491813F207220056D111 /* RootViewController.h */,
+				28F7491913F207220056D111 /* RootViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -664,6 +681,24 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		28F7491E13F209510056D111 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				28F7491F13F2095C0056D111 /* UINavigationBar+Custom.h */,
+				28F7492013F2095C0056D111 /* UINavigationBar+Custom.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		28F7492213F209840056D111 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				28F7492313F209A00056D111 /* bg_navigationbar.png */,
+				28F7492413F209A00056D111 /* bg_navigationbar@2x.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -723,6 +758,9 @@
 				28F7403F13F1F1640056D111 /* grayArrow@2x.png in Resources */,
 				28F7404013F1F1640056D111 /* whiteArrow.png in Resources */,
 				28F7404113F1F1640056D111 /* whiteArrow@2x.png in Resources */,
+				28F7491D13F207AC0056D111 /* InitialDefaults.plist in Resources */,
+				28F7492513F209A00056D111 /* bg_navigationbar.png in Resources */,
+				28F7492613F209A00056D111 /* bg_navigationbar@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -803,6 +841,8 @@
 				2814E3C913F1F01400D7A85A /* PSZoomView.m in Sources */,
 				28F7403913F1F1640056D111 /* EGORefreshTableHeaderView.m in Sources */,
 				28F7490F13F202430056D111 /* PSDataCenter.m in Sources */,
+				28F7491A13F207220056D111 /* RootViewController.m in Sources */,
+				28F7492113F2095C0056D111 /* UINavigationBar+Custom.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,7 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SpotlightAppDelegate : NSObject <UIApplicationDelegate>
+@interface SpotlightAppDelegate : NSObject <UIApplicationDelegate> {
+  UINavigationController *_navigationController;
+}
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 

@@ -11,18 +11,21 @@
 
 @implementation UINavigationBar (Custom)
 
-- (void)drawRect:(CGRect)rect {
+- (void)drawRect:(CGRect)rect
+{
   UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
 	[image drawInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
 }
 
-- (void)willMoveToWindow:(UIWindow *)newWindow{
+- (void)willMoveToWindow:(UIWindow *)newWindow
+{
   [super willMoveToWindow:newWindow];
   [self applyDropShadow];
   self.tintColor = [UIColor darkGrayColor];
 }
 
-- (void)applyDropShadow {
+- (void)applyDropShadow
+{
   // add the drop shadow
   self.layer.masksToBounds = NO;
   self.layer.shadowColor = [[UIColor blackColor] CGColor];

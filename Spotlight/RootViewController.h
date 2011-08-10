@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PSBaseViewController.h"
+#import "PSTableViewController.h"
 
-@interface RootViewController : PSBaseViewController
+@interface RootViewController : PSTableViewController {
+  
+}
 
 @end

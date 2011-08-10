@@ -82,6 +82,8 @@
 		28A1B3C713F1DAC100EB971E /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */; };
 		28A1B3C813F1DAC100EB971E /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A313F1DAC100EB971E /* LocalyticsSession.m */; };
 		28A1B3C913F1DAC100EB971E /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A513F1DAC100EB971E /* UploaderThread.m */; };
+		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
+		28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */; };
 		28B0EF8013F1DF0A004813B2 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B0EF7E13F1DF0A004813B2 /* QuartzCore.framework */; };
 		28B0EF8113F1DF0A004813B2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B0EF7F13F1DF0A004813B2 /* SystemConfiguration.framework */; };
 		28B0EF8313F1DF15004813B2 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B0EF8213F1DF15004813B2 /* CoreData.framework */; };
@@ -263,6 +265,10 @@
 		28A1B3A413F1DAC100EB971E /* UploaderThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploaderThread.h; sourceTree = "<group>"; };
 		28A1B3A513F1DAC100EB971E /* UploaderThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploaderThread.m; sourceTree = "<group>"; };
 		28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
+		28A9FAB513F26FA200EFB191 /* PlaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceCell.h; sourceTree = "<group>"; };
+		28A9FAB613F26FA200EFB191 /* PlaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceCell.m; sourceTree = "<group>"; };
+		28A9FABE13F27CFD00EFB191 /* PlaceDataCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceDataCenter.h; sourceTree = "<group>"; };
+		28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceDataCenter.m; sourceTree = "<group>"; };
 		28B014FF13F1E3E2004813B2 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		28B0150013F1E3F2004813B2 /* NetworkConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkConstants.h; sourceTree = "<group>"; };
 		28B0EF7E13F1DF0A004813B2 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -360,11 +366,11 @@
 		2814E31613F1F01400D7A85A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2814E31B13F1F01400D7A85A /* PSStateMachine.h */,
 				2814E31713F1F01400D7A85A /* PSBaseViewController.h */,
 				2814E31813F1F01400D7A85A /* PSBaseViewController.m */,
 				2814E31913F1F01400D7A85A /* PSCoreDataTableViewController.h */,
 				2814E31A13F1F01400D7A85A /* PSCoreDataTableViewController.m */,
-				2814E31B13F1F01400D7A85A /* PSStateMachine.h */,
 				2814E31C13F1F01400D7A85A /* PSTableViewController.h */,
 				2814E31D13F1F01400D7A85A /* PSTableViewController.m */,
 				2814E31E13F1F01400D7A85A /* PSViewController.h */,
@@ -530,6 +536,7 @@
 		28A1B27B13F1CFB000EB971E /* Spotlight */ = {
 			isa = PBXGroup;
 			children = (
+				28A9FABD13F27CD400EFB191 /* DataCenters */,
 				28F7491E13F209510056D111 /* Categories */,
 				28A1B29613F1D0BB00EB971E /* Models */,
 				28A1B29513F1D0B900EB971E /* Views */,
@@ -568,6 +575,8 @@
 		28A1B29513F1D0B900EB971E /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				28A9FAB513F26FA200EFB191 /* PlaceCell.h */,
+				28A9FAB613F26FA200EFB191 /* PlaceCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -654,6 +663,15 @@
 				28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */,
 			);
 			path = Localytics;
+			sourceTree = "<group>";
+		};
+		28A9FABD13F27CD400EFB191 /* DataCenters */ = {
+			isa = PBXGroup;
+			children = (
+				28A9FABE13F27CFD00EFB191 /* PlaceDataCenter.h */,
+				28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */,
+			);
+			name = DataCenters;
 			sourceTree = "<group>";
 		};
 		28F7402D13F1F1640056D111 /* EGO */ = {
@@ -843,6 +861,8 @@
 				28F7490F13F202430056D111 /* PSDataCenter.m in Sources */,
 				28F7491A13F207220056D111 /* RootViewController.m in Sources */,
 				28F7492113F2095C0056D111 /* UINavigationBar+Custom.m in Sources */,
+				28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */,
+				28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

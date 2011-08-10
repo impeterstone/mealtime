@@ -1,14 +1,14 @@
 //
-//  PlaceDataCenter.m
+//  ProductDataCenter.m
 //  Spotlight
 //
 //  Created by Peter Shih on 8/10/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "PlaceDataCenter.h"
+#import "ProductDataCenter.h"
 
-@implementation PlaceDataCenter
+@implementation ProductDataCenter
 
 + (id)defaultCenter {
   static id defaultCenter = nil;
@@ -18,9 +18,9 @@
   return defaultCenter;
 }
 
-- (void)getPlacesFromFixtures
+- (void)getProductsFromFixtures
 {
-  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"json"];
+  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"products" ofType:@"json"];
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
   id fixtureResponse = [fixtureData JSONValue];
   

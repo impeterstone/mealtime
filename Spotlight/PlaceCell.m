@@ -36,20 +36,18 @@
     _nameLabel.backgroundColor = [UIColor clearColor];
     _distanceLabel.backgroundColor = [UIColor clearColor];
     
-    _nameLabel.font = TITLE_FONT;
-    _distanceLabel.font = TITLE_FONT;
-    
-    _nameLabel.textColor = [UIColor whiteColor];
-    _distanceLabel.textColor = [UIColor whiteColor];
-    
     _nameLabel.textAlignment = UITextAlignmentLeft;
     _distanceLabel.textAlignment = UITextAlignmentRight;
     
-    _nameLabel.shadowColor = [UIColor blackColor];
-    _nameLabel.shadowOffset = CGSizeMake(0, -1);
-    
-    _distanceLabel.shadowColor = [UIColor blackColor];
-    _distanceLabel.shadowOffset = CGSizeMake(0, -1);
+    // Styling
+    _nameLabel.font = [PSStyleSheet fontForStyle:@"cellTitle"];
+    _distanceLabel.font = [PSStyleSheet fontForStyle:@"cellTitle"];
+    _nameLabel.textColor = [PSStyleSheet textColorForStyle:@"cellTitle"];
+    _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"cellTitle"];
+    _nameLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellTitle"];
+    _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellTitle"];
+    _nameLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellTitle"];
+    _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellTitle"];
     
     // Add subviews
     [self.contentView addSubview:_photoView];
@@ -106,13 +104,7 @@
   _nameLabel.left = left;
   
   // Add Gradient Overlay
-  if (![[[_photoView.layer sublayers] lastObject] isKindOfClass:[CAGradientLayer class]]) {
-    CAGradientLayer *gradient = [CAGradientLayer layer];
-    gradient.frame = _photoView.bounds;
-    gradient.colors = [NSArray arrayWithObjects:(id)[[UIColor clearColor] CGColor], (id)[RGBACOLOR(0, 0, 0, 0.9) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil];
-    gradient.locations = [NSArray arrayWithObjects:[NSNumber numberWithFloat:0.6], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil];
-    [_photoView.layer addSublayer:gradient];
-  }
+  [_photoView addGradientLayer];
 }
 
 #pragma mark - Fill and Height

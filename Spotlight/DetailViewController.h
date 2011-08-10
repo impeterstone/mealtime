@@ -9,6 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "PSBaseViewController.h"
 
-@interface DetailViewController : PSBaseViewController
+@class ProductViewController;
+@class BusinessViewController;
+
+@interface DetailViewController : PSBaseViewController {
+  NSDictionary *_placeMeta;
+  ProductViewController *_productViewController;
+  BusinessViewController *_businessViewController;
+}
+
+@property (nonatomic, retain) NSDictionary *placeMeta;
 
 @end

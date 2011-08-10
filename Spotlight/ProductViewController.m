@@ -1,30 +1,29 @@
 //
-//  RootViewController.m
+//  ProductViewController.m
 //  Spotlight
 //
-//  Created by Peter Shih on 8/9/11.
+//  Created by Peter Shih on 8/10/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "RootViewController.h"
-#import "PlaceCell.h"
-#import "PlaceDataCenter.h"
-#import "DetailViewController.h"
+#import "ProductViewController.h"
+#import "ProductCell.h"
+#import "ProductDataCenter.h"
 
-@implementation RootViewController
+@implementation ProductViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
-    [[PlaceDataCenter defaultCenter] setDelegate:self];
+    [[ProductDataCenter defaultCenter] setDelegate:self];
   }
   return self;
 }
 
 - (void)dealloc
 {
-  [[PlaceDataCenter defaultCenter] setDelegate:nil];
+  [[ProductDataCenter defaultCenter] setDelegate:nil];
   [super dealloc];
 }
 
@@ -34,7 +33,6 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-  _navTitleLabel.text = @"Epic Photo Time";
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -47,7 +45,7 @@
 #pragma mark - State Machine
 - (void)loadDataSource {
   [super loadDataSource];
-  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
+  [[ProductDataCenter defaultCenter] getProductsFromFixtures];
 }
 
 - (void)dataSourceDidLoad {
@@ -77,22 +75,35 @@
 //  return 30.0;
 //}
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+  if ([_sectionTitles count] == 0) return nil;
+  
+  NSString *sectionTitle = nil;
+  sectionTitle = [_sectionTitles objectAtIndex:section];
+  if ([sectionTitle notNil]) {
+    return sectionTitle;
+  } else {
+    return nil;
+  }
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-  return [PlaceCell rowHeight];
+  NSDictionary *product = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  return [ProductCell rowHeightForObject:product expanded:[self cellIsSelected:indexPath] forInterfaceOrientation:[self interfaceOrientation]];
 }
 
 - (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
-  NSDictionary *place = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-  [cell fillCellWithObject:place];
+  NSDictionary *product = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  [cell fillCellWithObject:product];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-  PlaceCell *cell = nil;
-  NSString *reuseIdentifier = [PlaceCell reuseIdentifier];
+  ProductCell *cell = nil;
+  NSString *reuseIdentifier = [ProductCell reuseIdentifier];
   
-  cell = (PlaceCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
+  cell = (ProductCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
-    cell = [[[PlaceCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    cell = [[[ProductCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
   }
   
   [self tableView:tableView configureCell:cell atIndexPath:indexPath];
@@ -102,13 +113,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
-  
-  NSDictionary *place = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-  
-  DetailViewController *dvc = [[DetailViewController alloc] initWithNibName:nil bundle:nil];
-  dvc.placeMeta = place;
-  [self.navigationController pushViewController:dvc animated:YES];
-  [dvc release];
 }
+
 
 @end

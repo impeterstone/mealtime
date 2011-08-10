@@ -1,5 +1,5 @@
 //
-//  InfoViewController.h
+//  ProductViewController.h
 //  Spotlight
 //
 //  Created by Peter Shih on 8/10/11.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "PSTableViewController.h"
 
-@interface InfoViewController : PSTableViewController
+@interface ProductViewController : PSTableViewController
 
 @end

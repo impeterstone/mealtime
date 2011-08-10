@@ -89,6 +89,3 @@
 #define FB_BLUE_COLOR RGBCOLOR(59.0,89.0,152.0)
 #define FB_COLOR_DARK_GRAY_BLUE RGBCOLOR(79.0,92.0,117.0)
 
-#define RGBCOLOR(R,G,B) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:1.0]
-#define RGBACOLOR(R,G,B,A) [UIColor colorWithRed:R/255.0 green:G/255.0 blue:B/255.0 alpha:A]
-

@@ -1,14 +1,14 @@
 //
-//  InfoViewController.m
+//  BusinessViewController.m
 //  Spotlight
 //
 //  Created by Peter Shih on 8/10/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "InfoViewController.h"
+#import "BusinessViewController.h"
 
-@implementation InfoViewController
+@implementation BusinessViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -42,6 +42,5 @@
 - (void)dataSourceDidLoad {
   [super dataSourceDidLoad];
 }
-
 
 @end

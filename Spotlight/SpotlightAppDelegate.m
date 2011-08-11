@@ -40,6 +40,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // Override StyleSheet
+  [PSStyleSheet setStyleSheet:@"AppStyleSheet"];
+  
   // Initialize RootViewController
   RootViewController *rvc = [[[RootViewController alloc] init] autorelease];
   _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];

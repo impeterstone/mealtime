@@ -72,6 +72,9 @@
 		2814E3C713F1F01400D7A85A /* PSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38613F1F01400D7A85A /* PSView.m */; };
 		2814E3C813F1F01400D7A85A /* PSWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38813F1F01400D7A85A /* PSWelcomeView.m */; };
 		2814E3C913F1F01400D7A85A /* PSZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38A13F1F01400D7A85A /* PSZoomView.m */; };
+		28682DA413F35D0000921F15 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA213F35D0000921F15 /* Default.png */; };
+		28682DA513F35D0000921F15 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA313F35D0000921F15 /* Default@2x.png */; };
+		28A0617713F3EA4400DF60A7 /* AppStyleSheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */; };
 		28A1B27613F1CFB000EB971E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27513F1CFB000EB971E /* UIKit.framework */; };
 		28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27713F1CFB000EB971E /* Foundation.framework */; };
 		28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27913F1CFB000EB971E /* CoreGraphics.framework */; };
@@ -264,6 +267,9 @@
 		2814E38813F1F01400D7A85A /* PSWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSWelcomeView.m; sourceTree = "<group>"; };
 		2814E38913F1F01400D7A85A /* PSZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSZoomView.h; sourceTree = "<group>"; };
 		2814E38A13F1F01400D7A85A /* PSZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSZoomView.m; sourceTree = "<group>"; };
+		28682DA213F35D0000921F15 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		28682DA313F35D0000921F15 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppStyleSheet.plist; sourceTree = "<group>"; };
 		28A1B27113F1CFB000EB971E /* Spotlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28A1B27513F1CFB000EB971E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28A1B27713F1CFB000EB971E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -598,6 +604,7 @@
 				28B0150013F1E3F2004813B2 /* NetworkConstants.h */,
 				28A9FB2713F32F2C00EFB191 /* InitialDefaults.plist */,
 				28A1B27D13F1CFB000EB971E /* Spotlight-Info.plist */,
+				28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */,
 				28A1B27E13F1CFB000EB971E /* InfoPlist.strings */,
 				28A1B28113F1CFB000EB971E /* main.m */,
 				28A1B28313F1CFB000EB971E /* Spotlight-Prefix.pch */,
@@ -786,6 +793,8 @@
 				28A9FACE13F2917800EFB191 /* bg_section_header@2x.png */,
 				28A9FB2113F32E5700EFB191 /* Icon.png */,
 				28A9FB2213F32E5700EFB191 /* Icon@2x.png */,
+				28682DA213F35D0000921F15 /* Default.png */,
+				28682DA313F35D0000921F15 /* Default@2x.png */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -862,6 +871,9 @@
 				28A9FB2413F32E5700EFB191 /* Icon@2x.png in Resources */,
 				28A9FB2813F32F2C00EFB191 /* InitialDefaults.plist in Resources */,
 				28A9FB6713F341AA00EFB191 /* bg_caption.png in Resources */,
+				28682DA413F35D0000921F15 /* Default.png in Resources */,
+				28682DA513F35D0000921F15 /* Default@2x.png in Resources */,
+				28A0617713F3EA4400DF60A7 /* AppStyleSheet.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

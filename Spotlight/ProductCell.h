@@ -17,6 +17,7 @@
   
   UILabel *_nameLabel;
   UILabel *_priceLabel;
+  UILabel *_descriptionLabel;
 }
 
 @end

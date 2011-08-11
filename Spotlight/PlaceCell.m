@@ -31,23 +31,20 @@
     
     // Labels
     _nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _distanceLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    
     _nameLabel.backgroundColor = [UIColor clearColor];
-    _distanceLabel.backgroundColor = [UIColor clearColor];
-    
     _nameLabel.textAlignment = UITextAlignmentLeft;
-    _distanceLabel.textAlignment = UITextAlignmentRight;
+    _nameLabel.font = [PSStyleSheet fontForStyle:@"placeTitle"];
+    _nameLabel.textColor = [PSStyleSheet textColorForStyle:@"placeTitle"];
+    _nameLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeTitle"];
+    _nameLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeTitle"];
     
-    // Styling
-    _nameLabel.font = [PSStyleSheet fontForStyle:@"cellTitle"];
-    _distanceLabel.font = [PSStyleSheet fontForStyle:@"cellTitle"];
-    _nameLabel.textColor = [PSStyleSheet textColorForStyle:@"cellTitle"];
-    _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"cellTitle"];
-    _nameLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellTitle"];
-    _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellTitle"];
-    _nameLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellTitle"];
-    _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellTitle"];
+    _distanceLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _distanceLabel.backgroundColor = [UIColor clearColor];
+    _distanceLabel.textAlignment = UITextAlignmentRight;
+    _distanceLabel.font = [PSStyleSheet fontForStyle:@"placeDistance"];
+    _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"placeDistance"];
+    _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeDistance"];
+    _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeDistance"];
     
     // Add subviews
     [self.contentView addSubview:_photoView];

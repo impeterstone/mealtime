@@ -19,7 +19,7 @@
     
     // Photo
     _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
-    _photoView.shouldAnimate = NO;
+    _photoView.shouldAnimate = YES;
     _photoView.delegate = self;
     
     // Caption
@@ -32,23 +32,28 @@
     
     // Labels
     _nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _priceLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    
     _nameLabel.backgroundColor = [UIColor clearColor];
-    _priceLabel.backgroundColor = [UIColor clearColor];
-    
     _nameLabel.textAlignment = UITextAlignmentLeft;
-    _priceLabel.textAlignment = UITextAlignmentRight;
+    _nameLabel.font = [PSStyleSheet fontForStyle:@"productTitle"];
+    _nameLabel.textColor = [PSStyleSheet textColorForStyle:@"productTitle"];
+    _nameLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"productTitle"];
+    _nameLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"productTitle"];
     
-    // Styling
-    _nameLabel.font = [PSStyleSheet fontForStyle:@"cellTitle"];
-    _priceLabel.font = [PSStyleSheet fontForStyle:@"cellPrice"];
-    _nameLabel.textColor = [PSStyleSheet textColorForStyle:@"cellTitle"];
-    _priceLabel.textColor = [PSStyleSheet textColorForStyle:@"cellPrice"];
-    _nameLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellTitle"];
-    _priceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"cellPrice"];
-    _nameLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellTitle"];
-    _priceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"cellPrice"];
+    _priceLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _priceLabel.backgroundColor = [UIColor clearColor];
+    _priceLabel.textAlignment = UITextAlignmentRight;
+    _priceLabel.font = [PSStyleSheet fontForStyle:@"productPrice"];
+    _priceLabel.textColor = [PSStyleSheet textColorForStyle:@"productPrice"];
+    _priceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"productPrice"];
+    _priceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"productPrice"];
+    
+    _descriptionLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _descriptionLabel.backgroundColor = [UIColor clearColor];
+    _descriptionLabel.textAlignment = UITextAlignmentRight;
+    _descriptionLabel.font = [PSStyleSheet fontForStyle:@"productSubtitle"];
+    _descriptionLabel.textColor = [PSStyleSheet textColorForStyle:@"productSubtitle"];
+    _descriptionLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"productSubtitle"];
+    _descriptionLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"productSubtitle"];
     
     // Add subviews
     [self.contentView addSubview:_photoView];
@@ -57,12 +62,14 @@
     // Caption subviews
     [_captionView addSubview:_nameLabel];
     [_captionView addSubview:_priceLabel];
+    [_captionView addSubview:_descriptionLabel];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_descriptionLabel);
   RELEASE_SAFELY(_priceLabel);
   RELEASE_SAFELY(_nameLabel);
   RELEASE_SAFELY(_captionView);
@@ -77,6 +84,8 @@
   _photoView.image = nil;
   _photoView.urlPath = nil;
   _product = nil;
+  _nameLabel.text = nil;
+  _descriptionLabel.text = nil;
 }
 
 - (void)layoutSubviews
@@ -97,8 +106,6 @@
   _captionView.frame = CGRectMake(0, _photoView.bottom - 44, self.contentView.width, 44);
   
   // Caption Labels
-  CGFloat top = MARGIN_Y;
-  CGFloat left = MARGIN_X;
   CGFloat textWidth = _captionView.width - MARGIN_X * 2;
   CGSize desiredSize = CGSizeZero;
   
@@ -106,13 +113,19 @@
   _priceLabel.width = desiredSize.width;
   _priceLabel.height = desiredSize.height;
   _priceLabel.left = _captionView.width - _priceLabel.width - MARGIN_X;
-  _priceLabel.top = floorf((_captionView.height - _priceLabel.height) / 2);
+  _priceLabel.top = 0;
   
   desiredSize = [UILabel sizeForText:_nameLabel.text width:(textWidth - _priceLabel.width - MARGIN_X) font:_nameLabel.font numberOfLines:_nameLabel.numberOfLines lineBreakMode:_nameLabel.lineBreakMode];
   _nameLabel.width = desiredSize.width;
   _nameLabel.height = desiredSize.height;
-  _nameLabel.left = left;
-  _nameLabel.top = floorf((_captionView.height - _nameLabel.height) / 2);
+  _nameLabel.left = MARGIN_X;
+  _nameLabel.top = 0;
+  
+  desiredSize = [UILabel sizeForText:_descriptionLabel.text width:textWidth font:_descriptionLabel.font numberOfLines:_descriptionLabel.numberOfLines lineBreakMode:_descriptionLabel.lineBreakMode];
+  _descriptionLabel.width = desiredSize.width;
+  _descriptionLabel.height = desiredSize.height;
+  _descriptionLabel.left = MARGIN_X + 2.0;
+  _descriptionLabel.top = _nameLabel.bottom - 2.0;
 }
 
 #pragma mark - Fill and Height
@@ -140,7 +153,8 @@
     [_photoView loadImageAndDownload:YES];
     
     _nameLabel.text = [metadata objectForKey:@"name"];
-    _priceLabel.text = [metadata objectForKey:@"price"];
+    _priceLabel.text = [NSString stringWithFormat:@"$%@", [metadata objectForKey:@"price"]];
+    _descriptionLabel.text = [metadata objectForKey:@"description"];
   }
   
   _product = product;

@@ -23,6 +23,10 @@
   return self;
 }
 
+- (void)viewDidUnload {
+  [super viewDidUnload];
+}
+
 - (void)dealloc
 {
   [[ProductDataCenter defaultCenter] setDelegate:nil];
@@ -39,6 +43,11 @@
   self.view.backgroundColor = [UIColor blackColor];
   
   _navTitleLabel.text = [_place objectForKey:@"name"];
+  
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
+  
+  // iAd
+  _adView = [self newAdBannerViewWithDelegate:self];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];

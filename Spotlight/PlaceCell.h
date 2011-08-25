@@ -16,6 +16,8 @@
   
   UILabel *_nameLabel;
   UILabel *_distanceLabel;
+  
+  NSDictionary *_place;
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;

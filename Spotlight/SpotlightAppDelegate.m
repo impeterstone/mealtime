@@ -8,7 +8,6 @@
 
 #import "SpotlightAppDelegate.h"
 #import "PSConstants.h"
-
 #import "RootViewController.h"
 
 @interface SpotlightAppDelegate (Private)
@@ -43,12 +42,14 @@
   // Override StyleSheet
   [PSStyleSheet setStyleSheet:@"AppStyleSheet"];
   
+  
   // Initialize RootViewController
   RootViewController *rvc = [[[RootViewController alloc] init] autorelease];
   _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];
   
   [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];
+  
   return YES;
 }
 

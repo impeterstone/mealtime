@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate> {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate> {
   PSTextField *_searchField;
   UIBarButtonItem *_compassButton;
   UIBarButtonItem *_cancelButton;

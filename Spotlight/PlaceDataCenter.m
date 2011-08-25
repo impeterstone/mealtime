@@ -34,7 +34,7 @@
   NSLog(@"fetching places near: %@", address);
   NSString *urlEncodedAddress = [address stringByURLEncoding];
   
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&find_loc=%@&rpp=50", urlEncodedAddress];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&radius=3&find_loc=%@&rpp=50", urlEncodedAddress];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];

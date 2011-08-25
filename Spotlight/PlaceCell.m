@@ -21,6 +21,8 @@
     self.clipsToBounds = YES;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    _place = nil;
+    
     // Photo
     _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = NO;
@@ -76,6 +78,7 @@
   _distanceLabel.text = nil;
   _photoView.image = nil;
   _photoView.urlPath = nil;
+  _place = nil;
 }
 
 - (void)layoutSubviews
@@ -116,6 +119,7 @@
 - (void)fillCellWithObject:(id)object
 {
   NSMutableDictionary *place = (NSMutableDictionary *)object;
+  _place = place;
   id src = [place objectForKey:@"src"];
   if (src) {
     if (src == [NSNull null]) src = nil;
@@ -137,14 +141,16 @@
   [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    NSArray *photos = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
-    if ([[photos lastObject] objectForKey:@"src"]) {
-      [place setObject:[[photos lastObject] objectForKey:@"src"] forKey:@"src"];
-    } else {
-      [place setObject:[NSNull null] forKey:@"src"];
+    if ([[_place objectForKey:@"biz"] isEqualToString:[place objectForKey:@"biz"]]) {
+      NSArray *photos = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+      if ([[photos lastObject] objectForKey:@"src"]) {
+        [place setObject:[[photos lastObject] objectForKey:@"src"] forKey:@"src"];
+      } else {
+        [place setObject:[NSNull null] forKey:@"src"];
+      }
+      _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
+      [_photoView loadImageAndDownload:YES];
     }
-    _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
-    [_photoView loadImageAndDownload:YES];
   }];
   
   [request setFailedBlock:^{

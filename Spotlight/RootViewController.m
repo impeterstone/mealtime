@@ -19,6 +19,7 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
   }
   return self;
 }
@@ -32,8 +33,10 @@
 
 - (void)dealloc
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
   [_searchField removeFromSuperview];
+  
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
@@ -43,7 +46,7 @@
 #pragma mark - View
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
+
   
   [UIView animateWithDuration:0.4
                         delay:0.0
@@ -58,7 +61,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
   [_searchField resignFirstResponder];
   
   [UIView animateWithDuration:0.4
@@ -78,6 +80,11 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   _navTitleLabel.text = @"Nom Nom Nom!";
+  
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Nearby Restaurants" emptyTitle:@"Fail" emptySubtitle:@"No Restaurants Found" image:nil];
+  
+  // iAd
+//  _adView = [self newAdBannerViewWithDelegate:self];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -112,89 +119,10 @@
   _searchField.text = @"Current Location";
 }
 
-#pragma mark - Search
-- (void)cancelSearch {
-  [UIView animateWithDuration:0.4
-                   animations:^{
-                     _searchField.width = 60;
-                   }
-                   completion:^(BOOL finished) {
-                   }];
-  
-  self.navigationItem.rightBarButtonItem = _compassButton;
-  [_searchField resignFirstResponder];
-  _searchActive = NO;
-}
-
-- (void)searchTermChanged:(UITextField *)textField {
-}
-
-- (void)searchWithText:(NSString *)searchText {
-  _searchActive = YES; 
-  
-  [_searchField resignFirstResponder];
-  
-  // Search Yelp with Address
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText];
-}
-
-#pragma mark - UITextFieldDelegate
-- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-  self.navigationItem.rightBarButtonItem = _cancelButton;
-  
-  [UIView animateWithDuration:0.4
-                   animations:^{
-                     _searchField.width = self.view.width - 80;
-//                     _searchTermController.view.alpha = 1.0;
-                   }
-                   completion:^(BOOL finished) {
-                   }];
-  
-  return YES;
-}
-
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {  
-//  _searchTermController.view.alpha = 0.0;
-  return YES;
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-  [textField resignFirstResponder];
-  if (![textField isEditing]) {
-    [textField becomeFirstResponder];
-  }
-  if ([textField.text length] == 0 || [textField.text isEqualToString:@"Current Location"]) {
-    // Empty search
-    _searchField.text = @"Current Location";
-    _searchActive = YES;
-    [_searchField resignFirstResponder];
-    [self findMyLocation];
-  } else {
-    [self searchWithText:textField.text];
-  }
-  
-  return YES;
-}
-
 #pragma mark - State Machine
 - (void)loadDataSource {
   [super loadDataSource];
-//  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
-
-//  [self reverseGeocode];
-
-//    NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpphotos" ofType:@"html"]];
-//  NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpplaces50" ofType:@"html"]];
-//  NSString *dataString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
-  
-//  [self scrapePhotos];
-//  [self scrapePlaces];
-  
-//  [self fetchYelpCoverPhotoForBiz:@"fTeiio1L2ZBIRdlzjdjAeg"];
-
+  [self findMyLocation];
 }
 
 - (void)reverseGeocode {
@@ -225,12 +153,9 @@
   [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress];
 }
 
-
-
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
 }
-
 
 - (void)dataSourceDidLoad {
   [self.tableView reloadData];
@@ -291,6 +216,73 @@
   ProductViewController *pvc = [[ProductViewController alloc] initWithPlace:place];
   [self.navigationController pushViewController:pvc animated:YES];
   [pvc release];
+}
+
+#pragma mark - Search
+- (void)cancelSearch {
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _searchField.width = 60;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+  
+  self.navigationItem.rightBarButtonItem = _compassButton;
+  [_searchField resignFirstResponder];
+  _searchActive = NO;
+}
+
+- (void)searchTermChanged:(UITextField *)textField {
+}
+
+- (void)searchWithText:(NSString *)searchText {
+  _searchActive = YES; 
+  
+  [_searchField resignFirstResponder];
+  
+  // Search Yelp with Address
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText];
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+  self.navigationItem.rightBarButtonItem = _cancelButton;
+  
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _searchField.width = self.view.width - 80;
+                     //                     _searchTermController.view.alpha = 1.0;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+  
+  return YES;
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {  
+  //  _searchTermController.view.alpha = 0.0;
+  return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  [textField resignFirstResponder];
+  if (![textField isEditing]) {
+    [textField becomeFirstResponder];
+  }
+  if ([textField.text length] == 0 || [textField.text isEqualToString:@"Current Location"]) {
+    // Empty search
+    _searchField.text = @"Current Location";
+    _searchActive = YES;
+    [_searchField resignFirstResponder];
+    [self findMyLocation];
+  } else {
+    [self searchWithText:textField.text];
+  }
+  
+  return YES;
 }
 
 @end

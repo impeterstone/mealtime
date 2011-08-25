@@ -135,6 +135,8 @@
 		28417EC7140609970050C04D /* icon_compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC5140609970050C04D /* icon_compass.png */; };
 		28417EC8140609970050C04D /* icon_compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC6140609970050C04D /* icon_compass@2x.png */; };
 		28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417ECE14060A4A0050C04D /* PSLocationCenter.m */; };
+		28417ED814062CD80050C04D /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28417ED714062CD80050C04D /* iAd.framework */; };
+		28417EDE140632E70050C04D /* UIViewController+Ad.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417EDD140632E70050C04D /* UIViewController+Ad.m */; };
 		28682DA413F35D0000921F15 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA213F35D0000921F15 /* Default.png */; };
 		28682DA513F35D0000921F15 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA313F35D0000921F15 /* Default@2x.png */; };
 		28A0617713F3EA4400DF60A7 /* AppStyleSheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */; };
@@ -408,6 +410,9 @@
 		28417EC6140609970050C04D /* icon_compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_compass@2x.png"; sourceTree = "<group>"; };
 		28417ECD14060A490050C04D /* PSLocationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSLocationCenter.h; sourceTree = "<group>"; };
 		28417ECE14060A4A0050C04D /* PSLocationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSLocationCenter.m; sourceTree = "<group>"; };
+		28417ED714062CD80050C04D /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		28417EDC140632E70050C04D /* UIViewController+Ad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Ad.h"; sourceTree = "<group>"; };
+		28417EDD140632E70050C04D /* UIViewController+Ad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Ad.m"; sourceTree = "<group>"; };
 		28682DA213F35D0000921F15 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		28682DA313F35D0000921F15 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppStyleSheet.plist; sourceTree = "<group>"; };
@@ -526,6 +531,7 @@
 				28A1B27613F1CFB000EB971E /* UIKit.framework in Frameworks */,
 				28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */,
 				28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */,
+				28417ED814062CD80050C04D /* iAd.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -821,6 +827,7 @@
 				28DD65A0140586BD00B42F20 /* libxml2.2.dylib */,
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
+				28417ED714062CD80050C04D /* iAd.framework */,
 				28DD65BE140599B800B42F20 /* CoreLocation.framework */,
 				28DD65BB140597D600B42F20 /* MapKit.framework */,
 				28B0EF8A13F1DF73004813B2 /* MobileCoreServices.framework */,
@@ -1058,6 +1065,8 @@
 			children = (
 				28F7491F13F2095C0056D111 /* UINavigationBar+Custom.h */,
 				28F7492013F2095C0056D111 /* UINavigationBar+Custom.m */,
+				28417EDC140632E70050C04D /* UIViewController+Ad.h */,
+				28417EDD140632E70050C04D /* UIViewController+Ad.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1327,6 +1336,7 @@
 				28E9BCE51405F2CF00A0F3BA /* XPathQuery.m in Sources */,
 				28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */,
 				28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */,
+				28417EDE140632E70050C04D /* UIViewController+Ad.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

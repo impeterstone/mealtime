@@ -26,6 +26,7 @@
     _photoView.shouldAnimate = NO;
     _photoView.delegate = self;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
+    _photoView.placeholderImage = [UIImage imageNamed:@"place_placeholder.png"];
     
     // Disclosure
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];
@@ -114,14 +115,21 @@
 
 - (void)fillCellWithObject:(id)object
 {
-  NSDictionary *place = (NSDictionary *)object;
-  [self fetchYelpCoverPhotoForBiz:[place objectForKey:@"biz"]];
+  NSMutableDictionary *place = (NSMutableDictionary *)object;
+  id src = [place objectForKey:@"src"];
+  if (src) {
+    if (src == [NSNull null]) src = nil;
+    _photoView.urlPath = src;
+    [_photoView loadImageAndDownload:YES];
+  } else {
+    [self fetchYelpCoverPhotoForPlace:place];
+  }
   _nameLabel.text = [place objectForKey:@"name"];
   _distanceLabel.text = [place objectForKey:@"distance"];
 }
 
-- (void)fetchYelpCoverPhotoForBiz:(NSString *)biz {
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=1", biz];
+- (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=1", [place objectForKey:@"biz"]];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -130,7 +138,11 @@
   
   [request setCompletionBlock:^{
     NSArray *photos = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
-//    NSLog(@"cover photo: %@", [photos lastObject]);
+    if ([[photos lastObject] objectForKey:@"src"]) {
+      [place setObject:[[photos lastObject] objectForKey:@"src"] forKey:@"src"];
+    } else {
+      [place setObject:[NSNull null] forKey:@"src"];
+    }
     _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
     [_photoView loadImageAndDownload:YES];
   }];

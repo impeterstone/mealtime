@@ -18,6 +18,6 @@
   UILabel *_distanceLabel;
 }
 
-- (void)fetchYelpCoverPhotoForBiz:(NSString *)biz;
+- (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
 
 @end

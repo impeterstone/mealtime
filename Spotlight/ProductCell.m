@@ -10,6 +10,7 @@
 
 @implementation ProductCell
 
+@synthesize photoView = _photoView;
 @synthesize delegate = _delegate;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier

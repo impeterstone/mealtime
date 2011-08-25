@@ -123,6 +123,7 @@
 		28E9BCE31405F2CF00A0F3BA /* TFHpple.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BCDD1405F2CF00A0F3BA /* TFHpple.m */; };
 		28E9BCE41405F2CF00A0F3BA /* TFHppleElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BCDF1405F2CF00A0F3BA /* TFHppleElement.m */; };
 		28E9BCE51405F2CF00A0F3BA /* XPathQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BCE11405F2CF00A0F3BA /* XPathQuery.m */; };
+		28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BD011405F49100A0F3BA /* ZoomViewController.m */; };
 		28F7403913F1F1640056D111 /* EGORefreshTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F7402F13F1F1640056D111 /* EGORefreshTableHeaderView.m */; };
 		28F7403A13F1F1640056D111 /* blackArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7403113F1F1640056D111 /* blackArrow.png */; };
 		28F7403B13F1F1640056D111 /* blackArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7403213F1F1640056D111 /* blackArrow@2x.png */; };
@@ -353,6 +354,8 @@
 		28E9BCDF1405F2CF00A0F3BA /* TFHppleElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TFHppleElement.m; sourceTree = "<group>"; };
 		28E9BCE01405F2CF00A0F3BA /* XPathQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathQuery.h; sourceTree = "<group>"; };
 		28E9BCE11405F2CF00A0F3BA /* XPathQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XPathQuery.m; sourceTree = "<group>"; };
+		28E9BD001405F49100A0F3BA /* ZoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomViewController.h; sourceTree = "<group>"; };
+		28E9BD011405F49100A0F3BA /* ZoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZoomViewController.m; sourceTree = "<group>"; };
 		28F7402E13F1F1640056D111 /* EGORefreshTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGORefreshTableHeaderView.h; sourceTree = "<group>"; };
 		28F7402F13F1F1640056D111 /* EGORefreshTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGORefreshTableHeaderView.m; sourceTree = "<group>"; };
 		28F7403113F1F1640056D111 /* blackArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackArrow.png; sourceTree = "<group>"; };
@@ -662,6 +665,8 @@
 				28A9FAD513F2968900EFB191 /* BusinessViewController.m */,
 				28A9FB2913F3309600EFB191 /* ProductViewController.h */,
 				28A9FB2A13F3309600EFB191 /* ProductViewController.m */,
+				28E9BD001405F49100A0F3BA /* ZoomViewController.h */,
+				28E9BD011405F49100A0F3BA /* ZoomViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1035,6 +1040,7 @@
 				28E9BCE31405F2CF00A0F3BA /* TFHpple.m in Sources */,
 				28E9BCE41405F2CF00A0F3BA /* TFHppleElement.m in Sources */,
 				28E9BCE51405F2CF00A0F3BA /* XPathQuery.m in Sources */,
+				28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

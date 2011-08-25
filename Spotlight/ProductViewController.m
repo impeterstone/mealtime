@@ -9,6 +9,7 @@
 #import "ProductViewController.h"
 //#import "ProductCell.h"
 #import "ProductDataCenter.h"
+#import "ZoomViewController.h"
 
 @implementation ProductViewController
 
@@ -154,6 +155,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
+  
+  ProductCell *cell = (ProductCell *)[tableView cellForRowAtIndexPath:indexPath];
+  
+  ZoomViewController *zvc = [[ZoomViewController alloc] init];
+  [self presentModalViewController:zvc animated:YES];
+  zvc.imageView.image = cell.photoView.image;
+  [zvc release];
 }
 
 #pragma mark - ProductCellDelegate

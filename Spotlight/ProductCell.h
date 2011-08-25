@@ -33,6 +33,7 @@
   id <ProductCellDelegate> _delegate;
 }
 
+@property (nonatomic, assign) PSURLCacheImageView *photoView;
 @property (nonatomic, assign) id <ProductCellDelegate> delegate;
 
 @end

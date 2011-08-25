@@ -10,6 +10,8 @@
 
 @implementation ProductCell
 
+@synthesize delegate = _delegate;
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -17,10 +19,14 @@
     self.clipsToBounds = YES;
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
+    _desiredWidth = 0.0;
+    _desiredHeight = 0.0;
+    
     // Photo
     _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = YES;
     _photoView.delegate = self;
+    _photoView.contentMode = UIViewContentModeScaleAspectFill;
     
     // Caption
     _captionView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -32,6 +38,7 @@
     
     // Labels
     _nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _nameLabel.numberOfLines = 0;
     _nameLabel.backgroundColor = [UIColor clearColor];
     _nameLabel.textAlignment = UITextAlignmentLeft;
     _nameLabel.font = [PSStyleSheet fontForStyle:@"productTitle"];
@@ -83,9 +90,10 @@
   [super prepareForReuse];
   _photoView.image = nil;
   _photoView.urlPath = nil;
-  _product = nil;
   _nameLabel.text = nil;
   _descriptionLabel.text = nil;
+  _desiredWidth = 0.0;
+  _desiredHeight = 0.0;
 }
 
 - (void)layoutSubviews
@@ -93,71 +101,57 @@
   [super layoutSubviews];
   
   // Photo
-  NSDictionary *metadata = [_product objectForKey:@"metadata"];
-  if (metadata) {
-    NSDictionary *picture = [metadata objectForKey:@"picture"];
-    CGFloat width = [[picture objectForKey:@"width"] floatValue];
-    CGFloat height = [[picture objectForKey:@"height"] floatValue];
-    CGFloat scaledHeight = floorf(height / (width / self.contentView.width));
-    _photoView.frame = CGRectMake(0, 0, self.contentView.width, scaledHeight);
-  }
+   _photoView.frame = CGRectMake(0, 0, self.contentView.width, self.contentView.width);
   
-  // Caption
-  _captionView.frame = CGRectMake(0, _photoView.bottom - 44, self.contentView.width, 44);
+//  if (_photoView.image) {
+//    NSLog(@"yes");
+//    CGFloat scaledHeight = floorf(_photoView.image.size.height / (_photoView.image.size.width / self.contentView.width));
+//    _photoView.frame = CGRectMake(0, 0, self.contentView.width, scaledHeight);
+//  } else {
+//    NSLog(@"no");
+//   _photoView.frame = CGRectMake(0, 0, self.contentView.width, 320);
+//  }
+
+//  if (_photoView.image.size.height > 0) {
+//    CGFloat scaledHeight = floorf(_desiredHeight / (_desiredWidth / self.contentView.width));
+//    _photoView.frame = CGRectMake(0, 0, self.contentView.width, scaledHeight);
+//  } else {
+//    _photoView.frame = CGRectMake(0, 0, self.contentView.width, _desiredHeight);
+//  }
   
   // Caption Labels
-  CGFloat textWidth = _captionView.width - MARGIN_X * 2;
+  CGFloat textWidth = self.contentView.width - MARGIN_X * 2;
   CGSize desiredSize = CGSizeZero;
   
-  desiredSize = [UILabel sizeForText:_priceLabel.text width:textWidth font:_priceLabel.font numberOfLines:_priceLabel.numberOfLines lineBreakMode:_priceLabel.lineBreakMode];
-  _priceLabel.width = desiredSize.width;
-  _priceLabel.height = desiredSize.height;
-  _priceLabel.left = _captionView.width - _priceLabel.width - MARGIN_X;
-  _priceLabel.top = 0;
+//  desiredSize = [UILabel sizeForText:_priceLabel.text width:textWidth font:_priceLabel.font numberOfLines:_priceLabel.numberOfLines lineBreakMode:_priceLabel.lineBreakMode];
+//  _priceLabel.width = desiredSize.width;
+//  _priceLabel.height = desiredSize.height;
+//  _priceLabel.left = _captionView.width - _priceLabel.width - MARGIN_X;
+//  _priceLabel.top = 0;
   
-  desiredSize = [UILabel sizeForText:_nameLabel.text width:(textWidth - _priceLabel.width - MARGIN_X) font:_nameLabel.font numberOfLines:_nameLabel.numberOfLines lineBreakMode:_nameLabel.lineBreakMode];
+  desiredSize = [UILabel sizeForText:_nameLabel.text width:textWidth font:_nameLabel.font numberOfLines:_nameLabel.numberOfLines lineBreakMode:_nameLabel.lineBreakMode];
   _nameLabel.width = desiredSize.width;
   _nameLabel.height = desiredSize.height;
   _nameLabel.left = MARGIN_X;
-  _nameLabel.top = 0;
+  _nameLabel.top = MARGIN_Y;
   
-  desiredSize = [UILabel sizeForText:_descriptionLabel.text width:textWidth font:_descriptionLabel.font numberOfLines:_descriptionLabel.numberOfLines lineBreakMode:_descriptionLabel.lineBreakMode];
-  _descriptionLabel.width = desiredSize.width;
-  _descriptionLabel.height = desiredSize.height;
-  _descriptionLabel.left = MARGIN_X + 2.0;
-  _descriptionLabel.top = _nameLabel.bottom - 2.0;
+  // Adjust caption Size
+  _captionView.frame = CGRectMake(0, _photoView.bottom - desiredSize.height - (MARGIN_Y * 2), self.contentView.width, desiredSize.height + (MARGIN_Y * 2));
+  
+//  desiredSize = [UILabel sizeForText:_descriptionLabel.text width:textWidth font:_descriptionLabel.font numberOfLines:_descriptionLabel.numberOfLines lineBreakMode:_descriptionLabel.lineBreakMode];
+//  _descriptionLabel.width = desiredSize.width;
+//  _descriptionLabel.height = desiredSize.height;
+//  _descriptionLabel.left = MARGIN_X + 2.0;
+//  _descriptionLabel.top = _nameLabel.bottom - 2.0;
 }
 
 #pragma mark - Fill and Height
-+ (CGFloat)rowHeightForObject:(id)object expanded:(BOOL)expanded forInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-  NSDictionary *product = (NSDictionary *)object;
-  NSDictionary *metadata = [product objectForKey:@"metadata"];
-  if (metadata) {
-    NSDictionary *picture = [metadata objectForKey:@"picture"];
-    CGFloat width = [[picture objectForKey:@"width"] floatValue];
-    CGFloat height = [[picture objectForKey:@"height"] floatValue];
-    CGFloat scaledHeight = floorf(height / (width / [[self class] rowWidthForInterfaceOrientation:interfaceOrientation]));
-    return scaledHeight;
-  } else {
-    return 160.0;
-  }
-}
-
 - (void)fillCellWithObject:(id)object
 {
   NSDictionary *product = (NSDictionary *)object;
-  NSDictionary *metadata = [product objectForKey:@"metadata"];
-  if (metadata) {
-    NSDictionary *picture = [metadata objectForKey:@"picture"];
-    _photoView.urlPath = [picture objectForKey:@"source"];
-    [_photoView loadImageAndDownload:YES];
-    
-    _nameLabel.text = [metadata objectForKey:@"name"];
-    _priceLabel.text = [NSString stringWithFormat:@"$%@", [metadata objectForKey:@"price"]];
-    _descriptionLabel.text = [metadata objectForKey:@"description"];
-  }
-  
-  _product = product;
+  _nameLabel.text = [product objectForKey:@"alt"];
+  _photoView.urlPath = [product objectForKey:@"src"];
+  [_photoView loadImageAndDownload:YES];
 }
 
 @end

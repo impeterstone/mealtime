@@ -14,5 +14,6 @@
 }
 
 - (void)getPlacesFromFixtures;
+- (void)fetchYelpPlacesForAddress:(NSString *)address;
 
 @end

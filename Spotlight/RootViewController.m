@@ -9,7 +9,8 @@
 #import "RootViewController.h"
 #import "PlaceCell.h"
 #import "PlaceDataCenter.h"
-#import "DetailViewController.h"
+#import "ProductViewController.h"
+#import "ASIHTTPRequest.h"
 
 @implementation RootViewController
 
@@ -34,10 +35,12 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-  _navTitleLabel.text = @"Epic Photo Time";
+  _navTitleLabel.text = @"Nom Nom Nom!";
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
+  
+  _tableView.rowHeight = 160.0;
   
   // Populate datasource
 #warning fixtures being used
@@ -47,8 +50,53 @@
 #pragma mark - State Machine
 - (void)loadDataSource {
   [super loadDataSource];
-  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
+//  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
+
+  [self reverseGeocode];
+
+//    NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpphotos" ofType:@"html"]];
+//  NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpplaces50" ofType:@"html"]];
+//  NSString *dataString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+  
+//  [self scrapePhotos];
+//  [self scrapePlaces];
+  
+//  [self fetchYelpCoverPhotoForBiz:@"fTeiio1L2ZBIRdlzjdjAeg"];
+
 }
+
+- (void)reverseGeocode {
+  // NYC (Per Se): 40.76848, -73.98264
+  // Paris: 48.86930, 2.37151
+  // London (Gordon Ramsay): 51.48476, -0.16308
+  // Alexanders: 37.32798, -122.01382
+  // Bouchon: 38.40153, -122.36049
+  CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(37.32798, -122.01382);
+  MKReverseGeocoder *rg = [[MKReverseGeocoder alloc] initWithCoordinate:coord];
+  rg.delegate = self;
+  [rg start];
+}
+
+#pragma mark - MKReverseGeocoderDelegate
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
+  NSDictionary *address = placemark.addressDictionary;
+  NSLog(@"add: %@", address);
+  
+  // Create some edge cases for weird stuff
+
+  NSArray *addressArray = [NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil];
+  NSString *formattedAddress = [addressArray componentsJoinedByString:@" "];
+  
+  // fetch Yelp Places
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress];
+}
+
+
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
+  DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
+}
+
 
 - (void)dataSourceDidLoad {
   [self.tableView reloadData];
@@ -59,7 +107,7 @@
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
   
   // Put response into items (datasource)
-  NSArray *data = [response objectForKey:@"data"];
+  NSArray *data = response;
   [self.items addObject:data];
   
   [self dataSourceDidLoad];
@@ -77,9 +125,9 @@
 //  return 30.0;
 //}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-  return [PlaceCell rowHeight];
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+//  return [PlaceCell rowHeight];
+//}
 
 - (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *place = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
@@ -105,10 +153,9 @@
   
   NSDictionary *place = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
-  DetailViewController *dvc = [[DetailViewController alloc] initWithNibName:nil bundle:nil];
-  dvc.placeMeta = place;
-  [self.navigationController pushViewController:dvc animated:YES];
-  [dvc release];
+  ProductViewController *pvc = [[ProductViewController alloc] initWithPlace:place];
+  [self.navigationController pushViewController:pvc animated:YES];
+  [pvc release];
 }
 
 @end

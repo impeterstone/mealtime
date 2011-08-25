@@ -7,6 +7,8 @@
 //
 
 #import "PlaceCell.h"
+#import "PSScrapeCenter.h"
+#import "ASIHTTPRequest.h"
 
 #define CELL_HEIGHT 160.0
 
@@ -23,6 +25,7 @@
     _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = NO;
     _photoView.delegate = self;
+    _photoView.contentMode = UIViewContentModeScaleAspectFill;
     
     // Disclosure
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];
@@ -112,14 +115,30 @@
 - (void)fillCellWithObject:(id)object
 {
   NSDictionary *place = (NSDictionary *)object;
-  NSDictionary *metadata = [place objectForKey:@"metadata"];
-  if (metadata) {
-    _photoView.urlPath = [metadata objectForKey:@"picture"];
+  [self fetchYelpCoverPhotoForBiz:[place objectForKey:@"biz"]];
+  _nameLabel.text = [place objectForKey:@"name"];
+  _distanceLabel.text = [place objectForKey:@"distance"];
+}
+
+- (void)fetchYelpCoverPhotoForBiz:(NSString *)biz {
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=1", biz];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+  
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
+  
+  [request setCompletionBlock:^{
+    NSArray *photos = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+//    NSLog(@"cover photo: %@", [photos lastObject]);
+    _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
     [_photoView loadImageAndDownload:YES];
+  }];
+  
+  [request setFailedBlock:^{
     
-    _nameLabel.text = [metadata objectForKey:@"name"];
-    _distanceLabel.text = @"0.54mi";
-  }
+  }];
+  [request startAsynchronous];
 }
   
 @end

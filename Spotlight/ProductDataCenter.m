@@ -7,16 +7,9 @@
 //
 
 #import "ProductDataCenter.h"
+#import "PSScrapeCenter.h"
 
 @implementation ProductDataCenter
-
-+ (id)defaultCenter {
-  static id defaultCenter = nil;
-  if (!defaultCenter) {
-    defaultCenter = [[self alloc] init];
-  }
-  return defaultCenter;
-}
 
 - (void)getProductsFromFixtures
 {
@@ -29,4 +22,25 @@
   }
 }
 
+- (void)fetchYelpPhotosForBiz:(NSString *)biz {
+  //    http://lite.yelp.com/biz_photos/fTeiio1L2ZBIRdlzjdjAeg?rpp=-1
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=-1", biz];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+  
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
+  
+  [request setCompletionBlock:^{
+    NSArray *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+      [self.delegate dataCenterDidFinish:request withResponse:response];
+    }
+  }];
+  
+  [request setFailedBlock:^{
+    
+  }];
+  [request startAsynchronous];
+}
 @end

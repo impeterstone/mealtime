@@ -14,5 +14,6 @@
 }
 
 - (void)getProductsFromFixtures;
+- (void)fetchYelpPhotosForBiz:(NSString *)biz;
 
 @end

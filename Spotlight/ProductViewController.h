@@ -8,7 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "PSTableViewController.h"
+#import "ProductCell.h"
 
-@interface ProductViewController : PSTableViewController
+@interface ProductViewController : PSTableViewController <ProductCellDelegate> {
+  NSDictionary *_place;
+  NSMutableDictionary *_imageSizeCache;
+}
+
+- (id)initWithPlace:(NSDictionary *)place;
 
 @end

@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 
-@interface RootViewController : PSTableViewController {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate> {
   
 }
+
+- (void)reverseGeocode;
 
 @end

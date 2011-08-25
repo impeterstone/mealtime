@@ -43,6 +43,14 @@
   [super dealloc];
 }
 
+#pragma mark - View Config
+- (UIView *)backgroundView {
+  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_weave.png"]] autorelease];
+  bg.frame = self.view.bounds;
+  bg.autoresizingMask = ~UIViewAutoresizingNone;
+  return bg;
+}
+
 #pragma mark - View
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -74,8 +82,7 @@
                    }];
 }
 
-- (void)loadView
-{
+- (void)loadView {
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
@@ -116,7 +123,6 @@
 #pragma mark - Find My Location
 - (void)findMyLocation {
   [[PSLocationCenter defaultCenter] getMyLocation];
-  _searchField.text = @"Current Location";
 }
 
 #pragma mark - State Machine
@@ -272,12 +278,9 @@
   if (![textField isEditing]) {
     [textField becomeFirstResponder];
   }
-  if ([textField.text length] == 0 || [textField.text isEqualToString:@"Current Location"]) {
+  if ([textField.text length] == 0) {
     // Empty search
-    _searchField.text = @"Current Location";
-    _searchActive = YES;
-    [_searchField resignFirstResponder];
-    [self findMyLocation];
+    [self cancelSearch];
   } else {
     [self searchWithText:textField.text];
   }

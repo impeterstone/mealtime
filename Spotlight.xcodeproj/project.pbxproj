@@ -136,7 +136,9 @@
 		28417EC8140609970050C04D /* icon_compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC6140609970050C04D /* icon_compass@2x.png */; };
 		28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417ECE14060A4A0050C04D /* PSLocationCenter.m */; };
 		28417ED814062CD80050C04D /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28417ED714062CD80050C04D /* iAd.framework */; };
-		28417EDE140632E70050C04D /* UIViewController+Ad.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417EDD140632E70050C04D /* UIViewController+Ad.m */; };
+		285FD8B31406463D00026293 /* bg_weave.png in Resources */ = {isa = PBXBuildFile; fileRef = 285FD8B11406463D00026293 /* bg_weave.png */; };
+		285FD8B41406463D00026293 /* bg_weave@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 285FD8B21406463D00026293 /* bg_weave@2x.png */; };
+		285FD8B8140647CC00026293 /* UIViewController+Ad.m in Sources */ = {isa = PBXBuildFile; fileRef = 285FD8B7140647CC00026293 /* UIViewController+Ad.m */; };
 		28682DA413F35D0000921F15 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA213F35D0000921F15 /* Default.png */; };
 		28682DA513F35D0000921F15 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA313F35D0000921F15 /* Default@2x.png */; };
 		28A0617713F3EA4400DF60A7 /* AppStyleSheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */; };
@@ -158,8 +160,6 @@
 		28A9FACC13F2891F00EFB191 /* ribbon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FACA13F2891F00EFB191 /* ribbon@2x.png */; };
 		28A9FACF13F2917800EFB191 /* bg_section_header.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FACD13F2917800EFB191 /* bg_section_header.png */; };
 		28A9FAD013F2917800EFB191 /* bg_section_header@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FACE13F2917800EFB191 /* bg_section_header@2x.png */; };
-		28A9FAD313F294F100EFB191 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAD213F294F100EFB191 /* DetailViewController.m */; };
-		28A9FAD613F2968A00EFB191 /* BusinessViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAD513F2968900EFB191 /* BusinessViewController.m */; };
 		28A9FB1B13F31F4800EFB191 /* PSStyleSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FB1A13F31F4700EFB191 /* PSStyleSheet.m */; };
 		28A9FB1D13F3215B00EFB191 /* PSStyleSheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FB1C13F3215900EFB191 /* PSStyleSheet.plist */; };
 		28A9FB2013F3239800EFB191 /* UIColor+SML.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FB1F13F3239800EFB191 /* UIColor+SML.m */; };
@@ -411,8 +411,10 @@
 		28417ECD14060A490050C04D /* PSLocationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSLocationCenter.h; sourceTree = "<group>"; };
 		28417ECE14060A4A0050C04D /* PSLocationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSLocationCenter.m; sourceTree = "<group>"; };
 		28417ED714062CD80050C04D /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
-		28417EDC140632E70050C04D /* UIViewController+Ad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Ad.h"; sourceTree = "<group>"; };
-		28417EDD140632E70050C04D /* UIViewController+Ad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Ad.m"; sourceTree = "<group>"; };
+		285FD8B11406463D00026293 /* bg_weave.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_weave.png; sourceTree = "<group>"; };
+		285FD8B21406463D00026293 /* bg_weave@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_weave@2x.png"; sourceTree = "<group>"; };
+		285FD8B6140647CC00026293 /* UIViewController+Ad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Ad.h"; sourceTree = "<group>"; };
+		285FD8B7140647CC00026293 /* UIViewController+Ad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Ad.m"; sourceTree = "<group>"; };
 		28682DA213F35D0000921F15 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		28682DA313F35D0000921F15 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppStyleSheet.plist; sourceTree = "<group>"; };
@@ -444,10 +446,6 @@
 		28A9FACA13F2891F00EFB191 /* ribbon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ribbon@2x.png"; sourceTree = "<group>"; };
 		28A9FACD13F2917800EFB191 /* bg_section_header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_section_header.png; sourceTree = "<group>"; };
 		28A9FACE13F2917800EFB191 /* bg_section_header@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_section_header@2x.png"; sourceTree = "<group>"; };
-		28A9FAD113F294F100EFB191 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
-		28A9FAD213F294F100EFB191 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
-		28A9FAD413F2968900EFB191 /* BusinessViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BusinessViewController.h; sourceTree = "<group>"; };
-		28A9FAD513F2968900EFB191 /* BusinessViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BusinessViewController.m; sourceTree = "<group>"; };
 		28A9FB1913F31F4600EFB191 /* PSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStyleSheet.h; sourceTree = "<group>"; };
 		28A9FB1A13F31F4700EFB191 /* PSStyleSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStyleSheet.m; sourceTree = "<group>"; };
 		28A9FB1C13F3215900EFB191 /* PSStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = PSStyleSheet.plist; sourceTree = "<group>"; };
@@ -581,6 +579,8 @@
 				2814E31513F1F01400D7A85A /* UIView+SML.m */,
 				28A9FB1E13F3239800EFB191 /* UIColor+SML.h */,
 				28A9FB1F13F3239800EFB191 /* UIColor+SML.m */,
+				285FD8B6140647CC00026293 /* UIViewController+Ad.h */,
+				285FD8B7140647CC00026293 /* UIViewController+Ad.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -878,10 +878,6 @@
 			children = (
 				28F7491813F207220056D111 /* RootViewController.h */,
 				28F7491913F207220056D111 /* RootViewController.m */,
-				28A9FAD113F294F100EFB191 /* DetailViewController.h */,
-				28A9FAD213F294F100EFB191 /* DetailViewController.m */,
-				28A9FAD413F2968900EFB191 /* BusinessViewController.h */,
-				28A9FAD513F2968900EFB191 /* BusinessViewController.m */,
 				28A9FB2913F3309600EFB191 /* ProductViewController.h */,
 				28A9FB2A13F3309600EFB191 /* ProductViewController.m */,
 				28E9BD001405F49100A0F3BA /* ZoomViewController.h */,
@@ -1065,8 +1061,6 @@
 			children = (
 				28F7491F13F2095C0056D111 /* UINavigationBar+Custom.h */,
 				28F7492013F2095C0056D111 /* UINavigationBar+Custom.m */,
-				28417EDC140632E70050C04D /* UIViewController+Ad.h */,
-				28417EDD140632E70050C04D /* UIViewController+Ad.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -1088,6 +1082,8 @@
 				28F7492413F209A00056D111 /* bg_navigationbar@2x.png */,
 				28A9FACD13F2917800EFB191 /* bg_section_header.png */,
 				28A9FACE13F2917800EFB191 /* bg_section_header@2x.png */,
+				285FD8B11406463D00026293 /* bg_weave.png */,
+				285FD8B21406463D00026293 /* bg_weave@2x.png */,
 				28A9FB2113F32E5700EFB191 /* Icon.png */,
 				28A9FB2213F32E5700EFB191 /* Icon@2x.png */,
 				28682DA213F35D0000921F15 /* Default.png */,
@@ -1238,6 +1234,8 @@
 				28417EC31406043C0050C04D /* navigationbar_bg@2x.png in Resources */,
 				28417EC7140609970050C04D /* icon_compass.png in Resources */,
 				28417EC8140609970050C04D /* icon_compass@2x.png in Resources */,
+				285FD8B31406463D00026293 /* bg_weave.png in Resources */,
+				285FD8B41406463D00026293 /* bg_weave@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1322,8 +1320,6 @@
 				28F7492113F2095C0056D111 /* UINavigationBar+Custom.m in Sources */,
 				28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */,
 				28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */,
-				28A9FAD313F294F100EFB191 /* DetailViewController.m in Sources */,
-				28A9FAD613F2968A00EFB191 /* BusinessViewController.m in Sources */,
 				28A9FB1B13F31F4800EFB191 /* PSStyleSheet.m in Sources */,
 				28A9FB2013F3239800EFB191 /* UIColor+SML.m in Sources */,
 				28A9FB2B13F3309600EFB191 /* ProductViewController.m in Sources */,
@@ -1336,7 +1332,7 @@
 				28E9BCE51405F2CF00A0F3BA /* XPathQuery.m in Sources */,
 				28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */,
 				28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */,
-				28417EDE140632E70050C04D /* UIViewController+Ad.m in Sources */,
+				285FD8B8140647CC00026293 /* UIViewController+Ad.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

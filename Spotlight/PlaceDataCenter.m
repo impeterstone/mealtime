@@ -11,6 +11,14 @@
 
 @implementation PlaceDataCenter
 
++ (id)defaultCenter {
+  static id defaultCenter = nil;
+  if (!defaultCenter) {
+    defaultCenter = [[self alloc] init];
+  }
+  return defaultCenter;
+}
+
 - (void)getPlacesFromFixtures
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"json"];
@@ -26,7 +34,7 @@
   NSLog(@"fetching places near: %@", address);
   NSString *urlEncodedAddress = [address stringByURLEncoding];
   
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&radius=0.5&find_loc=%@", urlEncodedAddress];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&find_loc=%@&rpp=50", urlEncodedAddress];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];

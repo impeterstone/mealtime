@@ -11,6 +11,14 @@
 
 @implementation ProductDataCenter
 
++ (id)defaultCenter {
+  static id defaultCenter = nil;
+  if (!defaultCenter) {
+    defaultCenter = [[self alloc] init];
+  }
+  return defaultCenter;
+}
+
 - (void)getProductsFromFixtures
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"products" ofType:@"json"];

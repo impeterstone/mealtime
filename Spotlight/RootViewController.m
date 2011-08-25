@@ -59,6 +59,7 @@
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
+  [_searchField resignFirstResponder];
   
   [UIView animateWithDuration:0.4
                         delay:0.0
@@ -94,7 +95,7 @@
   _searchField.delegate = self;
   _searchField.returnKeyType = UIReturnKeySearch;
   _searchField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:0];
-  _searchField.placeholder = @"Search for photos...";
+  _searchField.placeholder = @"Address, City, State or Zip";
   [_searchField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
   [[[UIApplication sharedApplication] keyWindow] addSubview:_searchField];
@@ -107,7 +108,8 @@
 
 #pragma mark - Find My Location
 - (void)findMyLocation {
-  [[PSLocationCenter defaultCenter] startStandardUpdates];
+  [[PSLocationCenter defaultCenter] getMyLocation];
+  _searchField.text = @"Current Location";
 }
 
 #pragma mark - Search
@@ -128,9 +130,12 @@
 }
 
 - (void)searchWithText:(NSString *)searchText {
-  _searchActive = YES;
+  _searchActive = YES; 
   
   [_searchField resignFirstResponder];
+  
+  // Search Yelp with Address
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText];
 }
 
 #pragma mark - UITextFieldDelegate
@@ -144,6 +149,32 @@
                    }
                    completion:^(BOOL finished) {
                    }];
+  
+  return YES;
+}
+
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {  
+//  _searchTermController.view.alpha = 0.0;
+  return YES;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  [textField resignFirstResponder];
+  if (![textField isEditing]) {
+    [textField becomeFirstResponder];
+  }
+  if ([textField.text length] == 0 || [textField.text isEqualToString:@"Current Location"]) {
+    // Empty search
+    _searchField.text = @"Current Location";
+    _searchActive = YES;
+    [_searchField resignFirstResponder];
+    [self findMyLocation];
+  } else {
+    [self searchWithText:textField.text];
+  }
   
   return YES;
 }
@@ -208,6 +239,7 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
+  [self.items removeAllObjects];
   
   // Put response into items (datasource)
   NSArray *data = response;

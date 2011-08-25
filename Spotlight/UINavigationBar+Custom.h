@@ -11,7 +11,7 @@
 
 @interface UINavigationBar (Custom)
 
-- (void)drawRect:(CGRect)rect;
+//- (void)drawRect:(CGRect)rect;
 - (void)applyDropShadow;
 
 @end

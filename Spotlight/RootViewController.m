@@ -10,7 +10,7 @@
 #import "PlaceCell.h"
 #import "PlaceDataCenter.h"
 #import "ProductViewController.h"
-#import "ASIHTTPRequest.h"
+#import "PSLocationCenter.h"
 
 @implementation RootViewController
 
@@ -23,13 +23,54 @@
   return self;
 }
 
+- (void)viewDidUnload {
+  [super viewDidUnload];
+  RELEASE_SAFELY(_searchField);
+  RELEASE_SAFELY(_compassButton);
+  RELEASE_SAFELY(_cancelButton);
+}
+
 - (void)dealloc
 {
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
+  [_searchField removeFromSuperview];
+  RELEASE_SAFELY(_searchField);
+  RELEASE_SAFELY(_compassButton);
+  RELEASE_SAFELY(_cancelButton);
   [super dealloc];
 }
 
 #pragma mark - View
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
+  
+  [UIView animateWithDuration:0.4
+                        delay:0.0
+   
+                      options:UIViewAnimationCurveEaseOut
+                   animations:^{
+                     _searchField.alpha = 1.0;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+  [super viewWillDisappear:animated];
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
+  
+  [UIView animateWithDuration:0.4
+                        delay:0.0
+   
+                      options:UIViewAnimationCurveEaseOut
+                   animations:^{
+                     _searchField.alpha = 0.0;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+}
+
 - (void)loadView
 {
   [super loadView];
@@ -42,9 +83,69 @@
   
   _tableView.rowHeight = 160.0;
   
+  // Compass location finder
+  _compassButton = [[UIBarButtonItem navButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(findMyLocation) buttonType:NavButtonTypeBlue] retain];
+  self.navigationItem.rightBarButtonItem = _compassButton;
+  
+  // Setup Search
+  _searchField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 26, 60, 30) withInset:CGSizeMake(30, 6)];
+  _searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _searchField.font = NORMAL_FONT;
+  _searchField.delegate = self;
+  _searchField.returnKeyType = UIReturnKeySearch;
+  _searchField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:0];
+  _searchField.placeholder = @"Search for photos...";
+  [_searchField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  
+  [[[UIApplication sharedApplication] keyWindow] addSubview:_searchField];
+  
+  _cancelButton = [[UIBarButtonItem navButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) buttonType:NavButtonTypeSilver] retain];
+  
   // Populate datasource
-#warning fixtures being used
   [self loadDataSource];
+}
+
+#pragma mark - Find My Location
+- (void)findMyLocation {
+  [[PSLocationCenter defaultCenter] startStandardUpdates];
+}
+
+#pragma mark - Search
+- (void)cancelSearch {
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _searchField.width = 60;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+  
+  self.navigationItem.rightBarButtonItem = _compassButton;
+  [_searchField resignFirstResponder];
+  _searchActive = NO;
+}
+
+- (void)searchTermChanged:(UITextField *)textField {
+}
+
+- (void)searchWithText:(NSString *)searchText {
+  _searchActive = YES;
+  
+  [_searchField resignFirstResponder];
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+  self.navigationItem.rightBarButtonItem = _cancelButton;
+  
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _searchField.width = self.view.width - 80;
+//                     _searchTermController.view.alpha = 1.0;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+  
+  return YES;
 }
 
 #pragma mark - State Machine
@@ -52,7 +153,7 @@
   [super loadDataSource];
 //  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 
-  [self reverseGeocode];
+//  [self reverseGeocode];
 
 //    NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpphotos" ofType:@"html"]];
 //  NSData *data = [NSData dataWithContentsOfFile:[[NSBundle mainBundle]pathForResource:@"yelpplaces50" ofType:@"html"]];
@@ -71,7 +172,9 @@
   // London (Gordon Ramsay): 51.48476, -0.16308
   // Alexanders: 37.32798, -122.01382
   // Bouchon: 38.40153, -122.36049
-  CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(37.32798, -122.01382);
+  CGFloat latitude = [[PSLocationCenter defaultCenter] latitude];
+  CGFloat longitude = [[PSLocationCenter defaultCenter] longitude];
+  CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(latitude, longitude);
   MKReverseGeocoder *rg = [[MKReverseGeocoder alloc] initWithCoordinate:coord];
   rg.delegate = self;
   [rg start];

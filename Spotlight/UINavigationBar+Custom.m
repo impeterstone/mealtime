@@ -12,11 +12,11 @@
 
 @implementation UINavigationBar (Custom)
 
-- (void)drawRect:(CGRect)rect
-{
-  UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
-	[image drawInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-}
+//- (void)drawRect:(CGRect)rect
+//{
+//  UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
+//	[image drawInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
+//}
 
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
@@ -31,7 +31,7 @@
   self.layer.masksToBounds = NO;
   self.layer.shadowColor = [[UIColor blackColor] CGColor];
   self.layer.shadowOffset = CGSizeMake(0.0, 3.0);
-  self.layer.shadowOpacity = 0.5;
+  self.layer.shadowOpacity = 0.33;
 }
 
 @end

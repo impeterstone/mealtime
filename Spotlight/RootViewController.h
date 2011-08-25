@@ -10,10 +10,15 @@
 #import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate> {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate> {
+  PSTextField *_searchField;
+  UIBarButtonItem *_compassButton;
+  UIBarButtonItem *_cancelButton;
   
+  BOOL _searchActive;
 }
 
+- (void)findMyLocation;
 - (void)reverseGeocode;
 
 @end

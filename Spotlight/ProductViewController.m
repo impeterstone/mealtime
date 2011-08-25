@@ -82,7 +82,9 @@
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
   // Put response into items (datasource)
   NSArray *data = response;
-  [self.items addObject:data];
+  if ([data count] > 0) {
+    [self.items addObject:data];
+  }
 
   [self dataSourceDidLoad];
 }

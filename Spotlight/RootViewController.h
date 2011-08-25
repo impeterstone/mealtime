@@ -15,6 +15,8 @@
   UIBarButtonItem *_compassButton;
   UIBarButtonItem *_cancelButton;
   
+  MKReverseGeocoder *_reverseGeocoder;
+  
   BOOL _searchActive;
 }
 

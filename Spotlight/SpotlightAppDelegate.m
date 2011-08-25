@@ -46,6 +46,7 @@
   // Initialize RootViewController
   RootViewController *rvc = [[[RootViewController alloc] init] autorelease];
   _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];
+  _navigationController.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
   
   [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];

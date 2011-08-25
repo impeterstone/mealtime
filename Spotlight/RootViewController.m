@@ -132,17 +132,21 @@
 }
 
 - (void)reverseGeocode {
-  // NYC (Per Se): 40.76848, -73.98264
-  // Paris: 48.86930, 2.37151
-  // London (Gordon Ramsay): 51.48476, -0.16308
-  // Alexanders: 37.32798, -122.01382
-  // Bouchon: 38.40153, -122.36049
-  CGFloat latitude = [[PSLocationCenter defaultCenter] latitude];
-  CGFloat longitude = [[PSLocationCenter defaultCenter] longitude];
-  CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(latitude, longitude);
-  MKReverseGeocoder *rg = [[MKReverseGeocoder alloc] initWithCoordinate:coord];
-  rg.delegate = self;
-  [rg start];
+  if (_reverseGeocoder && _reverseGeocoder.querying) {
+    return;
+  } else {
+    // NYC (Per Se): 40.76848, -73.98264
+    // Paris: 48.86930, 2.37151
+    // London (Gordon Ramsay): 51.48476, -0.16308
+    // Alexanders: 37.32798, -122.01382
+    // Bouchon: 38.40153, -122.36049
+    CGFloat latitude = [[PSLocationCenter defaultCenter] latitude];
+    CGFloat longitude = [[PSLocationCenter defaultCenter] longitude];
+    
+    _reverseGeocoder = [[MKReverseGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];    
+    _reverseGeocoder.delegate = self;
+    [_reverseGeocoder start];
+  }
 }
 
 #pragma mark - MKReverseGeocoderDelegate
@@ -157,10 +161,16 @@
   
   // fetch Yelp Places
   [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress];
+  
+  _reverseGeocoder = nil;
+  [geocoder release];
 }
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
+  
+  _reverseGeocoder = nil;
+  [geocoder release];
 }
 
 - (void)dataSourceDidLoad {
@@ -174,7 +184,9 @@
   
   // Put response into items (datasource)
   NSArray *data = response;
-  [self.items addObject:data];
+  if ([data count] > 0) {
+    [self.items addObject:data];
+  }
   
   [self dataSourceDidLoad];
 }

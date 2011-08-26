@@ -70,7 +70,13 @@
 - (void)loadDataSource {
   [super loadDataSource];
 //  [[ProductDataCenter defaultCenter] getProductsFromFixtures];
-  [[ProductDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"]];
+  NSString *rpp = nil;
+  if ([_place objectForKey:@"numPhotos"] && [[_place objectForKey:@"numPhotos"] integerValue] <= 1) {
+    rpp = @"1";
+  } else {
+    rpp = @"-1";
+  }
+  [[ProductDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
 }
 
 - (void)dataSourceDidLoad {

@@ -148,6 +148,11 @@
       } else {
         [place setObject:[NSNull null] forKey:@"src"];
       }
+      
+      // Num Photos
+      NSString *numPhotos = [[PSScrapeCenter defaultCenter] scrapeNumberOfPhotosWithHTMLString:request.responseString];
+      [place setObject:numPhotos forKey:@"numPhotos"];
+      
       _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
       [_photoView loadImageAndDownload:YES];
     }

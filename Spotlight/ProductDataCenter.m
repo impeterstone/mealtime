@@ -30,9 +30,9 @@
   }
 }
 
-- (void)fetchYelpPhotosForBiz:(NSString *)biz {
+- (void)fetchYelpPhotosForBiz:(NSString *)biz rpp:(NSString *)rpp {
   //    http://lite.yelp.com/biz_photos/fTeiio1L2ZBIRdlzjdjAeg?rpp=-1
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=-1", biz];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%@", biz, rpp];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];

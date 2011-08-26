@@ -112,7 +112,7 @@
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
 
   [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Sort" withTarget:self action:@selector(sort) width:60 height:30 buttonType:BarButtonTypeSilver]];
-  [toolbarItems addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
   UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
   titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -129,7 +129,7 @@
   UIBarButtonItem *currentLocationItem = [[[UIBarButtonItem alloc] initWithCustomView:titleView] autorelease];
   [toolbarItems addObject:currentLocationItem];
   
-  [toolbarItems addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Filter" withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver]];
 
   [_toolbar setItems:toolbarItems];

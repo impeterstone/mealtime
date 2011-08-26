@@ -165,17 +165,21 @@
 - (void)sort {
   UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
   as.tag = kSortActionSheet;
+  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
   [as showFromToolbar:_toolbar];
 }
 
 - (void)filter {
   UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"0.2 miles", @"0.5 miles", @"1.0 miles", @"3.0 miles", @"5.0 miles", nil] autorelease];
   as.tag = kFilterActionSheet;
+  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
   [as showFromToolbar:_toolbar];
 }
 
 #pragma mark - UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == actionSheet.cancelButtonIndex) return;
+  
   switch (actionSheet.tag) {
     case kSortActionSheet:
       switch (buttonIndex) {

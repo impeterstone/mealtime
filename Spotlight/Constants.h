@@ -26,8 +26,6 @@
 #define kFilterActionSheet 7071
 
 // Notifications
-#define kApplicationResumed @"ApplicationResumed"
-#define kApplicationSuspended @"ApplicationSuspended"
 #define kLocationAcquired @"LocationAcquired"
 #define kLogoutRequested @"LogoutRequested"
 #define kOrientationChanged @"OrientationChangedNotification"

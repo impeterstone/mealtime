@@ -1,42 +1,20 @@
 //
 //  UINavigationBar+Custom.m
-//  PhotoTime
+//  Spotlight
 //
-//  Created by Peter Shih on 2/28/11.
-//  Copyright 2011 Seven Minute Labs. All rights reserved.
+//  Created by Peter Shih on 8/25/11.
+//  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
 #import "UINavigationBar+Custom.h"
 #import <QuartzCore/QuartzCore.h>
-#import "PSConstants.h"
 
 @implementation UINavigationBar (Custom)
 
-//- (void)drawRect:(CGRect)rect
-//{
-//  UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
-//	[image drawInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-//}
-
-//- (void)layoutSubviews {
-//  [super layoutSubviews];
-//  self.tintColor = RGBACOLOR(80, 80, 80, 1.0);
-//}
-
-- (void)willMoveToWindow:(UIWindow *)newWindow
-{
-  [super willMoveToWindow:newWindow];
-  [self applyDropShadow];
-}
-
-- (void)applyDropShadow
-{
-  // add the drop shadow
-  self.layer.shadowColor = [[UIColor blackColor] CGColor];
-  self.layer.shadowOffset = CGSizeMake(0.0, 3.0);
-  self.layer.shadowOpacity = 0.33;
-  self.layer.masksToBounds = NO;
-  self.layer.shouldRasterize = YES;
+- (void)drawRect:(CGRect)rect {
+  UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
+  [image drawInRect:CGRectMake(0, 0, rect.size.width, rect.size.height + 7)];
+  [image release];
 }
 
 @end

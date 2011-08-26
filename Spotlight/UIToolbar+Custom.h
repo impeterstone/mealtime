@@ -1,5 +1,5 @@
 //
-//  UINavigationBar+Custom.h
+//  UIToolbar+Custom.h
 //  Spotlight
 //
 //  Created by Peter Shih on 8/25/11.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UINavigationBar (Custom)
+@interface UIToolbar (Custom)
 
 @end

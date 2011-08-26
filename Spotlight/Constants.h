@@ -21,7 +21,13 @@
 // App Delegate Macro
 #define APP_DELEGATE ((SpotlightAppDelegate *)[[UIApplication sharedApplication] delegate])
 
+// Tags
+#define kSortActionSheet 7070
+#define kFilterActionSheet 7071
+
 // Notifications
+#define kApplicationResumed @"ApplicationResumed"
+#define kApplicationSuspended @"ApplicationSuspended"
 #define kLocationAcquired @"LocationAcquired"
 #define kLogoutRequested @"LogoutRequested"
 #define kOrientationChanged @"OrientationChangedNotification"

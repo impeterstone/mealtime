@@ -20,12 +20,18 @@
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
+    
+    _sortBy = [@"popularity" retain];
+    _distance = 0.5;
+    _limit = 25;
   }
   return self;
 }
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  RELEASE_SAFELY(_currentLocationLabel);
+  RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
@@ -37,9 +43,13 @@
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
   [_searchField removeFromSuperview];
   
+  RELEASE_SAFELY(_currentLocationLabel);
+  RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
+  
+  RELEASE_SAFELY(_sortBy);
   [super dealloc];
 }
 
@@ -54,7 +64,6 @@
 #pragma mark - View
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-
   
   [UIView animateWithDuration:0.4
                         delay:0.0
@@ -69,6 +78,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
+  
   [_searchField resignFirstResponder];
   
   [UIView animateWithDuration:0.4
@@ -95,11 +105,38 @@
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
-  
   _tableView.rowHeight = 160.0;
   
+  // Toolbar
+  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Sort" withTarget:self action:@selector(sort) width:60 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
+  
+  UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
+  titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+  _currentLocationLabel = [[UILabel alloc] initWithFrame:titleView.bounds];
+  _currentLocationLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+  _currentLocationLabel.textAlignment = UITextAlignmentCenter;
+  _currentLocationLabel.numberOfLines = 3;
+  _currentLocationLabel.font = [PSStyleSheet fontForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.textColor = [PSStyleSheet textColorForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.shadowOffset = CGSizeMake(0, 1);
+  _currentLocationLabel.backgroundColor = [UIColor clearColor];
+  [titleView addSubview:_currentLocationLabel];
+  UIBarButtonItem *currentLocationItem = [[[UIBarButtonItem alloc] initWithCustomView:titleView] autorelease];
+  [toolbarItems addObject:currentLocationItem];
+  
+  [toolbarItems addObject:[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Filter" withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver]];
+
+  [_toolbar setItems:toolbarItems];
+  [self setupFooterWithView:_toolbar];
+  
   // Compass location finder
-  _compassButton = [[UIBarButtonItem navButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(findMyLocation) buttonType:NavButtonTypeBlue] retain];
+  _compassButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(findMyLocation) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
   self.navigationItem.rightBarButtonItem = _compassButton;
   
   // Setup Search
@@ -114,18 +151,90 @@
   
   [[[UIApplication sharedApplication] keyWindow] addSubview:_searchField];
   
-  _cancelButton = [[UIBarButtonItem navButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) buttonType:NavButtonTypeSilver] retain];
+  _cancelButton = [[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) width:60 height:30 buttonType:BarButtonTypeSilver] retain];
   
   // Populate datasource
   [self loadDataSource];
 }
 
-#pragma mark - Find My Location
+#pragma mark - Button Actios
 - (void)findMyLocation {
   [[PSLocationCenter defaultCenter] getMyLocation];
 }
 
+- (void)sort {
+  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
+  as.tag = kSortActionSheet;
+  [as showFromToolbar:_toolbar];
+}
+
+- (void)filter {
+  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"0.2 miles", @"0.5 miles", @"1.0 miles", @"3.0 miles", @"5.0 miles", nil] autorelease];
+  as.tag = kFilterActionSheet;
+  [as showFromToolbar:_toolbar];
+}
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+  switch (actionSheet.tag) {
+    case kSortActionSheet:
+      switch (buttonIndex) {
+        case 0:
+          _sortBy = @"index";
+          break;
+        case 1:
+          _sortBy = @"distance";
+          break;
+        default:
+          _sortBy = @"index";
+          break;
+      }
+      // Sort results
+      [self sortResults];
+      break;
+    case kFilterActionSheet:
+      switch (buttonIndex) {
+        case 0:
+          _distance = 0.2;
+          break;
+        case 1:
+          _distance = 0.5;
+          break;
+        case 2:
+          _distance = 1.0;
+          break;
+        case 3:
+          _distance = 3.0;
+          break;
+        case 4:
+          _distance = 5.0;
+          break;
+        default:
+          _distance = 0.5;
+          break;
+      }
+      // Reload Location
+      [self findMyLocation];
+      break;
+    default:
+      break;
+  }
+}
+
+#pragma mark - Sort
+- (void)sortResults {
+  NSArray *results = [self.items objectAtIndex:0];
+  NSArray *sortedResults = [results sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
+  [self.items replaceObjectAtIndex:0 withObject:sortedResults];
+  [self.tableView reloadData];
+}
+
 #pragma mark - State Machine
+- (void)reloadDataSource {
+  [super reloadDataSource];
+  [self loadDataSource];
+}
+
 - (void)loadDataSource {
   [super loadDataSource];
   [self findMyLocation];
@@ -159,8 +268,10 @@
   NSArray *addressArray = [NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil];
   NSString *formattedAddress = [addressArray componentsJoinedByString:@" "];
   
+  _currentLocationLabel.text = [NSString stringWithFormat:@"%@\n%@", [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1]];
+  
   // fetch Yelp Places
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress distance:_distance limit:_limit];
   
   _reverseGeocoder = nil;
   [geocoder release];
@@ -185,7 +296,8 @@
   // Put response into items (datasource)
   NSArray *data = response;
   if ([data count] > 0) {
-    [self.items addObject:data];
+    // Sort
+    [self.items addObject:[data sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]]];
   }
   
   [self dataSourceDidLoad];
@@ -259,7 +371,7 @@
   [_searchField resignFirstResponder];
   
   // Search Yelp with Address
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText distance:_distance limit:_limit];
 }
 
 #pragma mark - UITextFieldDelegate

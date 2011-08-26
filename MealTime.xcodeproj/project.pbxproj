@@ -153,7 +153,7 @@
 		28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27913F1CFB000EB971E /* CoreGraphics.framework */; };
 		28A1B28013F1CFB000EB971E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 28A1B27E13F1CFB000EB971E /* InfoPlist.strings */; };
 		28A1B28213F1CFB000EB971E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28113F1CFB000EB971E /* main.m */; };
-		28A1B28613F1CFB000EB971E /* SpotlightAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28513F1CFB000EB971E /* SpotlightAppDelegate.m */; };
+		28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */; };
 		28A1B28913F1CFB000EB971E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28A1B28713F1CFB000EB971E /* MainWindow.xib */; };
 		28A1B3C713F1DAC100EB971E /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */; };
 		28A1B3C813F1DAC100EB971E /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A313F1DAC100EB971E /* LocalyticsSession.m */; };
@@ -431,16 +431,16 @@
 		28682DA213F35D0000921F15 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		28682DA313F35D0000921F15 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppStyleSheet.plist; sourceTree = "<group>"; };
-		28A1B27113F1CFB000EB971E /* Spotlight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Spotlight.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		28A1B27113F1CFB000EB971E /* MealTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MealTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28A1B27513F1CFB000EB971E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		28A1B27713F1CFB000EB971E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		28A1B27913F1CFB000EB971E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		28A1B27D13F1CFB000EB971E /* Spotlight-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Spotlight-Info.plist"; sourceTree = "<group>"; };
+		28A1B27D13F1CFB000EB971E /* MealTime-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MealTime-Info.plist"; sourceTree = "<group>"; };
 		28A1B27F13F1CFB000EB971E /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		28A1B28113F1CFB000EB971E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		28A1B28313F1CFB000EB971E /* Spotlight-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Spotlight-Prefix.pch"; sourceTree = "<group>"; };
-		28A1B28413F1CFB000EB971E /* SpotlightAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpotlightAppDelegate.h; sourceTree = "<group>"; };
-		28A1B28513F1CFB000EB971E /* SpotlightAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SpotlightAppDelegate.m; sourceTree = "<group>"; };
+		28A1B28313F1CFB000EB971E /* MealTime-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MealTime-Prefix.pch"; sourceTree = "<group>"; };
+		28A1B28413F1CFB000EB971E /* MealTimeAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MealTimeAppDelegate.h; sourceTree = "<group>"; };
+		28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MealTimeAppDelegate.m; sourceTree = "<group>"; };
 		28A1B28813F1CFB000EB971E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
 		28A1B3A013F1DAC100EB971E /* LocalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsDatabase.h; sourceTree = "<group>"; };
 		28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsDatabase.m; sourceTree = "<group>"; };
@@ -816,7 +816,7 @@
 			children = (
 				28A1B29813F1D0EA00EB971E /* Submodules */,
 				28A1B29713F1D0DC00EB971E /* Vendor */,
-				28A1B27B13F1CFB000EB971E /* Spotlight */,
+				28A1B27B13F1CFB000EB971E /* MealTime */,
 				28F7492213F209840056D111 /* Resources */,
 				2814E2F613F1EFA200D7A85A /* Fixtures */,
 				28A1B27413F1CFB000EB971E /* Frameworks */,
@@ -827,7 +827,7 @@
 		28A1B27213F1CFB000EB971E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				28A1B27113F1CFB000EB971E /* Spotlight.app */,
+				28A1B27113F1CFB000EB971E /* MealTime.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -853,7 +853,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		28A1B27B13F1CFB000EB971E /* Spotlight */ = {
+		28A1B27B13F1CFB000EB971E /* MealTime */ = {
 			isa = PBXGroup;
 			children = (
 				28A9FABD13F27CD400EFB191 /* DataCenters */,
@@ -861,11 +861,11 @@
 				28A1B29613F1D0BB00EB971E /* Models */,
 				28A1B29513F1D0B900EB971E /* Views */,
 				28A1B29413F1D0B700EB971E /* Controllers */,
-				28A1B28413F1CFB000EB971E /* SpotlightAppDelegate.h */,
-				28A1B28513F1CFB000EB971E /* SpotlightAppDelegate.m */,
+				28A1B28413F1CFB000EB971E /* MealTimeAppDelegate.h */,
+				28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */,
 				28A1B27C13F1CFB000EB971E /* Supporting Files */,
 			);
-			path = Spotlight;
+			path = MealTime;
 			sourceTree = "<group>";
 		};
 		28A1B27C13F1CFB000EB971E /* Supporting Files */ = {
@@ -874,11 +874,11 @@
 				28B014FF13F1E3E2004813B2 /* Constants.h */,
 				28B0150013F1E3F2004813B2 /* NetworkConstants.h */,
 				28A9FB2713F32F2C00EFB191 /* InitialDefaults.plist */,
-				28A1B27D13F1CFB000EB971E /* Spotlight-Info.plist */,
+				28A1B27D13F1CFB000EB971E /* MealTime-Info.plist */,
 				28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */,
 				28A1B27E13F1CFB000EB971E /* InfoPlist.strings */,
 				28A1B28113F1CFB000EB971E /* main.m */,
-				28A1B28313F1CFB000EB971E /* Spotlight-Prefix.pch */,
+				28A1B28313F1CFB000EB971E /* MealTime-Prefix.pch */,
 				28A1B28713F1CFB000EB971E /* MainWindow.xib */,
 			);
 			name = "Supporting Files";
@@ -1112,9 +1112,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		28A1B27013F1CFB000EB971E /* Spotlight */ = {
+		28A1B27013F1CFB000EB971E /* MealTime */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 28A1B28C13F1CFB000EB971E /* Build configuration list for PBXNativeTarget "Spotlight" */;
+			buildConfigurationList = 28A1B28C13F1CFB000EB971E /* Build configuration list for PBXNativeTarget "MealTime" */;
 			buildPhases = (
 				28A1B26D13F1CFB000EB971E /* Sources */,
 				28A1B26E13F1CFB000EB971E /* Frameworks */,
@@ -1124,9 +1124,9 @@
 			);
 			dependencies = (
 			);
-			name = Spotlight;
+			name = MealTime;
 			productName = Spotlight;
-			productReference = 28A1B27113F1CFB000EB971E /* Spotlight.app */;
+			productReference = 28A1B27113F1CFB000EB971E /* MealTime.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1134,7 +1134,7 @@
 /* Begin PBXProject section */
 		28A1B26813F1CFAF00EB971E /* Project object */ = {
 			isa = PBXProject;
-			buildConfigurationList = 28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "Spotlight" */;
+			buildConfigurationList = 28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "MealTime" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1146,7 +1146,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				28A1B27013F1CFB000EB971E /* Spotlight */,
+				28A1B27013F1CFB000EB971E /* MealTime */,
 			);
 		};
 /* End PBXProject section */
@@ -1268,7 +1268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				28A1B28213F1CFB000EB971E /* main.m in Sources */,
-				28A1B28613F1CFB000EB971E /* SpotlightAppDelegate.m in Sources */,
+				28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */,
 				28A1B3C713F1DAC100EB971E /* LocalyticsDatabase.m in Sources */,
 				28A1B3C813F1DAC100EB971E /* LocalyticsSession.m in Sources */,
 				28A1B3C913F1DAC100EB971E /* UploaderThread.m in Sources */,
@@ -1428,12 +1428,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Spotlight/Spotlight-Prefix.pch";
+				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				INFOPLIST_FILE = "Spotlight/Spotlight-Info.plist";
+				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
 				OTHER_LDFLAGS = "-lxml2";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1444,12 +1444,12 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Spotlight/Spotlight-Prefix.pch";
+				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
-				INFOPLIST_FILE = "Spotlight/Spotlight-Info.plist";
+				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
 				OTHER_LDFLAGS = "-lxml2";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1458,7 +1458,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "Spotlight" */ = {
+		28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "MealTime" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				28A1B28A13F1CFB000EB971E /* Debug */,
@@ -1467,7 +1467,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		28A1B28C13F1CFB000EB971E /* Build configuration list for PBXNativeTarget "Spotlight" */ = {
+		28A1B28C13F1CFB000EB971E /* Build configuration list for PBXNativeTarget "MealTime" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				28A1B28D13F1CFB000EB971E /* Debug */,

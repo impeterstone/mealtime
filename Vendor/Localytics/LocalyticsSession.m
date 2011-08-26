@@ -17,7 +17,7 @@
 #include <mach/mach.h>
 
 #pragma mark Constants
-#define CLIENT_VERSION              @"iOS_2.0"      // The version of this library
+#define CLIENT_VERSION              @"iOS_2.1"      // The version of this library
 #define LOCALYTICS_DIR              @".localytics"	// The directory in which the Localytics database is stored
 #define MAX_DATABASE_SIZE           500000          // The maximum allowed disk size of the primary database file at open, in bytes
 
@@ -208,6 +208,12 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
   // Do nothing if session is already open
   if(self.isSessionOpen == YES)
     return;
+
+  if([self isOptedIn] == false) {
+    [self logMessage:@"Can't resume session because user is opted out."];
+    return;
+  }  
+
   // conditions for resuming previous session
   if(self.sessionHasBeenOpen &&
      (!self.sessionCloseTime ||
@@ -723,6 +729,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 {		
 	NSString *output = [input stringByReplacingOccurrencesOfString:@"\\" withString:@"\\\\"];
 	output = [output stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+    output = [output stringByReplacingOccurrencesOfString:@"\n" withString:@"\\n"];
     return output;
 }
 
@@ -858,7 +865,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 	return UINT_MAX;
 }
 
-- (void)release {
+- (oneway void)release {
 	// ignore release commands
 }
 

@@ -237,7 +237,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     BOOL optedOut = NO;
 
     sqlite3_stmt *selectOptOut;
-    sqlite3_prepare_v2(_databaseConnection, "SELECT opted_out FROM localytics_info", -1, &selectOptOut, NULL);
+    sqlite3_prepare_v2(_databaseConnection, "SELECT opt_out FROM localytics_info", -1, &selectOptOut, NULL);
     int code = sqlite3_step(selectOptOut);
     if (code == SQLITE_ROW) {
         optedOut = sqlite3_column_int(selectOptOut, 0) == 1;
@@ -253,7 +253,7 @@ static LocalyticsDatabase *_sharedLocalyticsDatabase = nil;
     [_dbLock lock];
    
     sqlite3_stmt *updateOptedOut;
-    sqlite3_prepare_v2(_databaseConnection, "UPDATE localytics_info SET opted_out = ?", -1, &updateOptedOut, NULL);
+    sqlite3_prepare_v2(_databaseConnection, "UPDATE localytics_info SET opt_out = ?", -1, &updateOptedOut, NULL);
     sqlite3_bind_int(updateOptedOut, 1, optOut);
     int code = sqlite3_step(updateOptedOut);
     sqlite3_finalize(updateOptedOut);

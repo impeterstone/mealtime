@@ -1,5 +1,5 @@
 //
-// Prefix header for all source files of the 'Spotlight' target in the 'Spotlight' project
+// Prefix header for all source files of the 'MealTime' target in the 'MealTime' project
 //
 
 #import <Availability.h>

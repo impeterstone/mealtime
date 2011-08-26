@@ -1,6 +1,6 @@
 //
 //  main.m
-//  Spotlight
+//  MealTime
 //
 //  Created by Peter Shih on 8/9/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.

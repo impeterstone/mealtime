@@ -1,22 +1,22 @@
 //
-//  SpotlightAppDelegate.m
-//  Spotlight
+//  MealTimeAppDelegate.m
+//  MealTime
 //
 //  Created by Peter Shih on 8/9/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "SpotlightAppDelegate.h"
+#import "MealTimeAppDelegate.h"
 #import "PSConstants.h"
 #import "RootViewController.h"
 
-@interface SpotlightAppDelegate (Private)
+@interface MealTimeAppDelegate (Private)
 
 + (void)setupDefaults;
 
 @end
 
-@implementation SpotlightAppDelegate
+@implementation MealTimeAppDelegate
 
 @synthesize window = _window;
 
@@ -26,7 +26,7 @@
 
 #pragma mark - Initial Defaults
 + (void)setupDefaults {
-  if ([self class] == [SpotlightAppDelegate class]) {
+  if ([self class] == [MealTimeAppDelegate class]) {
     NSString *initialDefaultsPath = [[NSBundle mainBundle] pathForResource:@"InitialDefaults" ofType:@"plist"];
     assert(initialDefaultsPath != nil);
     

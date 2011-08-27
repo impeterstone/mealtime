@@ -38,9 +38,10 @@
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];
   [request setUserAgent:USER_AGENT];
+  [request setUserInfo:[NSDictionary dictionaryWithObject:@"photos" forKey:@"requestType"]];
   
   [request setCompletionBlock:^{
-    NSArray *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }
@@ -51,4 +52,28 @@
   }];
   [request startAsynchronous];
 }
+
+- (void)fetchYelpMapForBiz:(NSString *)biz {
+  // http://lite.yelp.com/map/8Dg9wpIIO2AIM_qE9rniNQ
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/map/%@", biz];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+  
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
+  [request setUserInfo:[NSDictionary dictionaryWithObject:@"map" forKey:@"requestType"]];
+  
+  [request setCompletionBlock:^{
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:request.responseString];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+      [self.delegate dataCenterDidFinish:request withResponse:response];
+    }
+  }];
+  
+  [request setFailedBlock:^{
+    
+  }];
+  [request startAsynchronous];
+}
+
 @end

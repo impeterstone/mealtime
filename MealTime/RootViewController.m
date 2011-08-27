@@ -299,10 +299,10 @@
   [self.items removeAllObjects];
   
   // Put response into items (datasource)
-  NSArray *data = response;
-  if ([data count] > 0) {
+  NSArray *places = [response objectForKey:@"places"];
+  if ([places count] > 0) {
     // Sort
-    [self.items addObject:[data sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]]];
+    [self.items addObject:[places sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]]];
   }
   
   [self dataSourceDidLoad];

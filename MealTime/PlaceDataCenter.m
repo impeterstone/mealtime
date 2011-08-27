@@ -43,7 +43,7 @@
   [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    NSArray *response = [[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:request.responseString];
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:request.responseString];
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }

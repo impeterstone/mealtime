@@ -7,13 +7,14 @@
 //
 
 #import "MapViewController.h"
+#import "PlaceAnnotation.h"
 
 @implementation MapViewController
 
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _place = [place copy];
+    _place = place;
   }
   return self;
 }
@@ -25,7 +26,6 @@
 
 - (void)dealloc
 {
-  RELEASE_SAFELY(_place);
   
   RELEASE_SAFELY(_mapView);
   [super dealloc];
@@ -46,6 +46,7 @@
   
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 160.0)];
+  _mapView.autoresizingMask = self.view.autoresizingMask;
   _mapView.delegate = self;
   _mapView.frame = self.view.bounds;
   [self.view addSubview:_mapView];
@@ -54,15 +55,21 @@
 
 - (void)loadMap {
   // zoom to place
-  _mapRegion.center.latitude = 37.32798;
-  _mapRegion.center.longitude = -122.01382;
-  _mapRegion.span.latitudeDelta = 0.01;
-  _mapRegion.span.longitudeDelta = 0.01;
+  if ([_place objectForKey:@"coordinates"]) {
+    NSArray *coords = [[_place objectForKey:@"coordinates"] componentsSeparatedByString:@","];
+    _mapRegion.center.latitude = [[coords objectAtIndex:0] floatValue];
+    _mapRegion.center.longitude = [[coords objectAtIndex:1] floatValue];
+    _mapRegion.span.latitudeDelta = 0.003;
+    _mapRegion.span.longitudeDelta = 0.003;
+    [_mapView setRegion:_mapRegion animated:NO];
+  }
   
-  [_mapView setRegion:_mapRegion animated:NO];
   NSArray *oldAnnotations = [_mapView annotations];
-  //  [_mapView removeAnnotations:oldAnnotations];
-  //  [_mapView addAnnotation:message];
+  [_mapView removeAnnotations:oldAnnotations];
+  
+  PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
+  [_mapView addAnnotation:placeAnnotation];
+  [placeAnnotation release];
 }
 
 @end

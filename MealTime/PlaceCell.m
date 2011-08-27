@@ -142,16 +142,19 @@
   
   [request setCompletionBlock:^{
     if ([[_place objectForKey:@"biz"] isEqualToString:[place objectForKey:@"biz"]]) {
-      NSArray *photos = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+      NSDictionary *photoDict = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+
+      // Num Photos
+      NSString *numPhotos = [photoDict objectForKey:@"numPhotos"];
+      [place setObject:numPhotos forKey:@"numPhotos"];
+      
+      // Array of photos
+      NSArray *photos = [photoDict objectForKey:@"photos"];
       if ([[photos lastObject] objectForKey:@"src"]) {
         [place setObject:[[photos lastObject] objectForKey:@"src"] forKey:@"src"];
       } else {
         [place setObject:[NSNull null] forKey:@"src"];
       }
-      
-      // Num Photos
-      NSString *numPhotos = [[PSScrapeCenter defaultCenter] scrapeNumberOfPhotosWithHTMLString:request.responseString];
-      [place setObject:numPhotos forKey:@"numPhotos"];
       
       _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
       [_photoView loadImageAndDownload:YES];

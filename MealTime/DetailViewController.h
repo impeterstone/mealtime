@@ -13,7 +13,7 @@
 @class InfoViewController;
 
 @interface DetailViewController : PSTableViewController <ProductCellDelegate> {
-  NSDictionary *_place;
+  NSMutableDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
   
   // Views

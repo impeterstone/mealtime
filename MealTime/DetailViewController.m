@@ -16,7 +16,7 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _place = [place copy];
+    _place = [[NSMutableDictionary alloc] initWithDictionary:place];
     _imageSizeCache = [[NSMutableDictionary alloc] init];
     [[ProductDataCenter defaultCenter] setDelegate:self];
     
@@ -118,6 +118,7 @@
     rpp = @"-1";
   }
   [[ProductDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
+  [[ProductDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
 }
 
 - (void)dataSourceDidLoad {
@@ -127,13 +128,22 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
-  // Put response into items (datasource)
-  NSArray *data = response;
-  if ([data count] > 0) {
-    [self.items addObject:data];
-  }
+  if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
+    [self.items removeAllObjects];
+    
+    // Put response into items (datasource)
+    NSArray *photos = [response objectForKey:@"photos"];
+    if ([photos count] > 0) {
+      [self.items addObject:photos];
+    }
 
-  [self dataSourceDidLoad];
+    [self dataSourceDidLoad];
+  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"map"]) {
+    // Update metadata
+    [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
+    [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
+    [_ivc loadMap];
+  }
 }
 
 #pragma mark - TableView

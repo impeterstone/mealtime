@@ -15,5 +15,6 @@
 
 - (void)getProductsFromFixtures;
 - (void)fetchYelpPhotosForBiz:(NSString *)biz rpp:(NSString *)rpp;
+- (void)fetchYelpMapForBiz:(NSString *)biz;
 
 @end

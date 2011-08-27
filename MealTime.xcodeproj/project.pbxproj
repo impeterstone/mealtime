@@ -192,6 +192,11 @@
 		28B589FA1408781400F0EDB6 /* button_actionbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B589F41408781400F0EDB6 /* button_actionbar.png */; };
 		28B589FB1408781400F0EDB6 /* button_actionbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B589F51408781400F0EDB6 /* button_actionbar@2x.png */; };
 		28B58A4A140881AD00F0EDB6 /* WebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A49140881AD00F0EDB6 /* WebViewController.m */; };
+		28B58A4E140889A700F0EDB6 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A4D140889A700F0EDB6 /* RegexKitLite.m */; };
+		28B58A5014088C4200F0EDB6 /* libicucore.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */; };
+		28B58A561408995100F0EDB6 /* HTMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A531408995100F0EDB6 /* HTMLNode.m */; };
+		28B58A571408995100F0EDB6 /* HTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A551408995100F0EDB6 /* HTMLParser.m */; };
+		28B58A5A1408D21C00F0EDB6 /* PlaceAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A591408D21C00F0EDB6 /* PlaceAnnotation.m */; };
 		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
@@ -504,6 +509,15 @@
 		28B589F51408781400F0EDB6 /* button_actionbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "button_actionbar@2x.png"; sourceTree = "<group>"; };
 		28B58A48140881AD00F0EDB6 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
 		28B58A49140881AD00F0EDB6 /* WebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebViewController.m; sourceTree = "<group>"; };
+		28B58A4C140889A700F0EDB6 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
+		28B58A4D140889A700F0EDB6 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.A.dylib; path = usr/lib/libicucore.A.dylib; sourceTree = SDKROOT; };
+		28B58A521408995100F0EDB6 /* HTMLNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLNode.h; sourceTree = "<group>"; };
+		28B58A531408995100F0EDB6 /* HTMLNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLNode.m; sourceTree = "<group>"; };
+		28B58A541408995100F0EDB6 /* HTMLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParser.h; sourceTree = "<group>"; };
+		28B58A551408995100F0EDB6 /* HTMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLParser.m; sourceTree = "<group>"; };
+		28B58A581408D21C00F0EDB6 /* PlaceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceAnnotation.h; sourceTree = "<group>"; };
+		28B58A591408D21C00F0EDB6 /* PlaceAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceAnnotation.m; sourceTree = "<group>"; };
 		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
@@ -562,6 +576,7 @@
 				28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */,
 				28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */,
 				28417ED814062CD80050C04D /* iAd.framework in Frameworks */,
+				28B58A5014088C4200F0EDB6 /* libicucore.A.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -636,6 +651,8 @@
 		2814E34013F1F01400D7A85A /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				28B58A511408995100F0EDB6 /* HTMLParser */,
+				28B58A4B140889A700F0EDB6 /* RegexKitLite */,
 				28E9BCD81405F2CF00A0F3BA /* GData */,
 				28E9BCDB1405F2CF00A0F3BA /* Hpple */,
 				28F7402D13F1F1640056D111 /* EGO */,
@@ -863,6 +880,7 @@
 				28DD65A0140586BD00B42F20 /* libxml2.2.dylib */,
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
+				28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */,
 				28417ED714062CD80050C04D /* iAd.framework */,
 				28DD65BE140599B800B42F20 /* CoreLocation.framework */,
 				28DD65BB140597D600B42F20 /* MapKit.framework */,
@@ -942,6 +960,8 @@
 		28A1B29613F1D0BB00EB971E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				28B58A581408D21C00F0EDB6 /* PlaceAnnotation.h */,
+				28B58A591408D21C00F0EDB6 /* PlaceAnnotation.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1051,6 +1071,26 @@
 				28A9FB6613F341AA00EFB191 /* bg_caption.png */,
 			);
 			name = bg;
+			sourceTree = "<group>";
+		};
+		28B58A4B140889A700F0EDB6 /* RegexKitLite */ = {
+			isa = PBXGroup;
+			children = (
+				28B58A4C140889A700F0EDB6 /* RegexKitLite.h */,
+				28B58A4D140889A700F0EDB6 /* RegexKitLite.m */,
+			);
+			path = RegexKitLite;
+			sourceTree = "<group>";
+		};
+		28B58A511408995100F0EDB6 /* HTMLParser */ = {
+			isa = PBXGroup;
+			children = (
+				28B58A521408995100F0EDB6 /* HTMLNode.h */,
+				28B58A531408995100F0EDB6 /* HTMLNode.m */,
+				28B58A541408995100F0EDB6 /* HTMLParser.h */,
+				28B58A551408995100F0EDB6 /* HTMLParser.m */,
+			);
+			path = HTMLParser;
 			sourceTree = "<group>";
 		};
 		28E9BCD81405F2CF00A0F3BA /* GData */ = {
@@ -1397,6 +1437,10 @@
 				284885481408641B00F68014 /* InfoViewController.m in Sources */,
 				28B589EE140871D600F0EDB6 /* MapViewController.m in Sources */,
 				28B58A4A140881AD00F0EDB6 /* WebViewController.m in Sources */,
+				28B58A4E140889A700F0EDB6 /* RegexKitLite.m in Sources */,
+				28B58A561408995100F0EDB6 /* HTMLNode.m in Sources */,
+				28B58A571408995100F0EDB6 /* HTMLParser.m in Sources */,
+				28B58A5A1408D21C00F0EDB6 /* PlaceAnnotation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

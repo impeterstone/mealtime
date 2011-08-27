@@ -1,5 +1,5 @@
 //
-//  ProductViewController.h
+//  DetailViewController.h
 //  MealTime
 //
 //  Created by Peter Shih on 8/10/11.
@@ -10,11 +10,20 @@
 #import "PSTableViewController.h"
 #import "ProductCell.h"
 
-@interface ProductViewController : PSTableViewController <ProductCellDelegate> {
+@class InfoViewController;
+
+@interface DetailViewController : PSTableViewController <ProductCellDelegate> {
   NSDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
+  
+  // Views
+  InfoViewController *_ivc;
+  UIBarButtonItem *_infoButton;
+  
+  BOOL _isInfoShowing;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;
+- (void)toggleInfo;
 
 @end

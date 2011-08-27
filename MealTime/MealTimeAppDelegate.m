@@ -42,6 +42,8 @@
   // Override StyleSheet
   [PSStyleSheet setStyleSheet:@"AppStyleSheet"];
   
+  // Localytics
+  [[LocalyticsSession sharedLocalyticsSession] startSession:@"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"];
   
   // Initialize RootViewController
   RootViewController *rvc = [[[RootViewController alloc] init] autorelease];

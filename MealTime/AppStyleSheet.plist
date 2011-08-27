@@ -132,5 +132,18 @@
 		<key>shadowOffset</key>
 		<string>{0,1}</string>
 	</dict>
+	<key>actionButton</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
+		<integer>16</integer>
+		<key>textColor</key>
+		<string>0x333333</string>
+		<key>shadowColor</key>
+		<string>0xffffff</string>
+		<key>shadowOffset</key>
+		<string>{0,0}</string>
+	</dict>
 </dict>
 </plist>

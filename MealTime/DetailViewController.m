@@ -1,17 +1,17 @@
 //
-//  ProductViewController.m
+//  DetailViewController.m
 //  MealTime
 //
 //  Created by Peter Shih on 8/10/11.
 //  Copyright 2011 __MyCompanyName__. All rights reserved.
 //
 
-#import "ProductViewController.h"
-//#import "ProductCell.h"
+#import "DetailViewController.h"
+#import "InfoViewController.h"
 #import "ProductDataCenter.h"
 #import "ZoomViewController.h"
 
-@implementation ProductViewController
+@implementation DetailViewController
 
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
@@ -19,12 +19,16 @@
     _place = [place copy];
     _imageSizeCache = [[NSMutableDictionary alloc] init];
     [[ProductDataCenter defaultCenter] setDelegate:self];
+    
+    _isInfoShowing = NO;
   }
   return self;
 }
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  RELEASE_SAFELY(_ivc);
+  RELEASE_SAFELY(_infoButton);
 }
 
 - (void)dealloc
@@ -32,6 +36,9 @@
   [[ProductDataCenter defaultCenter] setDelegate:nil];
   RELEASE_SAFELY(_place);
   RELEASE_SAFELY(_imageSizeCache);
+  
+  RELEASE_SAFELY(_ivc);
+  RELEASE_SAFELY(_infoButton);
   [super dealloc];
 }
 
@@ -52,7 +59,7 @@
   
   _navTitleLabel.text = [_place objectForKey:@"name"];
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
+  [_nullView setLoadingTitle:@"Loading" loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
   // iAd
   _adView = [self newAdBannerViewWithDelegate:self];
@@ -62,8 +69,42 @@
   
   _tableView.rowHeight = self.tableView.width;
   
+  // Nav Buttons
+  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
+  self.navigationItem.rightBarButtonItem = _infoButton;
+  
+  
+  _ivc = [[InfoViewController alloc] initWithPlace:_place];
+  _ivc.parent = self;
+  _ivc.view.frame = _tableView.bounds;
+  [self.view insertSubview:_ivc.view atIndex:0];
+  
   // Populate datasource
   [self loadDataSource];
+}
+
+- (void)toggleInfo {
+  UIView *currentView = nil;
+  UIView *newView = nil;
+  UIViewAnimationOptions options;
+  if (_isInfoShowing) {
+    _isInfoShowing = NO;
+    currentView = _ivc.view;
+    newView = _tableView;
+    options = UIViewAnimationOptionTransitionFlipFromLeft;
+  } else {
+    _isInfoShowing = YES;
+    currentView = _tableView;
+    newView = _ivc.view;
+    options = UIViewAnimationOptionTransitionFlipFromRight;
+  }
+  
+  [UIView transitionFromView:currentView
+                      toView:newView
+                    duration:0.6
+                     options:options
+                  completion:^(BOOL finished) {
+                  }];
 }
 
 #pragma mark - State Machine

@@ -26,15 +26,18 @@
 #define kSortActionSheet 7070
 #define kFilterActionSheet 7071
 
+#define kAlertCall 8010
+#define kAlertReviews 8011
+
 // Notifications
 #define kLocationAcquired @"LocationAcquired"
 #define kLogoutRequested @"LogoutRequested"
 #define kOrientationChanged @"OrientationChangedNotification"
 
 // Facebook
-#define FB_APP_ID @"132514440148709"
-#define FB_APP_SECRET @"925b0a280e685631acf466dfea13b154"
-#define FB_PERMISSIONS [NSArray arrayWithObjects:@"offline_access", @"user_photos", @"friends_photos", nil]
+#define FB_APP_ID @"251612101539714"
+#define FB_APP_SECRET @"77686ad944e00b40cae96dbeb2b28fd6"
+#define FB_PERMISSIONS_EXTENDED [NSArray arrayWithObjects:@"publish_stream", nil]
 #define FB_PARAMS @"id,first_name,last_name,name,gender,locale"
 
 // ERROR STRINGS

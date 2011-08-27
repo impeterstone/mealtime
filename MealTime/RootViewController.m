@@ -9,7 +9,7 @@
 #import "RootViewController.h"
 #import "PlaceCell.h"
 #import "PlaceDataCenter.h"
-#import "ProductViewController.h"
+#import "DetailViewController.h"
 #import "PSLocationCenter.h"
 
 @implementation RootViewController
@@ -96,7 +96,7 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-  _navTitleLabel.text = @"MealTime";
+//  _navTitleLabel.text = @"MealTime";
   
   [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Nearby Restaurants" emptyTitle:@"Fail" emptySubtitle:@"No Restaurants Found" image:nil];
   
@@ -140,7 +140,7 @@
   self.navigationItem.rightBarButtonItem = _compassButton;
   
   // Setup Search
-  _searchField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 26, 60, 30) withInset:CGSizeMake(30, 6)];
+  _searchField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 26, self.view.width - 80, 30) withInset:CGSizeMake(30, 6)];
   _searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _searchField.font = NORMAL_FONT;
   _searchField.delegate = self;
@@ -159,6 +159,7 @@
 
 #pragma mark - Button Actios
 - (void)findMyLocation {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
 }
 
@@ -347,19 +348,19 @@
   
   NSMutableDictionary *place = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
-  ProductViewController *pvc = [[ProductViewController alloc] initWithPlace:place];
-  [self.navigationController pushViewController:pvc animated:YES];
-  [pvc release];
+  DetailViewController *dvc = [[DetailViewController alloc] initWithPlace:place];
+  [self.navigationController pushViewController:dvc animated:YES];
+  [dvc release];
 }
 
 #pragma mark - Search
 - (void)cancelSearch {
-  [UIView animateWithDuration:0.4
-                   animations:^{
-                     _searchField.width = 60;
-                   }
-                   completion:^(BOOL finished) {
-                   }];
+//  [UIView animateWithDuration:0.4
+//                   animations:^{
+//                     _searchField.width = 60;
+//                   }
+//                   completion:^(BOOL finished) {
+//                   }];
   
   self.navigationItem.rightBarButtonItem = _compassButton;
   [_searchField resignFirstResponder];
@@ -382,13 +383,13 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
   self.navigationItem.rightBarButtonItem = _cancelButton;
   
-  [UIView animateWithDuration:0.4
-                   animations:^{
-                     _searchField.width = self.view.width - 80;
-                     //                     _searchTermController.view.alpha = 1.0;
-                   }
-                   completion:^(BOOL finished) {
-                   }];
+//  [UIView animateWithDuration:0.4
+//                   animations:^{
+//                     _searchField.width = self.view.width - 80;
+//                     //                     _searchTermController.view.alpha = 1.0;
+//                   }
+//                   completion:^(BOOL finished) {
+//                   }];
   
   return YES;
 }

@@ -61,6 +61,20 @@
   return bg;
 }
 
+- (UIView *)rowBackgroundView {
+  UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  backgroundView.backgroundColor = CELL_BACKGROUND_COLOR;
+  return backgroundView;
+}
+
+- (UIView *)rowSelectedBackgroundView {
+  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
+  return selectedBackgroundView;
+}
+
 #pragma mark - View
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -161,6 +175,7 @@
 - (void)findMyLocation {
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
+  _searchField.text = @"Current Location";
 }
 
 - (void)sort {
@@ -364,15 +379,13 @@
   
   self.navigationItem.rightBarButtonItem = _compassButton;
   [_searchField resignFirstResponder];
-  _searchActive = NO;
 }
 
 - (void)searchTermChanged:(UITextField *)textField {
 }
 
 - (void)searchWithText:(NSString *)searchText {
-  _searchActive = YES; 
-  
+  self.navigationItem.rightBarButtonItem = _compassButton;
   [_searchField resignFirstResponder];
   
   // Search Yelp with Address
@@ -409,6 +422,9 @@
   }
   if ([textField.text length] == 0) {
     // Empty search
+    [self cancelSearch];
+  } else if ([textField.text isEqualToString:@"Current Location"]) {
+    [[PSLocationCenter defaultCenter] getMyLocation];
     [self cancelSearch];
   } else {
     [self searchWithText:textField.text];

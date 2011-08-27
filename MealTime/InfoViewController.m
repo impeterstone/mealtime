@@ -10,6 +10,7 @@
 #import "MapViewController.h"
 #import "WebViewController.h"
 #import "PlaceAnnotation.h"
+#import "MetaCell.h"
 
 @implementation InfoViewController
 
@@ -44,6 +45,20 @@
   return bg;
 }
 
+- (UIView *)rowBackgroundView {
+  UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  backgroundView.backgroundColor = [UIColor whiteColor];
+  return backgroundView;
+}
+
+- (UIView *)rowSelectedBackgroundView {
+  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
+  return selectedBackgroundView;
+}
+
 #pragma mark - View
 - (void)loadView
 {
@@ -53,8 +68,8 @@
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
-  
-  _tableView.rowHeight = self.tableView.width;
+
+  _tableView.scrollsToTop = NO;
   
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 160.0)];
@@ -136,6 +151,44 @@
   [placeAnnotation release];
 }
 
+- (void)loadMeta {
+  [self.items removeAllObjects];
+  
+  // Sections
+  if ([_place objectForKey:@"phone"]) {
+    [_sectionTitles addObject:@"Phone"];
+    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"phone"]]];
+  }
+  
+  if ([_place objectForKey:@"address"]) {
+    [_sectionTitles addObject:@"Address"];
+    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"address"]]];
+  }
+  
+  if ([_place objectForKey:@"hours"]) {
+    [_sectionTitles addObject:@"Hours"];
+    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"hours"]]];
+  }
+  
+  if ([_place objectForKey:@"category"]) {
+    [_sectionTitles addObject:@"Category"];
+    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"category"]]];
+  }
+  
+  if ([_place objectForKey:@"price"]) {
+    [_sectionTitles addObject:@"Price"];
+    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"price"]]];
+  }
+  
+  [self dataSourceDidLoad];
+}
+
+- (void)dataSourceDidLoad {
+  [self.tableView reloadData];
+  [super dataSourceDidLoad];
+}
+
+#pragma mark - Button Actions
 - (void)call {  
   UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
   av.tag = kAlertCall;
@@ -143,11 +196,13 @@
 }
 
 - (void)checkin {
-  
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Foursquare" message:[NSString stringWithFormat:@"Check in at %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertCheckin;
+  [av show];
 }
 
 - (void)reviews {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Would you like to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
   av.tag = kAlertReviews;
   [av show];
 }
@@ -170,6 +225,45 @@
   return NO;
 }
 
+#pragma mark - TableView
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+  if ([_sectionTitles count] == 0) return nil;
+  
+  NSString *sectionTitle = nil;
+  sectionTitle = [_sectionTitles objectAtIndex:section];
+  if ([sectionTitle notNil]) {
+    return sectionTitle;
+  } else {
+    return nil;
+  }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+  NSString *meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  return [MetaCell rowHeightForObject:meta forInterfaceOrientation:[self interfaceOrientation]];
+}
+
+- (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
+  NSString *meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  [cell fillCellWithObject:meta];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+  MetaCell *cell = nil;
+  NSString *reuseIdentifier = [MetaCell reuseIdentifier];
+  
+  cell = (MetaCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
+  if(cell == nil) { 
+    cell = [[[MetaCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+  }
+  
+  [self tableView:tableView configureCell:cell atIndexPath:indexPath];
+  
+  return cell;
+}
+
+#pragma mark - UIAlertView
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (buttonIndex == alertView.cancelButtonIndex) return;
   

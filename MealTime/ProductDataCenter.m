@@ -38,7 +38,12 @@
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];
   [request setUserAgent:USER_AGENT];
-  [request setUserInfo:[NSDictionary dictionaryWithObject:@"photos" forKey:@"requestType"]];
+
+  // UserInfo
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+  [userInfo setObject:biz forKey:@"biz"];
+  [userInfo setObject:@"photos" forKey:@"requestType"];
+  [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
@@ -61,10 +66,43 @@
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];
   [request setUserAgent:USER_AGENT];
-  [request setUserInfo:[NSDictionary dictionaryWithObject:@"map" forKey:@"requestType"]];
+  
+  // UserInfo
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+  [userInfo setObject:biz forKey:@"biz"];
+  [userInfo setObject:@"map" forKey:@"requestType"];
+  [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:request.responseString];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+      [self.delegate dataCenterDidFinish:request withResponse:response];
+    }
+  }];
+  
+  [request setFailedBlock:^{
+    
+  }];
+  [request startAsynchronous];
+}
+
+- (void)fetchYelpBizForBiz:(NSString *)biz {
+  // http://lite.yelp.com/biz/PDhfVvcVXgBinZf5I6s1KQ
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", biz];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+  
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
+
+  // UserInfo
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+  [userInfo setObject:biz forKey:@"biz"];
+  [userInfo setObject:@"biz" forKey:@"requestType"];
+  [request setUserInfo:userInfo];
+  
+  [request setCompletionBlock:^{
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:request.responseString];
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }

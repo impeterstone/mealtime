@@ -197,6 +197,9 @@
 		28B58A561408995100F0EDB6 /* HTMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A531408995100F0EDB6 /* HTMLNode.m */; };
 		28B58A571408995100F0EDB6 /* HTMLParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A551408995100F0EDB6 /* HTMLParser.m */; };
 		28B58A5A1408D21C00F0EDB6 /* PlaceAnnotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A591408D21C00F0EDB6 /* PlaceAnnotation.m */; };
+		28B58A6114099CF200F0EDB6 /* MetaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A6014099CF200F0EDB6 /* MetaCell.m */; };
+		28B58A681409A9AD00F0EDB6 /* icon_info.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B58A661409A9AC00F0EDB6 /* icon_info.png */; };
+		28B58A691409A9AD00F0EDB6 /* icon_info@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B58A671409A9AD00F0EDB6 /* icon_info@2x.png */; };
 		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
@@ -518,6 +521,10 @@
 		28B58A551408995100F0EDB6 /* HTMLParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HTMLParser.m; sourceTree = "<group>"; };
 		28B58A581408D21C00F0EDB6 /* PlaceAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceAnnotation.h; sourceTree = "<group>"; };
 		28B58A591408D21C00F0EDB6 /* PlaceAnnotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceAnnotation.m; sourceTree = "<group>"; };
+		28B58A5F14099CF200F0EDB6 /* MetaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MetaCell.h; sourceTree = "<group>"; };
+		28B58A6014099CF200F0EDB6 /* MetaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaCell.m; sourceTree = "<group>"; };
+		28B58A661409A9AC00F0EDB6 /* icon_info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_info.png; sourceTree = "<group>"; };
+		28B58A671409A9AD00F0EDB6 /* icon_info@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_info@2x.png"; sourceTree = "<group>"; };
 		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
@@ -849,6 +856,8 @@
 			children = (
 				28417EC5140609970050C04D /* icon_compass.png */,
 				28417EC6140609970050C04D /* icon_compass@2x.png */,
+				28B58A661409A9AC00F0EDB6 /* icon_info.png */,
+				28B58A671409A9AD00F0EDB6 /* icon_info@2x.png */,
 			);
 			path = icons;
 			sourceTree = "<group>";
@@ -953,6 +962,8 @@
 				28A9FAB613F26FA200EFB191 /* PlaceCell.m */,
 				28A9FB5F13F3343500EFB191 /* ProductCell.h */,
 				28A9FB6013F3343500EFB191 /* ProductCell.m */,
+				28B58A5F14099CF200F0EDB6 /* MetaCell.h */,
+				28B58A6014099CF200F0EDB6 /* MetaCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1336,6 +1347,8 @@
 				28B589F91408781400F0EDB6 /* button_actionbar_highlighted@2x.png in Resources */,
 				28B589FA1408781400F0EDB6 /* button_actionbar.png in Resources */,
 				28B589FB1408781400F0EDB6 /* button_actionbar@2x.png in Resources */,
+				28B58A681409A9AD00F0EDB6 /* icon_info.png in Resources */,
+				28B58A691409A9AD00F0EDB6 /* icon_info@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1441,6 +1454,7 @@
 				28B58A561408995100F0EDB6 /* HTMLNode.m in Sources */,
 				28B58A571408995100F0EDB6 /* HTMLParser.m in Sources */,
 				28B58A5A1408D21C00F0EDB6 /* PlaceAnnotation.m in Sources */,
+				28B58A6114099CF200F0EDB6 /* MetaCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

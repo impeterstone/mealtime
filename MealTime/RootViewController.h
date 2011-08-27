@@ -22,8 +22,6 @@
   NSString *_sortBy;
   CGFloat _distance;
   NSInteger _limit;
-  
-  BOOL _searchActive;
 }
 
 // Buttons

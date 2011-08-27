@@ -24,8 +24,11 @@
 
 - (id)initWithPlace:(NSDictionary *)place;
 - (void)toggleDetail;
-- (void)loadMap;
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer;
+
+// Called from Detail
+- (void)loadMap;
+- (void)loadMeta;
 
 
 - (void)call;

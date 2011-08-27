@@ -50,6 +50,20 @@
   return bg;
 }
 
+- (UIView *)rowBackgroundView {
+  UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  backgroundView.backgroundColor = CELL_BACKGROUND_COLOR;
+  return backgroundView;
+}
+
+- (UIView *)rowSelectedBackgroundView {
+  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
+  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
+  return selectedBackgroundView;
+}
+
 #pragma mark - View
 - (void)loadView
 {
@@ -70,7 +84,7 @@
   _tableView.rowHeight = self.tableView.width;
   
   // Nav Buttons
-  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
+  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
   self.navigationItem.rightBarButtonItem = _infoButton;
   
   
@@ -91,11 +105,15 @@
     _isInfoShowing = NO;
     currentView = _ivc.view;
     newView = _tableView;
+    _ivc.tableView.scrollsToTop = NO;
+    self.tableView.scrollsToTop = YES;
     options = UIViewAnimationOptionTransitionFlipFromLeft;
   } else {
     _isInfoShowing = YES;
     currentView = _tableView;
     newView = _ivc.view;
+    _ivc.tableView.scrollsToTop = YES;
+    self.tableView.scrollsToTop = NO;
     options = UIViewAnimationOptionTransitionFlipFromRight;
   }
   
@@ -119,6 +137,7 @@
   }
   [[ProductDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
   [[ProductDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
+  [[ProductDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
 }
 
 - (void)dataSourceDidLoad {
@@ -128,6 +147,9 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
+  // Match biz from request to current, make sure this request is still valid
+  if (![[request.userInfo objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) return;
+  
   if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
     [self.items removeAllObjects];
     
@@ -140,9 +162,19 @@
     [self dataSourceDidLoad];
   } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"map"]) {
     // Update metadata
-    [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
-    [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
+    if ([response objectForKey:@"address"]) {
+      [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
+    }
+    if ([response objectForKey:@"coordinates"]) {
+      [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
+    }
     [_ivc loadMap];
+  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
+    // Update Hours
+    if ([response objectForKey:@"hours"]) {
+      [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
+    }
+    [_ivc loadMeta];
   }
 }
 

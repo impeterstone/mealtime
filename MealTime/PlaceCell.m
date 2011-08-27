@@ -52,17 +52,58 @@
     _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeDistance"];
     _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeDistance"];
     
+    _categoryLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _categoryLabel.backgroundColor = [UIColor clearColor];
+    _categoryLabel.textAlignment = UITextAlignmentRight;
+    _categoryLabel.font = [PSStyleSheet fontForStyle:@"placeCategory"];
+    _categoryLabel.textColor = [PSStyleSheet textColorForStyle:@"placeCategory"];
+    _categoryLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeCategory"];
+    _categoryLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeCategory"];
+
+    _priceLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _priceLabel.backgroundColor = [UIColor clearColor];
+    _priceLabel.textAlignment = UITextAlignmentRight;
+    _priceLabel.font = [PSStyleSheet fontForStyle:@"placePrice"];
+    _priceLabel.textColor = [PSStyleSheet textColorForStyle:@"placePrice"];
+    _priceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placePrice"];
+    _priceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placePrice"];
+    
+    // Ribbon
+    _ribbonLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _ribbonLabel.backgroundColor = [UIColor clearColor];
+    _ribbonLabel.textAlignment = UITextAlignmentRight;
+    _ribbonLabel.font = [PSStyleSheet fontForStyle:@"placeRibbon"];
+    _ribbonLabel.textColor = [PSStyleSheet textColorForStyle:@"placeRibbon"];
+    _ribbonLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeRibbon"];
+    _ribbonLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeRibbon"];
+    
+    _ribbonView = [[UIView alloc] initWithFrame:CGRectZero];
+    UIImageView *ribbonImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"ribbon.png" withLeftCapWidth:34 topCapWidth:0]] autorelease];
+    ribbonImageView.autoresizingMask = ~UIViewAutoresizingNone;
+    ribbonImageView.frame = _ribbonView.bounds;
+    _ribbonLabel.autoresizingMask = ~UIViewAutoresizingNone;
+    _ribbonLabel.frame = _ribbonView.bounds;
+    [_ribbonView addSubview:ribbonImageView];
+    [_ribbonView addSubview:_ribbonLabel];
+    
     // Add subviews
     [self.contentView addSubview:_photoView];
     [self.contentView addSubview:_disclosureView];
     [self.contentView addSubview:_nameLabel];
     [self.contentView addSubview:_distanceLabel];
+    [self.contentView addSubview:_categoryLabel];
+    [self.contentView addSubview:_priceLabel];
+    [self.contentView addSubview:_ribbonView];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_ribbonView);
+  RELEASE_SAFELY(_ribbonLabel);
+  RELEASE_SAFELY(_categoryLabel);
+  RELEASE_SAFELY(_priceLabel);
   RELEASE_SAFELY(_distanceLabel);
   RELEASE_SAFELY(_nameLabel);
   RELEASE_SAFELY(_disclosureView);
@@ -74,8 +115,11 @@
 - (void)prepareForReuse
 {
   [super prepareForReuse];
+  _ribbonLabel.text = nil;
   _nameLabel.text = nil;
   _distanceLabel.text = nil;
+  _categoryLabel.text = nil;
+  _priceLabel.text = nil;
   _photoView.image = nil;
   _photoView.urlPath = nil;
   _place = nil;
@@ -88,24 +132,42 @@
   // Set Frames
   _photoView.frame = CGRectMake(0, 0, self.contentView.width, CELL_HEIGHT);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
+  _ribbonView.frame = CGRectMake(self.contentView.width - 80, 10, 80, 24);
   
   // Labels
-  CGFloat top = self.contentView.height - 20 - MARGIN_Y;
+  CGFloat top = self.contentView.height - 40 - MARGIN_Y;
   CGFloat left = MARGIN_X;
   CGFloat textWidth = self.contentView.width - MARGIN_X * 2;
   CGSize desiredSize = CGSizeZero;
   
+  // Line 1
+  desiredSize = [UILabel sizeForText:_priceLabel.text width:textWidth font:_priceLabel.font numberOfLines:_priceLabel.numberOfLines lineBreakMode:_priceLabel.lineBreakMode];
+  _priceLabel.width = desiredSize.width;
+  _priceLabel.height = desiredSize.height;
+  _priceLabel.top = top;
+  _priceLabel.left = self.contentView.width - _priceLabel.width - MARGIN_X;
+  
+  desiredSize = [UILabel sizeForText:_nameLabel.text width:(textWidth - _priceLabel.width - MARGIN_X) font:_nameLabel.font numberOfLines:_nameLabel.numberOfLines lineBreakMode:_nameLabel.lineBreakMode];
+  _nameLabel.width = desiredSize.width;
+  _nameLabel.height = desiredSize.height;
+  _nameLabel.top = top;
+  _nameLabel.left = left;
+  
+  top += 20;
+    
+  // Line 2
   desiredSize = [UILabel sizeForText:_distanceLabel.text width:textWidth font:_distanceLabel.font numberOfLines:_distanceLabel.numberOfLines lineBreakMode:_distanceLabel.lineBreakMode];
   _distanceLabel.width = desiredSize.width;
   _distanceLabel.height = desiredSize.height;
   _distanceLabel.top = top;
   _distanceLabel.left = self.contentView.width - _distanceLabel.width - MARGIN_X;
   
-  desiredSize = [UILabel sizeForText:_nameLabel.text width:(textWidth - _distanceLabel.width - MARGIN_X) font:_nameLabel.font numberOfLines:_nameLabel.numberOfLines lineBreakMode:_nameLabel.lineBreakMode];
-  _nameLabel.width = desiredSize.width;
-  _nameLabel.height = desiredSize.height;
-  _nameLabel.top = top;
-  _nameLabel.left = left;
+  desiredSize = [UILabel sizeForText:_categoryLabel.text width:(textWidth - _distanceLabel.width - MARGIN_X) font:_categoryLabel.font numberOfLines:_categoryLabel.numberOfLines lineBreakMode:_categoryLabel.lineBreakMode];
+  _categoryLabel.width = desiredSize.width;
+  _categoryLabel.height = desiredSize.height;
+  _categoryLabel.top = top;
+  _categoryLabel.left = left;
+;
   
   // Add Gradient Overlay
   [_photoView addGradientLayer];
@@ -129,7 +191,10 @@
     [self fetchYelpCoverPhotoForPlace:place];
   }
   _nameLabel.text = [place objectForKey:@"name"];
-  _distanceLabel.text = [place objectForKey:@"distance"];
+  _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
+  _categoryLabel.text = [place objectForKey:@"category"];
+  _priceLabel.text = [place objectForKey:@"price"];
+  _ribbonLabel.text = [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"reviews"]];
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {

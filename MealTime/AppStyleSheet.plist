@@ -59,6 +59,32 @@
 		<key>fontName</key>
 		<string>HelveticaNeue-Bold</string>
 		<key>fontSize</key>
+		<integer>14</integer>
+		<key>textColor</key>
+		<string>0xcdcdcd</string>
+		<key>shadowColor</key>
+		<string>0x000000</string>
+		<key>shadowOffset</key>
+		<string>{0,-1}</string>
+	</dict>
+	<key>placeCategory</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
+		<integer>14</integer>
+		<key>textColor</key>
+		<string>0xcdcdcd</string>
+		<key>shadowColor</key>
+		<string>0x000000</string>
+		<key>shadowOffset</key>
+		<string>{0,-1}</string>
+	</dict>
+	<key>placePrice</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
 		<integer>18</integer>
 		<key>textColor</key>
 		<string>0xefefef</string>
@@ -66,6 +92,19 @@
 		<string>0x000000</string>
 		<key>shadowOffset</key>
 		<string>{0,-1}</string>
+	</dict>
+	<key>placeRibbon</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
+		<integer>10</integer>
+		<key>textColor</key>
+		<string>0xefefef</string>
+		<key>shadowColor</key>
+		<string>0x000000</string>
+		<key>shadowOffset</key>
+		<string>{0,0}</string>
 	</dict>
 	<key>productTitle</key>
 	<dict>

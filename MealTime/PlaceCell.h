@@ -14,8 +14,14 @@
   PSURLCacheImageView *_photoView;
   UIImageView *_disclosureView;
   
+  // Ribbon
+  UIView *_ribbonView;
+  UILabel *_ribbonLabel;
+  
   UILabel *_nameLabel;
   UILabel *_distanceLabel;
+  UILabel *_categoryLabel;
+  UILabel *_priceLabel;
   
   NSDictionary *_place;
 }

@@ -21,8 +21,10 @@
   
   NSString *_sortBy;
   CGFloat _distance;
-  NSInteger _limit;
+  NSString *_fetchQuery;
 }
+
+@property (nonatomic, retain) NSString *fetchQuery;
 
 // Buttons
 - (void)findMyLocation;

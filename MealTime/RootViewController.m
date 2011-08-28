@@ -14,6 +14,8 @@
 
 @implementation RootViewController
 
+@synthesize fetchQuery = _fetchQuery;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -23,7 +25,10 @@
     
     _sortBy = [@"popularity" retain];
     _distance = 0.5;
-    _limit = 25;
+    _pagingStart = 0;
+    _pagingCount = 25;
+    _pagingTotal = 25;
+    _fetchQuery = nil;
   }
   return self;
 }
@@ -167,8 +172,8 @@
   
   _cancelButton = [[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) width:60 height:30 buttonType:BarButtonTypeSilver] retain];
   
-  // Populate datasource
-  [self loadDataSource];
+  // Get initial location
+  [self findMyLocation];
 }
 
 #pragma mark - Button Actios
@@ -249,15 +254,25 @@
   [self.tableView reloadData];
 }
 
+#pragma mark - Fetching Data
+- (void)fetchDataSource {
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:self.fetchQuery distance:_distance start:_pagingStart rpp:_pagingCount];
+}
+
 #pragma mark - State Machine
-- (void)reloadDataSource {
-  [super reloadDataSource];
+- (BOOL)shouldLoadMore {
+  return YES;
+}
+
+- (void)loadMore {
+  _pagingTotal += _pagingCount;
+  _pagingStart += _pagingCount; // load another page
   [self loadDataSource];
 }
 
 - (void)loadDataSource {
   [super loadDataSource];
-  [self findMyLocation];
+  [self fetchDataSource];
 }
 
 - (void)reverseGeocode {
@@ -291,7 +306,9 @@
   _currentLocationLabel.text = [NSString stringWithFormat:@"%@\n%@", [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1]];
   
   // fetch Yelp Places
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:formattedAddress distance:_distance limit:_limit];
+  _pagingStart = 0; // reset paging
+  self.fetchQuery = formattedAddress;
+  [self fetchDataSource];
   
   _reverseGeocoder = nil;
   [geocoder release];
@@ -305,13 +322,28 @@
 }
 
 - (void)dataSourceDidLoad {
+  if (_pagingStart == 0) {
+    [self.tableView setContentOffset:CGPointMake(0, 0)];
+  }
   [self.tableView reloadData];
   [super dataSourceDidLoad];
 }
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
-  [self.items removeAllObjects];
+  if (_pagingStart == 0) {
+    [self.items removeAllObjects];
+  }
+  
+  // Check hasMore
+  NSDictionary *paging = [response objectForKey:@"paging"];
+  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
+  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
+  if (currentPage == numPages) {
+    _hasMore = NO;
+  } else {
+    _hasMore = YES;
+  }
   
   // Put response into items (datasource)
   NSArray *places = [response objectForKey:@"places"];
@@ -389,7 +421,9 @@
   [_searchField resignFirstResponder];
   
   // Search Yelp with Address
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:searchText distance:_distance limit:_limit];
+  _pagingStart = 0; // reset paging
+  self.fetchQuery = searchText;
+  [self fetchDataSource];
 }
 
 #pragma mark - UITextFieldDelegate

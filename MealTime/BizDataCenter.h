@@ -1,5 +1,5 @@
 //
-//  ProductDataCenter.h
+//  BizDataCenter.h
 //  MealTime
 //
 //  Created by Peter Shih on 8/10/11.
@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PSDataCenter.h"
 
-@interface ProductDataCenter : PSDataCenter {
+@interface BizDataCenter : PSDataCenter {
   
 }
 

@@ -30,13 +30,13 @@
   }
 }
 
-- (void)fetchYelpPlacesForAddress:(NSString *)address distance:(CGFloat)distance limit:(NSInteger)limit {
+- (void)fetchYelpPlacesForAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp {
   if (distance == 0.0) distance = 1.0;
-  if (limit == 0) limit = 25;
-  NSLog(@"fetching places near: %@ distance: %f, limit: %d", address, distance, limit);
+  if (rpp == 0) rpp = 25;
+  NSLog(@"fetching places near: %@ distance: %f, start: %d, rpp: %d", address, distance, start, rpp);
   NSString *urlEncodedAddress = [address stringByURLEncoding];
   
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&find_loc=%@&radius=%f&rpp=%d", urlEncodedAddress, distance, limit];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?cflt=restaurants&rflt=all&sortby=composite&find_loc=%@&radius=%f&start=%d&rpp=%d", urlEncodedAddress, distance, start, rpp];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
   [request setShouldContinueWhenAppEntersBackground:YES];

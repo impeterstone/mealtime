@@ -8,7 +8,7 @@
 
 #import "DetailViewController.h"
 #import "InfoViewController.h"
-#import "ProductDataCenter.h"
+#import "BizDataCenter.h"
 #import "ZoomViewController.h"
 
 @implementation DetailViewController
@@ -18,7 +18,7 @@
   if (self) {
     _place = [[NSMutableDictionary alloc] initWithDictionary:place];
     _imageSizeCache = [[NSMutableDictionary alloc] init];
-    [[ProductDataCenter defaultCenter] setDelegate:self];
+    [[BizDataCenter defaultCenter] setDelegate:self];
     
     _isInfoShowing = NO;
   }
@@ -33,7 +33,7 @@
 
 - (void)dealloc
 {
-  [[ProductDataCenter defaultCenter] setDelegate:nil];
+  [[BizDataCenter defaultCenter] setDelegate:nil];
   RELEASE_SAFELY(_place);
   RELEASE_SAFELY(_imageSizeCache);
   
@@ -128,16 +128,16 @@
 #pragma mark - State Machine
 - (void)loadDataSource {
   [super loadDataSource];
-//  [[ProductDataCenter defaultCenter] getProductsFromFixtures];
+//  [[BizDataCenter defaultCenter] getProductsFromFixtures];
   NSString *rpp = nil;
   if ([_place objectForKey:@"numPhotos"] && [[_place objectForKey:@"numPhotos"] integerValue] <= 1) {
     rpp = @"1";
   } else {
     rpp = @"-1";
   }
-  [[ProductDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
-  [[ProductDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
-  [[ProductDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
+  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
+  [[BizDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
+  [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
 }
 
 - (void)dataSourceDidLoad {

@@ -14,6 +14,6 @@
 }
 
 - (void)getPlacesFromFixtures;
-- (void)fetchYelpPlacesForAddress:(NSString *)address distance:(CGFloat)distance limit:(NSInteger)limit;
+- (void)fetchYelpPlacesForAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp;
 
 @end

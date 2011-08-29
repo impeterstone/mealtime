@@ -9,6 +9,7 @@
 #import "PlaceCell.h"
 #import "PSScrapeCenter.h"
 #import "ASIHTTPRequest.h"
+#import "BizDataCenter.h"
 
 #define CELL_HEIGHT 160.0
 
@@ -192,13 +193,13 @@
   }
   _nameLabel.text = [place objectForKey:@"name"];
   _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
-  _categoryLabel.text = [place objectForKey:@"category"];
-  _priceLabel.text = [place objectForKey:@"price"];
-  _ribbonLabel.text = [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"reviews"]];
+  _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
+  _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
+  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=1", [place objectForKey:@"biz"]];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@", [place objectForKey:@"biz"]];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -206,23 +207,19 @@
   [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    if ([[_place objectForKey:@"biz"] isEqualToString:[place objectForKey:@"biz"]]) {
-      NSDictionary *photoDict = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
-
-      // Num Photos
-      NSString *numPhotos = [photoDict objectForKey:@"numPhotos"];
-      [place setObject:numPhotos forKey:@"numPhotos"];
-      
-      // Array of photos
-      NSArray *photos = [photoDict objectForKey:@"photos"];
-      if ([[photos lastObject] objectForKey:@"src"]) {
-        [place setObject:[[photos lastObject] objectForKey:@"src"] forKey:@"src"];
-      } else {
-        [place setObject:[NSNull null] forKey:@"src"];
-      }
-      
-      _photoView.urlPath = [[photos lastObject] objectForKey:@"src"];
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+    
+    // Save to DB
+    [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
+    
+    if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+      // randomObject - causes too many reloading of pictures
+      NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
+      _photoView.urlPath = src;
       [_photoView loadImageAndDownload:YES];
+      [place setObject:src forKey:@"src"];
+    } else {
+      [place setObject:[NSNull null] forKey:@"src"];
     }
   }];
   

@@ -155,27 +155,27 @@
   [self.items removeAllObjects];
   
   // Sections
-  if ([_place objectForKey:@"phone"]) {
+  if ([[_place objectForKey:@"phone"] notNil]) {
     [_sectionTitles addObject:@"Phone"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"phone"]]];
   }
   
-  if ([_place objectForKey:@"address"]) {
+  if ([[_place objectForKey:@"address"] notNil]) {
     [_sectionTitles addObject:@"Address"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"address"]]];
   }
   
-  if ([_place objectForKey:@"hours"]) {
+  if ([[_place objectForKey:@"hours"] notNil]) {
     [_sectionTitles addObject:@"Hours"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"hours"]]];
   }
   
-  if ([_place objectForKey:@"category"]) {
+  if ([[_place objectForKey:@"category"] notNil]) {
     [_sectionTitles addObject:@"Category"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"category"]]];
   }
   
-  if ([_place objectForKey:@"price"]) {
+  if ([[_place objectForKey:@"price"] notNil]) {
     [_sectionTitles addObject:@"Price"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"price"]]];
   }

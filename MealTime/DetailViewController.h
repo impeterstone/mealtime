@@ -26,4 +26,6 @@
 - (id)initWithPlace:(NSDictionary *)place;
 - (void)toggleInfo;
 
+- (void)loadPhotosFromDatabase;
+
 @end

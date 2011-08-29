@@ -150,7 +150,7 @@
 - (void)fillCellWithObject:(id)object
 {
   NSDictionary *product = (NSDictionary *)object;
-  _nameLabel.text = [product objectForKey:@"alt"];
+  _nameLabel.text = [product objectForKey:@"caption"];
   _photoView.urlPath = [product objectForKey:@"src"];
   [_photoView loadImageAndDownload:YES];
 }

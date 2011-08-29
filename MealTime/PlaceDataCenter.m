@@ -8,6 +8,7 @@
 
 #import "PlaceDataCenter.h"
 #import "PSScrapeCenter.h"
+#import "PSDatabaseCenter.h"
 
 @implementation PlaceDataCenter
 
@@ -44,6 +45,12 @@
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:request.responseString];
+    
+    // Save to DB
+    for (NSDictionary *place in [response objectForKey:@"places"]) {
+      [self insertPlaceInDatabase:place];
+    }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }
@@ -53,6 +60,10 @@
     
   }];
   [request startAsynchronous];
+}
+
+- (void)insertPlaceInDatabase:(NSDictionary *)place {
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT OR REPLACE INTO places (biz, name, rating, phone, numreviews, price, category, distance, city, address, coordinates, hours, numphotos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT address FROM places WHERE biz = ?), (SELECT coordinates FROM places WHERE biz = ?), (SELECT hours FROM places WHERE biz = ?), (SELECT numphotos FROM places WHERE biz = ?))", [place objectForKey:@"biz"], [place objectForKey:@"name"], [place objectForKey:@"rating"], [place objectForKey:@"phone"], [place objectForKey:@"numreviews"], [place objectForKey:@"price"], [place objectForKey:@"category"], [place objectForKey:@"distance"], [place objectForKey:@"city"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], nil];
 }
 
 @end

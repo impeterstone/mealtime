@@ -33,5 +33,6 @@
 
 - (void)reverseGeocode;
 - (void)sortResults;
+- (void)loadPlacesFromDatabase;
 
 @end

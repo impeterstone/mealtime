@@ -34,6 +34,18 @@
     assert(initialDefaults != nil);
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:initialDefaults];
+    
+    // Copy SQLite to Documents
+    NSString *sqlitePath = [[NSBundle mainBundle] pathForResource:SQLITE_DB ofType:@"sqlite"];
+    assert(sqlitePath != nil);
+    
+    NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"sml.sqlite"];
+    
+    NSError *error = nil;
+    [[NSFileManager defaultManager] copyItemAtPath:sqlitePath 
+                                            toPath:sqliteDocumentsPath 
+                                             error:&error];
+    assert(sqliteDocumentsPath != nil);
   }
 }
 

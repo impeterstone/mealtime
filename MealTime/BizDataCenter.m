@@ -8,6 +8,7 @@
 
 #import "BizDataCenter.h"
 #import "PSScrapeCenter.h"
+#import "PSDatabaseCenter.h"
 
 @implementation BizDataCenter
 
@@ -47,6 +48,10 @@
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
+    
+    // Save to DB
+    [self updatePlacePhotosInDatabase:response forBiz:biz];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }
@@ -75,6 +80,10 @@
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:request.responseString];
+    
+    // Save to DB
+    [self updatePlaceMapInDatabase:response forBiz:biz];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }
@@ -103,6 +112,10 @@
   
   [request setCompletionBlock:^{
     NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:request.responseString];
+    
+    // Save to DB
+    [self updatePlaceBizInDatabase:response forBiz:biz];
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
       [self.delegate dataCenterDidFinish:request withResponse:response];
     }
@@ -112,6 +125,39 @@
     
   }];
   [request startAsynchronous];
+}
+
+- (void)updatePlaceMapInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET address = ?, coordinates = ? WHERE biz = ?", [place objectForKey:@"address"], [place objectForKey:@"coordinates"], biz, nil];
+}
+
+- (void)updatePlaceBizInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET hours = ? WHERE biz = ?", [place objectForKey:@"hours"], biz, nil];
+}
+
+- (void)updatePlacePhotosInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET numphotos = ? WHERE biz = ?", [place objectForKey:@"numphotos"], biz, nil];
+  
+  // Create photos
+  for (NSDictionary *photo in [place objectForKey:@"photos"]) {
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT OR REPLACE INTO photos (biz, src, caption) VALUES (?, ?, ?)", biz, [photo objectForKey:@"src"], [photo objectForKey:@"caption"], nil];
+  }
+}
+
+- (NSArray *)selectPlacePhotosInDatabaseForBiz:(NSString *)biz {
+  EGODatabaseResult *result = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM photos WHERE biz = ?", biz, nil];
+  
+  NSMutableArray *photos = [NSMutableArray array];
+  for(EGODatabaseRow *row in result) {
+    NSMutableDictionary *photo = [NSMutableDictionary dictionary];
+    
+    [photo setObject:[row stringForColumn:@"src"] forKey:@"src"];
+    [photo setObject:[row stringForColumn:@"caption"] forKey:@"caption"];
+    
+    [photos addObject:photo];
+  }
+  
+  return photos;
 }
 
 @end

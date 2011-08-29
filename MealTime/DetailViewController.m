@@ -130,19 +130,34 @@
   [super loadDataSource];
 //  [[BizDataCenter defaultCenter] getProductsFromFixtures];
   NSString *rpp = nil;
-  if ([_place objectForKey:@"numPhotos"] && [[_place objectForKey:@"numPhotos"] integerValue] <= 1) {
-    rpp = @"1";
+  
+  if ([_place objectForKey:@"numphotos"] && [[_place objectForKey:@"numphotos"] integerValue] <= 8) {
+    rpp = [_place objectForKey:@"numphotos"];
   } else {
     rpp = @"-1";
   }
+
   [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
   [[BizDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
   [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
+  [self loadPhotosFromDatabase];
 }
 
 - (void)dataSourceDidLoad {
   [self.tableView reloadData];
   [super dataSourceDidLoad];
+}
+
+- (void)loadPhotosFromDatabase {
+  // Load photos from DB
+  NSArray *photos = [[BizDataCenter defaultCenter] selectPlacePhotosInDatabaseForBiz:[_place objectForKey:@"biz"]];
+  [self.items removeAllObjects];
+  
+  // Put response into items (datasource)
+  if ([photos count] > 0) {
+    [self.items addObject:photos];
+  }
+  [self dataSourceDidLoad];
 }
 
 #pragma mark - PSDataCenterDelegate

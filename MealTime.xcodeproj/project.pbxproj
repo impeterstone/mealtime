@@ -87,6 +87,12 @@
 		282F9213140B11A4006F5132 /* bg_loadmore@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F9211140B11A4006F5132 /* bg_loadmore@2x.png */; };
 		282F9216140B12A6006F5132 /* shadow_lastcell.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F9214140B12A6006F5132 /* shadow_lastcell.png */; };
 		282F9217140B12A6006F5132 /* shadow_lastcell@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F9215140B12A6006F5132 /* shadow_lastcell@2x.png */; };
+		282F92CD140B5BD3006F5132 /* EGODatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 282F928A140B5BD3006F5132 /* EGODatabase.m */; };
+		282F92CE140B5BD3006F5132 /* EGODatabaseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 282F928C140B5BD3006F5132 /* EGODatabaseRequest.m */; };
+		282F92CF140B5BD3006F5132 /* EGODatabaseResult.m in Sources */ = {isa = PBXBuildFile; fileRef = 282F928E140B5BD3006F5132 /* EGODatabaseResult.m */; };
+		282F92D0140B5BD3006F5132 /* EGODatabaseRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 282F9290140B5BD3006F5132 /* EGODatabaseRow.m */; };
+		282F92D8140B5CFA006F5132 /* PSDatabaseCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */; };
+		282F92DA140B5E8C006F5132 /* sml.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 282F92D9140B5E8C006F5132 /* sml.sqlite */; };
 		28417E4B1406039A0050C04D /* bg_searchbar_textfield@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417E491406039A0050C04D /* bg_searchbar_textfield@2x.png */; };
 		28417E4C1406039A0050C04D /* bg_searchbar_textfield.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417E4A1406039A0050C04D /* bg_searchbar_textfield.png */; };
 		28417E6F1406040B0050C04D /* button_bar_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417E4F1406040B0050C04D /* button_bar_black.png */; };
@@ -392,6 +398,18 @@
 		282F9211140B11A4006F5132 /* bg_loadmore@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_loadmore@2x.png"; sourceTree = "<group>"; };
 		282F9214140B12A6006F5132 /* shadow_lastcell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shadow_lastcell.png; sourceTree = "<group>"; };
 		282F9215140B12A6006F5132 /* shadow_lastcell@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "shadow_lastcell@2x.png"; sourceTree = "<group>"; };
+		282F9289140B5BD3006F5132 /* EGODatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGODatabase.h; sourceTree = "<group>"; };
+		282F928A140B5BD3006F5132 /* EGODatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabase.m; sourceTree = "<group>"; };
+		282F928B140B5BD3006F5132 /* EGODatabaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGODatabaseRequest.h; sourceTree = "<group>"; };
+		282F928C140B5BD3006F5132 /* EGODatabaseRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabaseRequest.m; sourceTree = "<group>"; };
+		282F928D140B5BD3006F5132 /* EGODatabaseResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGODatabaseResult.h; sourceTree = "<group>"; };
+		282F928E140B5BD3006F5132 /* EGODatabaseResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabaseResult.m; sourceTree = "<group>"; };
+		282F928F140B5BD3006F5132 /* EGODatabaseRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGODatabaseRow.h; sourceTree = "<group>"; };
+		282F9290140B5BD3006F5132 /* EGODatabaseRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabaseRow.m; sourceTree = "<group>"; };
+		282F92D4140B5C4C006F5132 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		282F92D6140B5CF9006F5132 /* PSDatabaseCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSDatabaseCenter.h; sourceTree = "<group>"; };
+		282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSDatabaseCenter.m; sourceTree = "<group>"; };
+		282F92D9140B5E8C006F5132 /* sml.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = sml.sqlite; sourceTree = "<group>"; };
 		28417E491406039A0050C04D /* bg_searchbar_textfield@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_searchbar_textfield@2x.png"; sourceTree = "<group>"; };
 		28417E4A1406039A0050C04D /* bg_searchbar_textfield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_searchbar_textfield.png; sourceTree = "<group>"; };
 		28417E4F1406040B0050C04D /* button_bar_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = button_bar_black.png; sourceTree = "<group>"; };
@@ -674,6 +692,7 @@
 		2814E34013F1F01400D7A85A /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				282F9218140B5BD3006F5132 /* egodatabase */,
 				28B58A511408995100F0EDB6 /* HTMLParser */,
 				28B58A4B140889A700F0EDB6 /* RegexKitLite */,
 				28E9BCD81405F2CF00A0F3BA /* GData */,
@@ -802,6 +821,21 @@
 			path = nullview;
 			sourceTree = "<group>";
 		};
+		282F9218140B5BD3006F5132 /* egodatabase */ = {
+			isa = PBXGroup;
+			children = (
+				282F9289140B5BD3006F5132 /* EGODatabase.h */,
+				282F928A140B5BD3006F5132 /* EGODatabase.m */,
+				282F928B140B5BD3006F5132 /* EGODatabaseRequest.h */,
+				282F928C140B5BD3006F5132 /* EGODatabaseRequest.m */,
+				282F928D140B5BD3006F5132 /* EGODatabaseResult.h */,
+				282F928E140B5BD3006F5132 /* EGODatabaseResult.m */,
+				282F928F140B5BD3006F5132 /* EGODatabaseRow.h */,
+				282F9290140B5BD3006F5132 /* EGODatabaseRow.m */,
+			);
+			path = egodatabase;
+			sourceTree = "<group>";
+		};
 		28417E4E1406040B0050C04D /* buttons */ = {
 			isa = PBXGroup;
 			children = (
@@ -913,6 +947,7 @@
 		28A1B27413F1CFB000EB971E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				282F92D4140B5C4C006F5132 /* libsqlite3.dylib */,
 				28DD65A0140586BD00B42F20 /* libxml2.2.dylib */,
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
@@ -950,6 +985,7 @@
 		28A1B27C13F1CFB000EB971E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				282F92D9140B5E8C006F5132 /* sml.sqlite */,
 				28B014FF13F1E3E2004813B2 /* Constants.h */,
 				28B0150013F1E3F2004813B2 /* NetworkConstants.h */,
 				28A9FB2713F32F2C00EFB191 /* InitialDefaults.plist */,
@@ -1067,6 +1103,8 @@
 				2814E33F13F1F01400D7A85A /* PSURLCache.m */,
 				28E9BCD31405D2B600A0F3BA /* PSScrapeCenter.h */,
 				28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */,
+				282F92D6140B5CF9006F5132 /* PSDatabaseCenter.h */,
+				282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */,
 				2814E34013F1F01400D7A85A /* Vendor */,
 				2814E37413F1F01400D7A85A /* Views */,
 			);
@@ -1250,6 +1288,9 @@
 /* Begin PBXProject section */
 		28A1B26813F1CFAF00EB971E /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = 28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "MealTime" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
@@ -1389,6 +1430,7 @@
 				282F9213140B11A4006F5132 /* bg_loadmore@2x.png in Resources */,
 				282F9216140B12A6006F5132 /* shadow_lastcell.png in Resources */,
 				282F9217140B12A6006F5132 /* shadow_lastcell@2x.png in Resources */,
+				282F92DA140B5E8C006F5132 /* sml.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1495,6 +1537,11 @@
 				28B58A571408995100F0EDB6 /* HTMLParser.m in Sources */,
 				28B58A5A1408D21C00F0EDB6 /* PlaceAnnotation.m in Sources */,
 				28B58A6114099CF200F0EDB6 /* MetaCell.m in Sources */,
+				282F92CD140B5BD3006F5132 /* EGODatabase.m in Sources */,
+				282F92CE140B5BD3006F5132 /* EGODatabaseRequest.m in Sources */,
+				282F92CF140B5BD3006F5132 /* EGODatabaseResult.m in Sources */,
+				282F92D0140B5BD3006F5132 /* EGODatabaseRow.m in Sources */,
+				282F92D8140B5CFA006F5132 /* PSDatabaseCenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1572,6 +1619,10 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
@@ -1588,6 +1639,10 @@
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";

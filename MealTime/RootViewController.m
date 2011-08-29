@@ -117,7 +117,7 @@
   self.view.backgroundColor = [UIColor blackColor];
 //  _navTitleLabel.text = @"MealTime";
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Nearby Restaurants" emptyTitle:@"Fail" emptySubtitle:@"No Restaurants Found" image:nil];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Nearby Restaurants" emptyTitle:@"Fail" emptySubtitle:@"No Restaurants Found" image:[UIImage imageNamed:@"nullview_photos.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -173,7 +173,7 @@
   _cancelButton = [[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) width:60 height:30 buttonType:BarButtonTypeSilver] retain];
   
   // Get initial location
-  [self findMyLocation];
+  [self loadDataSource];
 }
 
 #pragma mark - Button Actios
@@ -272,7 +272,11 @@
 
 - (void)loadDataSource {
   [super loadDataSource];
-  [self fetchDataSource];
+  if (_fetchQuery) {
+    [self fetchDataSource];
+  } else {
+    [self findMyLocation];
+  }
 }
 
 - (void)reverseGeocode {

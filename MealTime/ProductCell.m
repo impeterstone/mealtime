@@ -85,6 +85,10 @@
   [super dealloc];
 }
 
+- (void)setShouldAnimate:(NSNumber *)shouldAnimate {
+  _photoView.shouldAnimate = [shouldAnimate boolValue];
+}
+
 #pragma mark - Layout
 - (void)prepareForReuse
 {

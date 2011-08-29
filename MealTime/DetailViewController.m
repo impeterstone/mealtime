@@ -164,7 +164,9 @@
 }
 
 - (void)dataSourceDidLoad {
+  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
   [self.tableView reloadData];
+  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
   [super dataSourceDidLoad];
 }
 
@@ -205,13 +207,11 @@
     if ([response objectForKey:@"coordinates"]) {
       [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
     }
-    if (_ivc) [_ivc loadMap];
   } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
     // Update Hours
     if ([response objectForKey:@"hours"]) {
       [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
     }
-    if (_ivc) [_ivc loadMeta];
   }
 }
 

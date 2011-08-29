@@ -348,7 +348,9 @@
   if (_pagingStart == 0) {
     [self.tableView setContentOffset:CGPointMake(0, 0)];
   }
+  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
   [self.tableView reloadData];
+  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
   [super dataSourceDidLoad];
 }
 

@@ -31,4 +31,6 @@
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
 
+- (void)setShouldAnimate:(NSNumber *)shouldAnimate;
+
 @end

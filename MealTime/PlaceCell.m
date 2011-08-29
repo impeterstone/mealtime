@@ -24,7 +24,7 @@
     
     // Photo
     _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
-    _photoView.shouldAnimate = NO;
+    _photoView.shouldAnimate = YES;
     _photoView.delegate = self;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     _photoView.placeholderImage = [UIImage imageNamed:@"place_placeholder.png"];
@@ -84,6 +84,7 @@
     _ribbonLabel.frame = _ribbonView.bounds;
     [_ribbonView addSubview:ribbonImageView];
     [_ribbonView addSubview:_ribbonLabel];
+    _ribbonView.alpha = 0.0;
     
     // Add subviews
     [self.contentView addSubview:_photoView];
@@ -110,6 +111,10 @@
   [super dealloc];
 }
 
+- (void)setShouldAnimate:(NSNumber *)shouldAnimate {
+  _photoView.shouldAnimate = [shouldAnimate boolValue];
+}
+
 #pragma mark - Layout
 - (void)prepareForReuse
 {
@@ -123,6 +128,7 @@
   [_photoView unloadImageArray];
   _photoView.urlPath = nil;
   _place = nil;
+  _ribbonView.alpha = 0.0;
 }
 
 - (void)layoutSubviews
@@ -192,8 +198,10 @@
       [_photoView unloadImageArray];
       [_photoView unloadImage];
     } else {
+      _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
       _photoView.urlPathArray = [srcArray valueForKey:@"src"];
       [_photoView loadImageArray];
+      _ribbonView.alpha = 1.0;
     }
   } else {
     [self fetchYelpCoverPhotoForPlace:place];
@@ -209,7 +217,8 @@
   } else {
     freshOrRotten = @"fresh";
   }
-  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];
+//  _ribbonLabel.text = nil;
+//  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];
 //  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
 }
 
@@ -245,6 +254,9 @@
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
             _photoView.urlPathArray = [srcArray valueForKey:@"src"];
             [_photoView loadImageArray];
+
+            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
+            _ribbonView.alpha = 1.0;
           }
         } else {
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {

@@ -14,8 +14,6 @@
 
 @implementation InfoViewController
 
-@synthesize parent = _parent;
-
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
@@ -66,6 +64,8 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   
+  _navTitleLabel.text = [_place objectForKey:@"name"];
+  
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
 
@@ -100,17 +100,17 @@
   [callButton addTarget:self action:@selector(call) forControlEvents:UIControlEventTouchUpInside];
   [actionView addSubview:callButton];
   
-  UIButton *checkinButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  checkinButton.frame = CGRectMake(110, 5, 100, 29);
-  [checkinButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateNormal];
-  [checkinButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar_highlighted.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateHighlighted];
-  [checkinButton setTitle:@"Check In" forState:UIControlStateNormal];
-  [checkinButton.titleLabel setFont:[PSStyleSheet fontForStyle:@"actionButton"]];
-  [checkinButton setTitleColor:[PSStyleSheet textColorForStyle:@"actionButton"] forState:UIControlStateNormal];
-  [checkinButton.titleLabel setShadowColor:[PSStyleSheet shadowColorForStyle:@"actionButton"]];
-  [checkinButton.titleLabel setShadowOffset:[PSStyleSheet shadowOffsetForStyle:@"actionButton"]];
-  [checkinButton addTarget:self action:@selector(checkin) forControlEvents:UIControlEventTouchUpInside];
-  [actionView addSubview:checkinButton];
+  UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  shareButton.frame = CGRectMake(110, 5, 100, 29);
+  [shareButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateNormal];
+  [shareButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar_highlighted.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateHighlighted];
+  [shareButton setTitle:@"Share" forState:UIControlStateNormal];
+  [shareButton.titleLabel setFont:[PSStyleSheet fontForStyle:@"actionButton"]];
+  [shareButton setTitleColor:[PSStyleSheet textColorForStyle:@"actionButton"] forState:UIControlStateNormal];
+  [shareButton.titleLabel setShadowColor:[PSStyleSheet shadowColorForStyle:@"actionButton"]];
+  [shareButton.titleLabel setShadowOffset:[PSStyleSheet shadowOffsetForStyle:@"actionButton"]];
+  [shareButton addTarget:self action:@selector(share) forControlEvents:UIControlEventTouchUpInside];
+  [actionView addSubview:shareButton];
   
   UIButton *reviewsButton = [UIButton buttonWithType:UIButtonTypeCustom];
   reviewsButton.frame = CGRectMake(215, 5, 100, 29);
@@ -130,6 +130,8 @@
   
   // Populate datasource
   [self loadDataSource];
+  [self loadMap];
+  [self loadMeta];
 }
 
 - (void)loadMap {
@@ -195,9 +197,9 @@
   [av show];
 }
 
-- (void)checkin {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Foursquare" message:[NSString stringWithFormat:@"Check in at %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertCheckin;
+- (void)share {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Facebook" message:[NSString stringWithFormat:@"Share %@ with your friends on Facebook?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertShare;
   [av show];
 }
 
@@ -209,7 +211,7 @@
 
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
   MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
-  [_parent.navigationController pushViewController:mvc animated:YES];
+  [self.navigationController pushViewController:mvc animated:YES];
   [mvc release];
 }
 
@@ -273,8 +275,10 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
   } else if (alertView.tag == kAlertReviews) {
     WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
-    [_parent.navigationController pushViewController:wvc animated:YES];
+    [self.navigationController pushViewController:wvc animated:YES];
     [wvc release];
+  } else if (alertView.tag == kAlertShare) {
+    
   }
 }
 

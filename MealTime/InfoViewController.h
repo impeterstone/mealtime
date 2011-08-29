@@ -11,7 +11,6 @@
 #import "PSTableViewController.h"
 
 @interface InfoViewController : PSTableViewController <MKMapViewDelegate, UIAlertViewDelegate> {
-  UIViewController *_parent;
   NSDictionary *_place;
   MKCoordinateRegion _mapRegion;
   
@@ -19,8 +18,6 @@
   MKMapView *_mapView;
   UIBarButtonItem *_detailButton;
 }
-
-@property (nonatomic, assign) UIViewController *parent;
 
 - (id)initWithPlace:(NSDictionary *)place;
 - (void)toggleDetail;
@@ -32,7 +29,7 @@
 
 
 - (void)call;
-- (void)checkin;
+- (void)share;
 - (void)reviews;
 
 @end

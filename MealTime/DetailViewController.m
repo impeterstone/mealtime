@@ -21,7 +21,6 @@
     [[BizDataCenter defaultCenter] setDelegate:self];
     
     _photoCount = 0;
-    _isInfoShowing = NO;
   }
   return self;
 }
@@ -88,42 +87,41 @@
   _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
   self.navigationItem.rightBarButtonItem = _infoButton;
   
-  
+  // Info VC
   _ivc = [[InfoViewController alloc] initWithPlace:_place];
-  _ivc.parent = self;
-  _ivc.view.frame = _tableView.bounds;
-  [self.view insertSubview:_ivc.view atIndex:0];
   
   // Populate datasource
   [self loadDataSource];
 }
 
 - (void)toggleInfo {
-  UIView *currentView = nil;
-  UIView *newView = nil;
-  UIViewAnimationOptions options;
-  if (_isInfoShowing) {
-    _isInfoShowing = NO;
-    currentView = _ivc.view;
-    newView = _tableView;
-    _ivc.tableView.scrollsToTop = NO;
-    self.tableView.scrollsToTop = YES;
-    options = UIViewAnimationOptionTransitionFlipFromLeft;
-  } else {
-    _isInfoShowing = YES;
-    currentView = _tableView;
-    newView = _ivc.view;
-    _ivc.tableView.scrollsToTop = YES;
-    self.tableView.scrollsToTop = NO;
-    options = UIViewAnimationOptionTransitionFlipFromRight;
-  }
+  [self.navigationController pushViewController:_ivc animated:YES];
   
-  [UIView transitionFromView:currentView
-                      toView:newView
-                    duration:0.6
-                     options:options
-                  completion:^(BOOL finished) {
-                  }];
+//  UIView *currentView = nil;
+//  UIView *newView = nil;
+//  UIViewAnimationOptions options;
+//  if (_isInfoShowing) {
+//    _isInfoShowing = NO;
+//    currentView = _ivc.view;
+//    newView = _tableView;
+//    _ivc.tableView.scrollsToTop = NO;
+//    self.tableView.scrollsToTop = YES;
+//    options = UIViewAnimationOptionTransitionFlipFromLeft;
+//  } else {
+//    _isInfoShowing = YES;
+//    currentView = _tableView;
+//    newView = _ivc.view;
+//    _ivc.tableView.scrollsToTop = YES;
+//    self.tableView.scrollsToTop = NO;
+//    options = UIViewAnimationOptionTransitionFlipFromRight;
+//  }
+//  
+//  [UIView transitionFromView:currentView
+//                      toView:newView
+//                    duration:0.6
+//                     options:options
+//                  completion:^(BOOL finished) {
+//                  }];
 }
 
 #pragma mark - State Machine

@@ -21,7 +21,6 @@
   UIBarButtonItem *_infoButton;
   
   NSInteger _photoCount;
-  BOOL _isInfoShowing;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;

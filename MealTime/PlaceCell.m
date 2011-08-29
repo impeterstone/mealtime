@@ -11,8 +11,6 @@
 #import "ASIHTTPRequest.h"
 #import "BizDataCenter.h"
 
-#define CELL_HEIGHT 160.0
-
 @implementation PlaceCell
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -132,7 +130,7 @@
   [super layoutSubviews];
   
   // Set Frames
-  _photoView.frame = CGRectMake(0, 0, self.contentView.width, CELL_HEIGHT);
+  _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
   _ribbonView.frame = CGRectMake(self.contentView.width - 80, 10, 80, 24);
   
@@ -177,7 +175,11 @@
 
 #pragma mark - Fill and Height
 + (CGFloat)rowHeight {
-  return CELL_HEIGHT;
+  if (isDeviceIPad()) {
+    return 320.0;
+  } else {
+    return 160.0;
+  }
 }
 
 - (void)fillCellWithObject:(id)object

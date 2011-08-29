@@ -70,7 +70,13 @@
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   // Map
-  _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 160.0)];
+  CGFloat mapHeight = 0.0;
+  if (isDeviceIPad()) {
+    mapHeight = 480.0;
+  } else {
+    mapHeight = 160.0;
+  }
+  _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
   _mapView.delegate = self;
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
@@ -80,14 +86,14 @@
   [_mapView addGestureRecognizer:mapTap];
   
   // Table Header View
-  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 200)] autorelease];
+  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight + 40)] autorelease];
   
-  UIView *actionView = [[[UIView alloc] initWithFrame:CGRectMake(0, 160, _tableView.width, 40)] autorelease];
+  UIView *actionView = [[[UIView alloc] initWithFrame:CGRectMake(0, mapHeight, _tableView.width, 40)] autorelease];
   actionView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_actionbar.png"]];
   
   // Action Buttons
   UIButton *callButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  callButton.frame = CGRectMake(5, 5, 100, 29);
+  callButton.frame = CGRectMake(5, 5, floorf((self.view.width - 20) / 3), 29);
   [callButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateNormal];
   [callButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar_highlighted.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateHighlighted];
   [callButton setTitle:@"Call" forState:UIControlStateNormal];
@@ -99,7 +105,7 @@
   [actionView addSubview:callButton];
   
   UIButton *shareButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  shareButton.frame = CGRectMake(110, 5, 100, 29);
+  shareButton.frame = CGRectMake(callButton.right + 5, 5, floorf((self.view.width - 20) / 3), 29);
   [shareButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateNormal];
   [shareButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar_highlighted.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateHighlighted];
   [shareButton setTitle:@"Share" forState:UIControlStateNormal];
@@ -111,7 +117,7 @@
   [actionView addSubview:shareButton];
   
   UIButton *reviewsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  reviewsButton.frame = CGRectMake(215, 5, 100, 29);
+  reviewsButton.frame = CGRectMake(shareButton.right + 5, 5, floorf((self.view.width - 20) / 3), 29);
   [reviewsButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateNormal];
   [reviewsButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_actionbar_highlighted.png" withLeftCapWidth:7 topCapWidth:15] forState:UIControlStateHighlighted];
   [reviewsButton setTitle:@"Reviews" forState:UIControlStateNormal];

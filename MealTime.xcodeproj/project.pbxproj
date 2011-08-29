@@ -1074,8 +1074,6 @@
 				2814E32413F1F01400D7A85A /* PSCoreDataImageCache.m */,
 				2814E32513F1F01400D7A85A /* PSCoreDataStack.h */,
 				2814E32613F1F01400D7A85A /* PSCoreDataStack.m */,
-				28417ECD14060A490050C04D /* PSLocationCenter.h */,
-				28417ECE14060A4A0050C04D /* PSLocationCenter.m */,
 				2814E32713F1F01400D7A85A /* PSImageCache.h */,
 				2814E32813F1F01400D7A85A /* PSImageCache.m */,
 				2814E32913F1F01400D7A85A /* PSImageCacheDelegate.h */,
@@ -1101,6 +1099,8 @@
 				2814E33D13F1F01400D7A85A /* PSToastCenter.m */,
 				2814E33E13F1F01400D7A85A /* PSURLCache.h */,
 				2814E33F13F1F01400D7A85A /* PSURLCache.m */,
+				28417ECD14060A490050C04D /* PSLocationCenter.h */,
+				28417ECE14060A4A0050C04D /* PSLocationCenter.m */,
 				28E9BCD31405D2B600A0F3BA /* PSScrapeCenter.h */,
 				28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */,
 				282F92D6140B5CF9006F5132 /* PSDatabaseCenter.h */,
@@ -1626,6 +1626,7 @@
 				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1646,6 +1647,7 @@
 				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

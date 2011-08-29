@@ -136,7 +136,12 @@
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
-  _tableView.rowHeight = 160.0;
+  
+  if (isDeviceIPad()) {
+    _tableView.rowHeight = 320.0;
+  } else {
+    _tableView.rowHeight = 160.0;
+  }
   
   // Toolbar
   _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];

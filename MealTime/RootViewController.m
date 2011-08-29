@@ -196,10 +196,12 @@
 }
 
 - (void)sort {
-  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
-  as.tag = kSortActionSheet;
-  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-  [as showFromToolbar:_toolbar];
+  [[[[UIAlertView alloc] initWithTitle:@"Oh Noes!" message:@"Broken for now..." delegate:nil cancelButtonTitle:@"Aww" otherButtonTitles:nil] autorelease] show];
+  
+//  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
+//  as.tag = kSortActionSheet;
+//  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
+//  [as showFromToolbar:_toolbar];
 }
 
 - (void)filter {
@@ -227,7 +229,7 @@
           break;
       }
       // Sort results
-      [self sortResults];
+//      [self sortResults];
       break;
     case kFilterActionSheet:
       switch (buttonIndex) {
@@ -347,10 +349,6 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
-  if (_pagingStart == 0) {
-    [self.items removeAllObjects];
-  }
-  
   // Check hasMore
   NSDictionary *paging = [response objectForKey:@"paging"];
   NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
@@ -364,8 +362,27 @@
   // Put response into items (datasource)
   NSArray *places = [response objectForKey:@"places"];
   if ([places count] > 0) {
+    if (_pagingStart == 0) {
+      // First load
+      [self.items removeAllObjects];
+      [self.items addObject:places];
+    } else {
+      // Load more
+      NSArray *newPlaces = [[self.items objectAtIndex:0] arrayByAddingObjectsFromArray:places];
+      [self.items replaceObjectAtIndex:0 withObject:newPlaces];
+    }
+    
     // Sort
-    [self.items addObject:[places sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]]];
+//    NSArray *sortedPlaces = nil;
+//    if (_pagingStart == 0) {
+//      [self.items removeAllObjects];
+//      sortedPlaces = [places sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
+//      [self.items addObject:sortedPlaces];
+//    } else {
+//      NSArray *newPlaces = [[self.items objectAtIndex:0] arrayByAddingObjectsFromArray:places];
+//      sortedPlaces = [newPlaces sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
+//      [self.items replaceObjectAtIndex:0 withObject:sortedPlaces];
+//    }
   }
   
   [self dataSourceDidLoad];

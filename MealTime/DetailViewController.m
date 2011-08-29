@@ -27,7 +27,6 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
-  RELEASE_SAFELY(_ivc);
   RELEASE_SAFELY(_infoButton);
 }
 
@@ -37,7 +36,6 @@
   RELEASE_SAFELY(_place);
   RELEASE_SAFELY(_imageSizeCache);
   
-  RELEASE_SAFELY(_ivc);
   RELEASE_SAFELY(_infoButton);
   [super dealloc];
 }
@@ -87,15 +85,15 @@
   _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
   self.navigationItem.rightBarButtonItem = _infoButton;
   
-  // Info VC
-  _ivc = [[InfoViewController alloc] initWithPlace:_place];
-  
   // Populate datasource
   [self loadDataSource];
 }
 
 - (void)toggleInfo {
+  // Info VC
+  _ivc = [[InfoViewController alloc] initWithPlace:_place];
   [self.navigationController pushViewController:_ivc animated:YES];
+  [_ivc release];
   
 //  UIView *currentView = nil;
 //  UIView *newView = nil;
@@ -207,13 +205,13 @@
     if ([response objectForKey:@"coordinates"]) {
       [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
     }
-    [_ivc loadMap];
+    if (_ivc) [_ivc loadMap];
   } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
     // Update Hours
     if ([response objectForKey:@"hours"]) {
       [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
     }
-    [_ivc loadMeta];
+    if (_ivc) [_ivc loadMeta];
   }
 }
 

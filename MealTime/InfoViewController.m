@@ -68,8 +68,6 @@
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
-
-  _tableView.scrollsToTop = NO;
   
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 160.0)];

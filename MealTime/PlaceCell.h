@@ -26,6 +26,9 @@
   NSDictionary *_place;
 }
 
+- (void)resumeAnimations;
+- (void)pauseAnimations;
+
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
 
 @end

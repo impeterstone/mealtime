@@ -29,6 +29,8 @@
     _pagingCount = 25;
     _pagingTotal = 25;
     _fetchQuery = nil;
+    
+    _cellCache = [[NSMutableArray alloc] init];
   }
   return self;
 }
@@ -42,6 +44,10 @@
   RELEASE_SAFELY(_cancelButton);
 }
 
+- (void)didReceiveMemoryWarning {
+  [super didReceiveMemoryWarning];
+}
+
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
@@ -53,6 +59,8 @@
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
+  
+  RELEASE_SAFELY(_cellCache);
   
   RELEASE_SAFELY(_sortBy);
   [super dealloc];
@@ -84,6 +92,8 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
+  [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
+  
   [UIView animateWithDuration:0.4
                         delay:0.0
    
@@ -97,6 +107,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
+  
+  [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
   
   [_searchField resignFirstResponder];
   
@@ -387,6 +399,7 @@
   cell = (PlaceCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
     cell = [[[PlaceCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    [_cellCache addObject:cell];
   }
   
   [self tableView:tableView configureCell:cell atIndexPath:indexPath];

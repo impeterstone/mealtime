@@ -17,6 +17,10 @@
   UIBarButtonItem *_cancelButton;
   UILabel *_currentLocationLabel;
   
+  // This is used to reference cells
+  // So that we can tell them to pause/resume animations
+  NSMutableArray *_cellCache;
+  
   MKReverseGeocoder *_reverseGeocoder;
   
   NSString *_sortBy;

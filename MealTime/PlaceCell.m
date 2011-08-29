@@ -186,17 +186,29 @@
   _place = place;
   id srcArray = [place objectForKey:@"srcArray"];
   if (srcArray) {
-    if (srcArray == [NSNull null]) srcArray = nil;
-    _photoView.urlPathArray = [srcArray valueForKey:@"src"];
-    [_photoView loadImageArray];
+    if (srcArray == [NSNull null]) {
+      [_photoView unloadImageArray];
+      [_photoView unloadImage];
+    } else {
+      _photoView.urlPathArray = [srcArray valueForKey:@"src"];
+      [_photoView loadImageArray];
+    }
   } else {
     [self fetchYelpCoverPhotoForPlace:place];
   }
+  
   _nameLabel.text = [place objectForKey:@"name"];
   _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
   _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
-  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
+  NSString *freshOrRotten = nil;
+  if ([[place objectForKey:@"score"] floatValue] < 50) {
+    freshOrRotten = @"rotten";
+  } else {
+    freshOrRotten = @"fresh";
+  }
+  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];
+//  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {
@@ -234,6 +246,7 @@
           }
         } else {
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+            [_photoView unloadImageArray];
             [_photoView unloadImage];
           }
           [place setObject:[NSNull null] forKey:@"src"];
@@ -250,4 +263,11 @@
   [request startAsynchronous];
 }
   
+- (void)resumeAnimations {
+  [_photoView resumeAnimations];
+}
+
+- (void)pauseAnimations {
+  [_photoView pauseAnimations];
+}
 @end

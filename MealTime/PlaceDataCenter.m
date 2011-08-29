@@ -44,16 +44,24 @@
   [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:request.responseString];
-    
-    // Save to DB
-    for (NSDictionary *place in [response objectForKey:@"places"]) {
-      [self insertPlaceInDatabase:place];
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-      [self.delegate dataCenterDidFinish:request withResponse:response];
-    }
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      for (NSDictionary *place in [response objectForKey:@"places"]) {
+        [self insertPlaceInDatabase:place];
+      }
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+        }
+      });
+    });
   }];
   
   [request setFailedBlock:^{

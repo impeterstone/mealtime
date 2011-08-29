@@ -199,7 +199,7 @@
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@", [place objectForKey:@"biz"]];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -207,20 +207,37 @@
   [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
-    
-    // Save to DB
-    [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
-    
-    if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
-      // randomObject - causes too many reloading of pictures
-      NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
-      _photoView.urlPath = src;
-      [_photoView loadImageAndDownload:YES];
-      [place setObject:src forKey:@"src"];
-    } else {
-      [place setObject:[NSNull null] forKey:@"src"];
-    }
+    // GCD
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
+        if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+          // randomObject - causes too many reloading of pictures
+          NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
+          [place setObject:src forKey:@"src"];
+          
+          // Only update the image if cell hasn't been reused
+          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+            _photoView.urlPath = src;
+            [_photoView loadImageAndDownload:YES];
+          }
+        } else {
+          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+            _photoView.urlPath = nil;
+            [_photoView loadImageAndDownload:NO];
+          }
+          [place setObject:[NSNull null] forKey:@"src"];
+        }
+        [response release];
+      });
+    });
   }];
   
   [request setFailedBlock:^{

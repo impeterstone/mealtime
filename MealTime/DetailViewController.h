@@ -20,6 +20,7 @@
   InfoViewController *_ivc;
   UIBarButtonItem *_infoButton;
   
+  NSInteger _photoCount;
   BOOL _isInfoShowing;
 }
 

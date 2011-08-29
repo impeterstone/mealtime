@@ -31,9 +31,9 @@
   }
 }
 
-- (void)fetchYelpPhotosForBiz:(NSString *)biz rpp:(NSString *)rpp {
+- (void)fetchYelpPhotosForBiz:(NSString *)biz start:(NSString *)start rpp:(NSString *)rpp {
   //    http://lite.yelp.com/biz_photos/fTeiio1L2ZBIRdlzjdjAeg?rpp=-1
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%@", biz, rpp];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?start=%@&rpp=%@", biz, start, rpp];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -47,14 +47,22 @@
   [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:request.responseString];
-    
-    // Save to DB
-    [self updatePlacePhotosInDatabase:response forBiz:biz];
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-      [self.delegate dataCenterDidFinish:request withResponse:response];
-    }
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      [self updatePlacePhotosInDatabase:response forBiz:biz];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+        }
+      });
+    });
   }];
   
   [request setFailedBlock:^{
@@ -79,14 +87,22 @@
   [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:request.responseString];
-    
-    // Save to DB
-    [self updatePlaceMapInDatabase:response forBiz:biz];
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-      [self.delegate dataCenterDidFinish:request withResponse:response];
-    }
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      [self updatePlaceMapInDatabase:response forBiz:biz];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+        }
+      });
+    });
   }];
   
   [request setFailedBlock:^{
@@ -111,14 +127,22 @@
   [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:request.responseString];
-    
-    // Save to DB
-    [self updatePlaceBizInDatabase:response forBiz:biz];
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-      [self.delegate dataCenterDidFinish:request withResponse:response];
-    }
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      [self updatePlaceBizInDatabase:response forBiz:biz];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+        }
+      });
+    });
   }];
   
   [request setFailedBlock:^{

@@ -20,6 +20,7 @@
     _imageSizeCache = [[NSMutableDictionary alloc] init];
     [[BizDataCenter defaultCenter] setDelegate:self];
     
+    _photoCount = 0;
     _isInfoShowing = NO;
   }
   return self;
@@ -126,21 +127,44 @@
 }
 
 #pragma mark - State Machine
+- (BOOL)shouldLoadMore {
+  return YES;
+}
+
+- (void)loadMore {
+  // If the user wants to load more pictures, fetch from Yelp
+  NSString *numPhotos = [_place objectForKey:@"numphotos"];
+  
+  // If we have all the photos, don't bother loading
+  if ([numPhotos integerValue] == _photoCount) {
+    _hasMore = NO;
+    [super dataSourceDidLoad];
+    return;
+  } else {
+    DLog(@"Load more photos for place: %@", _place);
+    [super loadDataSource];
+    
+    // Start offset    
+    NSString *start = @"0";
+    
+    // Results per page
+    NSString *rpp = nil;
+    if (numPhotos && [numPhotos integerValue] <= 8) {
+      rpp = numPhotos;
+    } else {
+      rpp = @"-1";
+    }
+    
+    [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
+  }
+}
+
 - (void)loadDataSource {
   [super loadDataSource];
-//  [[BizDataCenter defaultCenter] getProductsFromFixtures];
-  NSString *rpp = nil;
   
-  if ([_place objectForKey:@"numphotos"] && [[_place objectForKey:@"numphotos"] integerValue] <= 8) {
-    rpp = [_place objectForKey:@"numphotos"];
-  } else {
-    rpp = @"-1";
-  }
-
-  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] rpp:rpp];
+  [self loadPhotosFromDatabase];
   [[BizDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
   [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
-  [self loadPhotosFromDatabase];
 }
 
 - (void)dataSourceDidLoad {
@@ -154,7 +178,8 @@
   [self.items removeAllObjects];
   
   // Put response into items (datasource)
-  if ([photos count] > 0) {
+  _photoCount = [photos count];
+  if (_photoCount > 0) {
     [self.items addObject:photos];
   }
   [self dataSourceDidLoad];
@@ -167,6 +192,7 @@
   
   if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
     [self.items removeAllObjects];
+    _hasMore = NO; // Should only load once
     
     // Put response into items (datasource)
     NSArray *photos = [response objectForKey:@"photos"];

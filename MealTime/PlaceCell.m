@@ -25,7 +25,7 @@
     _place = nil;
     
     // Photo
-    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
+    _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = NO;
     _photoView.delegate = self;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
@@ -122,6 +122,7 @@
   _categoryLabel.text = nil;
   _priceLabel.text = nil;
   _photoView.image = nil;
+  [_photoView unloadImageArray];
   _photoView.urlPath = nil;
   _place = nil;
 }
@@ -183,11 +184,11 @@
 {
   NSMutableDictionary *place = (NSMutableDictionary *)object;
   _place = place;
-  id src = [place objectForKey:@"src"];
-  if (src) {
-    if (src == [NSNull null]) src = nil;
-    _photoView.urlPath = src;
-    [_photoView loadImageAndDownload:YES];
+  id srcArray = [place objectForKey:@"srcArray"];
+  if (srcArray) {
+    if (srcArray == [NSNull null]) srcArray = nil;
+    _photoView.urlPathArray = [srcArray valueForKey:@"src"];
+    [_photoView loadImageArray];
   } else {
     [self fetchYelpCoverPhotoForPlace:place];
   }
@@ -228,15 +229,15 @@
           
           // Only update the image if cell hasn't been reused
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-            _photoView.urlPath = src;
-            [_photoView loadImageAndDownload:YES];
+            _photoView.urlPathArray = [srcArray valueForKey:@"src"];
+            [_photoView loadImageArray];
           }
         } else {
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-            _photoView.urlPath = nil;
-            [_photoView loadImageAndDownload:NO];
+            [_photoView unloadImage];
           }
           [place setObject:[NSNull null] forKey:@"src"];
+          [place setObject:[NSNull null] forKey:@"srcArray"];
         }
         [response release];
       });

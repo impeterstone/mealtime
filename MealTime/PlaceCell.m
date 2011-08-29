@@ -223,6 +223,9 @@
           NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
           [place setObject:src forKey:@"src"];
           
+          NSArray *srcArray = [response objectForKey:@"photos"];
+          [place setObject:srcArray forKey:@"srcArray"];
+          
           // Only update the image if cell hasn't been reused
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
             _photoView.urlPath = src;

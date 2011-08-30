@@ -23,6 +23,9 @@
   UILabel *_categoryLabel;
   UILabel *_priceLabel;
   
+  UIView *_scoreView;
+  UILabel *_scoreLabel;
+  
   NSDictionary *_place;
 }
 

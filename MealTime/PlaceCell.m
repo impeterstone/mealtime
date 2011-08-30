@@ -53,7 +53,7 @@
     
     _categoryLabel = [[UILabel alloc] initWithFrame:CGRectZero];
     _categoryLabel.backgroundColor = [UIColor clearColor];
-    _categoryLabel.textAlignment = UITextAlignmentRight;
+    _categoryLabel.textAlignment = UITextAlignmentLeft;
     _categoryLabel.font = [PSStyleSheet fontForStyle:@"placeCategory"];
     _categoryLabel.textColor = [PSStyleSheet textColorForStyle:@"placeCategory"];
     _categoryLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeCategory"];
@@ -66,6 +66,14 @@
     _priceLabel.textColor = [PSStyleSheet textColorForStyle:@"placePrice"];
     _priceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placePrice"];
     _priceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placePrice"];
+    
+    _scoreLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    _scoreLabel.backgroundColor = [UIColor clearColor];
+    _scoreLabel.textAlignment = UITextAlignmentCenter;
+    _scoreLabel.font = [PSStyleSheet fontForStyle:@"placeScore"];
+    _scoreLabel.textColor = [PSStyleSheet textColorForStyle:@"placeScore"];
+    _scoreLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeScore"];
+    _scoreLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeScore"];
     
     // Ribbon
     _ribbonLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -86,6 +94,15 @@
     [_ribbonView addSubview:_ribbonLabel];
     _ribbonView.alpha = 0.0;
     
+    _scoreView = [[UIView alloc] initWithFrame:CGRectZero];
+    UIImageView *scoreImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"bg_pill.png" withLeftCapWidth:12 topCapWidth:0]] autorelease];
+    scoreImageView.autoresizingMask = ~UIViewAutoresizingNone;
+    scoreImageView.frame = _scoreView.bounds;
+    _scoreLabel.autoresizingMask = ~UIViewAutoresizingNone;
+    _scoreLabel.frame = _scoreView.bounds;
+    [_scoreView addSubview:scoreImageView];
+    [_scoreView addSubview:_scoreLabel];
+    
     // Add subviews
     [self.contentView addSubview:_photoView];
     [self.contentView addSubview:_disclosureView];
@@ -93,6 +110,7 @@
     [self.contentView addSubview:_distanceLabel];
     [self.contentView addSubview:_categoryLabel];
     [self.contentView addSubview:_priceLabel];
+    [self.contentView addSubview:_scoreView];
     [self.contentView addSubview:_ribbonView];
   }
   return self;
@@ -102,6 +120,8 @@
 {
   RELEASE_SAFELY(_ribbonView);
   RELEASE_SAFELY(_ribbonLabel);
+  RELEASE_SAFELY(_scoreView);
+  RELEASE_SAFELY(_scoreLabel);
   RELEASE_SAFELY(_categoryLabel);
   RELEASE_SAFELY(_priceLabel);
   RELEASE_SAFELY(_distanceLabel);
@@ -124,6 +144,7 @@
   _distanceLabel.text = nil;
   _categoryLabel.text = nil;
   _priceLabel.text = nil;
+  _scoreLabel.text = nil;
   _photoView.image = nil;
   [_photoView unloadImageArray];
   _photoView.urlPath = nil;
@@ -138,7 +159,9 @@
   // Set Frames
   _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
-  _ribbonView.frame = CGRectMake(self.contentView.width - 80, 10, 80, 24);
+  _ribbonView.frame = CGRectMake(self.contentView.width - 70, MARGIN_Y * 2, 70, 24);
+  
+  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 36, 24);
   
   // Labels
   CGFloat top = self.contentView.height - 40 - MARGIN_Y;
@@ -196,7 +219,7 @@
   if (srcArray) {
     if (srcArray == [NSNull null]) {
       [_photoView unloadImageArray];
-      [_photoView unloadImage];
+      _photoView.image = _photoView.placeholderImage;
     } else {
       _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
       _photoView.urlPathArray = [srcArray valueForKey:@"src"];
@@ -217,6 +240,9 @@
   } else {
     freshOrRotten = @"fresh";
   }
+  
+  _scoreLabel.text = [NSString stringWithFormat:@"%@", [place objectForKey:@"score"]];
+  
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];
 //  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
@@ -261,7 +287,7 @@
         } else {
           if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
             [_photoView unloadImageArray];
-            [_photoView unloadImage];
+            _photoView.image = _photoView.placeholderImage;
           }
           [place setObject:[NSNull null] forKey:@"src"];
           [place setObject:[NSNull null] forKey:@"srcArray"];

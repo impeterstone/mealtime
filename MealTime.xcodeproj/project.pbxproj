@@ -171,6 +171,8 @@
 		2863B8CB140721C30021946C /* bg_toolbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C9140721C30021946C /* bg_toolbar@2x.png */; };
 		28682DA413F35D0000921F15 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA213F35D0000921F15 /* Default.png */; };
 		28682DA513F35D0000921F15 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28682DA313F35D0000921F15 /* Default@2x.png */; };
+		287ABA0E140CBE3C0003CACC /* bg_pill.png in Resources */ = {isa = PBXBuildFile; fileRef = 287ABA0C140CBE3C0003CACC /* bg_pill.png */; };
+		287ABA0F140CBE3C0003CACC /* bg_pill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 287ABA0D140CBE3C0003CACC /* bg_pill@2x.png */; };
 		28A0617713F3EA4400DF60A7 /* AppStyleSheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = 28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */; };
 		28A1B27613F1CFB000EB971E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27513F1CFB000EB971E /* UIKit.framework */; };
 		28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28A1B27713F1CFB000EB971E /* Foundation.framework */; };
@@ -508,6 +510,8 @@
 		2863B8C9140721C30021946C /* bg_toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_toolbar@2x.png"; sourceTree = "<group>"; };
 		28682DA213F35D0000921F15 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		28682DA313F35D0000921F15 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		287ABA0C140CBE3C0003CACC /* bg_pill.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_pill.png; sourceTree = "<group>"; };
+		287ABA0D140CBE3C0003CACC /* bg_pill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_pill@2x.png"; sourceTree = "<group>"; };
 		28A0617613F3EA4400DF60A7 /* AppStyleSheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AppStyleSheet.plist; sourceTree = "<group>"; };
 		28A1B27113F1CFB000EB971E /* MealTime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MealTime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28A1B27513F1CFB000EB971E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -1187,6 +1191,8 @@
 		28A9FB6513F3419E00EFB191 /* bg */ = {
 			isa = PBXGroup;
 			children = (
+				287ABA0C140CBE3C0003CACC /* bg_pill.png */,
+				287ABA0D140CBE3C0003CACC /* bg_pill@2x.png */,
 				282F9214140B12A6006F5132 /* shadow_lastcell.png */,
 				282F9215140B12A6006F5132 /* shadow_lastcell@2x.png */,
 				282F9210140B11A4006F5132 /* bg_loadmore.png */,
@@ -1479,6 +1485,8 @@
 				282F9217140B12A6006F5132 /* shadow_lastcell@2x.png in Resources */,
 				282F92DA140B5E8C006F5132 /* sml.sqlite in Resources */,
 				285570BF140C7827004D34EF /* FBDialog.bundle in Resources */,
+				287ABA0E140CBE3C0003CACC /* bg_pill.png in Resources */,
+				287ABA0F140CBE3C0003CACC /* bg_pill@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

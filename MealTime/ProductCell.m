@@ -77,11 +77,11 @@
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_photoView);
   RELEASE_SAFELY(_descriptionLabel);
   RELEASE_SAFELY(_priceLabel);
   RELEASE_SAFELY(_nameLabel);
   RELEASE_SAFELY(_captionView);
-  RELEASE_SAFELY(_photoView);
   [super dealloc];
 }
 

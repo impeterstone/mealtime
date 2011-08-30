@@ -227,9 +227,13 @@
 }
 
 - (void)reviews {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertReviews;
-  [av show];
+  WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
+  [self.navigationController pushViewController:wvc animated:YES];
+  [wvc release];
+  
+//  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+//  av.tag = kAlertReviews;
+//  [av show];
 }
 
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
@@ -336,9 +340,7 @@
     NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
   } else if (alertView.tag == kAlertReviews) {
-    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
-    [self.navigationController pushViewController:wvc animated:YES];
-    [wvc release];
+
   } else if (alertView.tag == kAlertDirections) {
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
     NSString *address = [_place objectForKey:@"address"];

@@ -153,9 +153,13 @@
 }
 
 - (void)dataSourceDidLoad {
-  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
+  if ([self dataIsAvailable]) {
+    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
+  }
   [self.tableView reloadData];
-  [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
+  if ([self dataIsAvailable]) {
+    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
+  }
   [super dataSourceDidLoad];
 }
 

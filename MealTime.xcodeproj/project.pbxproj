@@ -164,6 +164,7 @@
 		285570C0140C7827004D34EF /* FBDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570B9140C7827004D34EF /* FBDialog.m */; };
 		285570C1140C7827004D34EF /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BB140C7827004D34EF /* FBLoginDialog.m */; };
 		285570C2140C7827004D34EF /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BD140C7827004D34EF /* FBRequest.m */; };
+		285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570C4140C7949004D34EF /* PSFacebookCenter.m */; };
 		285FD8B8140647CC00026293 /* UIViewController+Ad.m in Sources */ = {isa = PBXBuildFile; fileRef = 285FD8B7140647CC00026293 /* UIViewController+Ad.m */; };
 		2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863B8C5140720820021946C /* UIToolbar+Custom.m */; };
 		2863B8CA140721C30021946C /* bg_toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C8140721C30021946C /* bg_toolbar.png */; };
@@ -497,6 +498,8 @@
 		285570BB140C7827004D34EF /* FBLoginDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBLoginDialog.m; sourceTree = "<group>"; };
 		285570BC140C7827004D34EF /* FBRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBRequest.h; sourceTree = "<group>"; };
 		285570BD140C7827004D34EF /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
+		285570C3140C7949004D34EF /* PSFacebookCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSFacebookCenter.h; sourceTree = "<group>"; };
+		285570C4140C7949004D34EF /* PSFacebookCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSFacebookCenter.m; sourceTree = "<group>"; };
 		285FD8B6140647CC00026293 /* UIViewController+Ad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Ad.h"; sourceTree = "<group>"; };
 		285FD8B7140647CC00026293 /* UIViewController+Ad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Ad.m"; sourceTree = "<group>"; };
 		2863B8C4140720820021946C /* UIToolbar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIToolbar+Custom.h"; sourceTree = "<group>"; };
@@ -1147,6 +1150,8 @@
 				28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */,
 				282F92D6140B5CF9006F5132 /* PSDatabaseCenter.h */,
 				282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */,
+				285570C3140C7949004D34EF /* PSFacebookCenter.h */,
+				285570C4140C7949004D34EF /* PSFacebookCenter.m */,
 				2814E34013F1F01400D7A85A /* Vendor */,
 				2814E37413F1F01400D7A85A /* Views */,
 			);
@@ -1590,6 +1595,7 @@
 				285570C0140C7827004D34EF /* FBDialog.m in Sources */,
 				285570C1140C7827004D34EF /* FBLoginDialog.m in Sources */,
 				285570C2140C7827004D34EF /* FBRequest.m in Sources */,
+				285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

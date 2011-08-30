@@ -39,7 +39,7 @@
 // Facebook
 #define FB_APP_ID @"251612101539714"
 #define FB_APP_SECRET @"77686ad944e00b40cae96dbeb2b28fd6"
-#define FB_PERMISSIONS_EXTENDED [NSArray arrayWithObjects:@"publish_stream", nil]
+#define FB_PERMISSIONS_PUBLISH @"publish_stream"
 #define FB_PARAMS @"id,first_name,last_name,name,gender,locale"
 
 // ERROR STRINGS

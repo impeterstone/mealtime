@@ -12,6 +12,7 @@
 #import "PlaceAnnotation.h"
 #import "MetaCell.h"
 #import "PSLocationCenter.h"
+#import "PSFacebookCenter.h"
 
 @implementation InfoViewController
 
@@ -212,9 +213,17 @@
 }
 
 - (void)share {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Facebook" message:[NSString stringWithFormat:@"Share %@ with your friends on Facebook?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertShare;
-  [av show];
+  NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 FB_APP_ID, @"app_id",
+                                 @"http://www.seveminutelabs.com", @"link",
+                                 @"http://fbrell.com/f8.jpg", @"picture",
+                                 @"I'm using MealTime!", @"name",
+                                 @"I'm Awesome!", @"description",
+                                 nil];
+  
+  [[PSFacebookCenter defaultCenter] showDialog:@"feed" andParams:params];
+  
+  return;
 }
 
 - (void)reviews {
@@ -330,8 +339,6 @@
     WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
     [self.navigationController pushViewController:wvc animated:YES];
     [wvc release];
-  } else if (alertView.tag == kAlertShare) {
-    
   } else if (alertView.tag == kAlertDirections) {
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
     NSString *address = [_place objectForKey:@"address"];

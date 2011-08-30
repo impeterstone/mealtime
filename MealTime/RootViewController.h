@@ -9,13 +9,18 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
+#import "SearchTermDelegate.h"
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate, UIActionSheetDelegate> {
+@class SearchTermController;
+
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate, UIActionSheetDelegate, SearchTermDelegate> {
   UIToolbar *_toolbar;
   PSTextField *_searchField;
   UIBarButtonItem *_compassButton;
   UIBarButtonItem *_cancelButton;
   UILabel *_currentLocationLabel;
+  
+  SearchTermController *_searchTermController;
   
   // This is used to reference cells
   // So that we can tell them to pause/resume animations
@@ -29,6 +34,8 @@
 }
 
 @property (nonatomic, retain) NSString *fetchQuery;
+
+- (void)setupSearchTermController;
 
 // Buttons
 - (void)findMyLocation;

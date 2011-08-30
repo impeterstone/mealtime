@@ -140,6 +140,8 @@
   [self loadDataSource];
   [self loadMap];
   [self loadMeta];
+  
+  [self dataSourceDidLoad];
 }
 
 - (void)loadMap {
@@ -195,7 +197,6 @@
     [self.items addObject:[NSArray arrayWithObject:[NSString stringWithFormat:@"%@ from Yelp", [_place objectForKey:@"numreviews"]]]];
   }
   
-  [self dataSourceDidLoad];
 }
 
 - (void)dataSourceDidLoad {

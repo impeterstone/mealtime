@@ -10,7 +10,9 @@
 #import "PlaceCell.h"
 #import "PlaceDataCenter.h"
 #import "DetailViewController.h"
+#import "SearchTermController.h"
 #import "PSLocationCenter.h"
+#import "PSSearchCenter.h"
 
 @implementation RootViewController
 
@@ -42,6 +44,7 @@
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
+  RELEASE_SAFELY(_searchTermController);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -59,6 +62,7 @@
   RELEASE_SAFELY(_searchField);
   RELEASE_SAFELY(_compassButton);
   RELEASE_SAFELY(_cancelButton);
+  RELEASE_SAFELY(_searchTermController);
   
   RELEASE_SAFELY(_cellCache);
   
@@ -189,8 +193,19 @@
   
   _cancelButton = [[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) width:60 height:30 buttonType:BarButtonTypeSilver] retain];
   
+  // Search Term Controller
+  [self setupSearchTermController];
+  
   // Get initial location
   [self loadDataSource];
+}
+
+- (void)setupSearchTermController {
+  _searchTermController = [[SearchTermController alloc] init];
+  _searchTermController.delegate = self;
+  _searchTermController.view.frame = self.view.bounds;
+  _searchTermController.view.alpha = 0.0;
+  [self.view addSubview:_searchTermController.view];
 }
 
 #pragma mark - Button Actios
@@ -378,18 +393,8 @@
       NSArray *newPlaces = [[self.items objectAtIndex:0] arrayByAddingObjectsFromArray:places];
       [self.items replaceObjectAtIndex:0 withObject:newPlaces];
     }
-    
-    // Sort
-//    NSArray *sortedPlaces = nil;
-//    if (_pagingStart == 0) {
-//      [self.items removeAllObjects];
-//      sortedPlaces = [places sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
-//      [self.items addObject:sortedPlaces];
-//    } else {
-//      NSArray *newPlaces = [[self.items objectAtIndex:0] arrayByAddingObjectsFromArray:places];
-//      sortedPlaces = [newPlaces sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
-//      [self.items replaceObjectAtIndex:0 withObject:sortedPlaces];
-//    }
+  } else {
+    [self.items removeAllObjects];
   }
   
   [self dataSourceDidLoad];
@@ -455,21 +460,43 @@
 }
 
 - (void)searchTermChanged:(UITextField *)textField {
+  [_searchTermController searchWithTerm:textField.text];
 }
 
 - (void)searchWithText:(NSString *)searchText {
   self.navigationItem.rightBarButtonItem = _compassButton;
   [_searchField resignFirstResponder];
   
-  // Search Yelp with Address
-  _pagingStart = 0; // reset paging
-  self.fetchQuery = searchText;
-  [self fetchDataSource];
+  if ([searchText isEqualToString:@"Current Location"]) {
+    _pagingStart = 0; // reset paging
+    self.fetchQuery = nil;
+    [self loadDataSource];
+  } else {
+    // Store search term
+    [[PSSearchCenter defaultCenter] addTerm:searchText];
+    
+    // Search Yelp with Address
+    _pagingStart = 0; // reset paging
+    self.fetchQuery = searchText;
+    [self fetchDataSource];
+  }
+}
+
+#pragma mark - SearchTermDelegate
+- (void)searchTermSelected:(NSString *)searchTerm {
+  _searchField.text = searchTerm;
+  [self searchWithText:_searchField.text];
+}
+
+- (void)searchCancelled {
+  [self cancelSearch];
 }
 
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
   self.navigationItem.rightBarButtonItem = _cancelButton;
+  [self.view bringSubviewToFront:_searchTermController.view];
+  _searchTermController.view.alpha = 1.0;
   
 //  [UIView animateWithDuration:0.4
 //                   animations:^{
@@ -483,7 +510,7 @@
 }
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {  
-  //  _searchTermController.view.alpha = 0.0;
+  _searchTermController.view.alpha = 0.0;
   return YES;
 }
 
@@ -497,9 +524,6 @@
   }
   if ([textField.text length] == 0) {
     // Empty search
-    [self cancelSearch];
-  } else if ([textField.text isEqualToString:@"Current Location"]) {
-    [[PSLocationCenter defaultCenter] getMyLocation];
     [self cancelSearch];
   } else {
     [self searchWithText:textField.text];

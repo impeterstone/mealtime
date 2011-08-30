@@ -29,6 +29,7 @@
 #define kAlertCall 8010
 #define kAlertReviews 8011
 #define kAlertShare 8012
+#define kAlertDirections 8013
 
 // Notifications
 #define kLocationAcquired @"LocationAcquired"

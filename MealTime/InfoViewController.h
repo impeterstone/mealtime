@@ -10,7 +10,7 @@
 #import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 
-@interface InfoViewController : PSTableViewController <MKMapViewDelegate, UIAlertViewDelegate> {
+@interface InfoViewController : PSTableViewController <MKMapViewDelegate, UIAlertViewDelegate, UIGestureRecognizerDelegate> {
   NSDictionary *_place;
   MKCoordinateRegion _mapRegion;
   

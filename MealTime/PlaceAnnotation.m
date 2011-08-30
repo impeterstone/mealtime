@@ -31,4 +31,13 @@
 	return coordinate;
 }
 
+- (NSString *)title {
+  return [_place objectForKey:@"name"];
+}
+
+// optional
+- (NSString *)subtitle {
+  return [_place objectForKey:@"address"];
+}
+
 @end

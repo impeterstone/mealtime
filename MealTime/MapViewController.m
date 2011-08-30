@@ -8,6 +8,7 @@
 
 #import "MapViewController.h"
 #import "PlaceAnnotation.h"
+#import "PSLocationCenter.h"
 
 @implementation MapViewController
 
@@ -44,6 +45,9 @@
 {
   [super loadView];
   
+  _navTitleLabel.text = [_place objectForKey:@"address"];
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
+  
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 160.0)];
   _mapView.autoresizingMask = self.view.autoresizingMask;
@@ -70,6 +74,48 @@
   PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
   [_mapView addAnnotation:placeAnnotation];
   [placeAnnotation release];
+}
+
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
+  static NSString *placeAnnotationIdentifier = @"placeAnnotationIdentifier";
+  
+  MKPinAnnotationView *placePinView = (MKPinAnnotationView *)
+  [mapView dequeueReusableAnnotationViewWithIdentifier:placeAnnotationIdentifier];
+  if (!placePinView) {
+    placePinView = [[[MKPinAnnotationView alloc]
+                     initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
+    placePinView.pinColor = MKPinAnnotationColorRed;
+    placePinView.animatesDrop = YES;
+    placePinView.canShowCallout = YES;
+    placePinView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+  } else {
+    placePinView.annotation = annotation;
+  }
+  
+  return  placePinView;
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Directions" message:[NSString stringWithFormat:@"Would you like to view directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertDirections;
+  [av show];
+}
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+  [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
+}
+
+#pragma mark - UIAlertView
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  if (alertView.tag == kAlertDirections) {
+    CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
+    NSString *address = [_place objectForKey:@"address"];
+    NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
+  }
 }
 
 @end

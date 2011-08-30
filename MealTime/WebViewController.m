@@ -43,6 +43,9 @@
 - (void)loadView {
   [super loadView];
   
+  _navTitleLabel.text = @"Loading...";
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
+  
   // WebView
   _webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
   _webView.autoresizingMask = self.view.autoresizingMask;
@@ -65,6 +68,10 @@
   }
   
   return YES; 
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView{
+  _navTitleLabel.text = [[webView stringByEvaluatingJavaScriptFromString:@"document.title"] stringByUnescapingHTML];
 }
 
 @end

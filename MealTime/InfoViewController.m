@@ -11,6 +11,7 @@
 #import "WebViewController.h"
 #import "PlaceAnnotation.h"
 #import "MetaCell.h"
+#import "PSLocationCenter.h"
 
 @implementation InfoViewController
 
@@ -63,8 +64,10 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-  
+
+  // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -74,7 +77,7 @@
   if (isDeviceIPad()) {
     mapHeight = 480.0;
   } else {
-    mapHeight = 160.0;
+    mapHeight = 200.0;
   }
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
   _mapView.delegate = self;
@@ -83,6 +86,7 @@
   
   UITapGestureRecognizer *mapTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMap:)] autorelease];
   mapTap.numberOfTapsRequired = 1;
+  mapTap.delegate = self;
   [_mapView addGestureRecognizer:mapTap];
   
   // Table Header View
@@ -161,15 +165,15 @@
   [self.items removeAllObjects];
   
   // Sections
-  if ([[_place objectForKey:@"phone"] notNil]) {
-    [_sectionTitles addObject:@"Phone"];
-    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"phone"]]];
-  }
+//  if ([[_place objectForKey:@"phone"] notNil]) {
+//    [_sectionTitles addObject:@"Phone"];
+//    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"phone"]]];
+//  }
   
-  if ([[_place objectForKey:@"address"] notNil]) {
-    [_sectionTitles addObject:@"Address"];
-    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"address"]]];
-  }
+//  if ([[_place objectForKey:@"address"] notNil]) {
+//    [_sectionTitles addObject:@"Address"];
+//    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"address"]]];
+//  }
   
   if ([[_place objectForKey:@"hours"] notNil]) {
     [_sectionTitles addObject:@"Hours"];
@@ -184,6 +188,11 @@
   if ([[_place objectForKey:@"price"] notNil]) {
     [_sectionTitles addObject:@"Price"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"price"]]];
+  }
+  
+  if ([[_place objectForKey:@"numreviews"] notNil]) {
+    [_sectionTitles addObject:@"Review Count"];
+    [self.items addObject:[NSArray arrayWithObject:[NSString stringWithFormat:@"%@ from Yelp", [_place objectForKey:@"numreviews"]]]];
   }
   
   [self dataSourceDidLoad];
@@ -269,6 +278,45 @@
   return cell;
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+  if ([touch.view isKindOfClass:[MKPinAnnotationView class]]) {
+    return NO;
+  } else {
+    return YES;
+  }
+}
+
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
+  static NSString *placeAnnotationIdentifier = @"placeAnnotationIdentifier";
+  
+  MKPinAnnotationView *placePinView = (MKPinAnnotationView *)
+  [mapView dequeueReusableAnnotationViewWithIdentifier:placeAnnotationIdentifier];
+  if (!placePinView) {
+    placePinView = [[[MKPinAnnotationView alloc]
+                     initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
+    placePinView.pinColor = MKPinAnnotationColorRed;
+    placePinView.animatesDrop = YES;
+    placePinView.canShowCallout = YES;
+    placePinView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+  } else {
+    placePinView.annotation = annotation;
+  }
+  
+  return  placePinView;
+}
+
+- (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Directions" message:[NSString stringWithFormat:@"Would you like to view directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertDirections;
+  [av show];
+}
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+  [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
+}
+
 #pragma mark - UIAlertView
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
   if (buttonIndex == alertView.cancelButtonIndex) return;
@@ -283,6 +331,11 @@
     [wvc release];
   } else if (alertView.tag == kAlertShare) {
     
+  } else if (alertView.tag == kAlertDirections) {
+    CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
+    NSString *address = [_place objectForKey:@"address"];
+    NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }
 }
 

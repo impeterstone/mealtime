@@ -69,7 +69,11 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   
+  // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
+  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
+  self.navigationItem.rightBarButtonItem = _infoButton;
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   [_nullView setLoadingTitle:@"Loading" loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
@@ -80,10 +84,6 @@
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   _tableView.rowHeight = self.tableView.width;
-  
-  // Nav Buttons
-  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
-  self.navigationItem.rightBarButtonItem = _infoButton;
   
   // Populate datasource
   [self loadDataSource];
@@ -207,11 +207,13 @@
     if ([response objectForKey:@"coordinates"]) {
       [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
     }
+    // Load Map
   } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
     // Update Hours
     if ([response objectForKey:@"hours"]) {
       [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
     }
+    // Load Meta
   }
 }
 

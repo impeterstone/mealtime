@@ -124,41 +124,30 @@
 
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
-  return YES;
-}
-
-- (void)loadMore {
-  // If the user wants to load more pictures, fetch from Yelp
-  NSString *numPhotos = [_place objectForKey:@"numphotos"];
-  
-  // If we have all the photos, don't bother loading
-  if ([numPhotos integerValue] == _photoCount) {
-    _hasMore = NO;
-    [super dataSourceDidLoad];
-    return;
-  } else {
-    DLog(@"Load more photos for place: %@", _place);
-    [super loadDataSource];
-    
-    // Start offset    
-    NSString *start = @"0";
-    
-    // Results per page
-    NSString *rpp = nil;
-    if (numPhotos && [numPhotos integerValue] <= 8) {
-      rpp = numPhotos;
-    } else {
-      rpp = @"-1";
-    }
-    
-    [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
-  }
+  return NO;
 }
 
 - (void)loadDataSource {
   [super loadDataSource];
   
-  [self loadPhotosFromDatabase];
+  // Preload from database
+  // No sense of order from server right now
+//  [self loadPhotosFromDatabase];
+  
+  // Load from server
+  NSString *numPhotos = [_place objectForKey:@"numphotos"];
+  NSString *start = @"0";
+  
+  // Results per page
+  NSString *rpp = nil;
+  if (numPhotos && [numPhotos integerValue] <= 8) {
+    rpp = numPhotos;
+  } else {
+    rpp = @"-1";
+  }
+  
+  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
+  
   [[BizDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
   [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
 }
@@ -190,7 +179,6 @@
   
   if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
     [self.items removeAllObjects];
-    _hasMore = NO; // Should only load once
     
     // Put response into items (datasource)
     NSArray *photos = [response objectForKey:@"photos"];

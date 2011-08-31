@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class PSNetworkQueue;
+
 @interface MealTimeAppDelegate : NSObject <UIApplicationDelegate> {
   UINavigationController *_navigationController;
+  PSNetworkQueue *_requestQueue;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

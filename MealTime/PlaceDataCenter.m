@@ -71,7 +71,9 @@
   [request setFailedBlock:^{
     
   }];
-  [request startAsynchronous];
+  
+  [[PSNetworkQueue sharedQueue] addOperation:request];
+//  [request startAsynchronous];
 }
 
 - (void)insertPlaceInDatabase:(NSDictionary *)place {

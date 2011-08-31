@@ -13,6 +13,7 @@
 #import "PSDatabaseCenter.h"
 #import "ASIHTTPRequest.h"
 #import "PSDataCenter.h"
+#import "PSNetworkQueue.h"
 
 @interface MealTimeAppDelegate (Private)
 
@@ -61,6 +62,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // Call home
+  _requestQueue = [[PSNetworkQueue alloc] init];
+  [_requestQueue setMaxConcurrentOperationCount:1];
   [self sendRequestsHome];
   
   // Override StyleSheet
@@ -131,50 +135,52 @@
   
   if ([result count] == 0) return;
   
-  NSMutableArray *requestIds = [NSMutableArray arrayWithCapacity:1];
-  NSMutableArray *requests = [NSMutableArray arrayWithCapacity:1];
   for (EGODatabaseRow *row in result) {
-    NSMutableDictionary *request = [NSMutableDictionary dictionaryWithCapacity:2];
-    [request setObject:[row stringForColumn:@"biz"] forKey:@"biz"];
-    [request setObject:[row stringForColumn:@"type"] forKey:@"type"];
-    [request setObject:[[row stringForColumn:@"data"] JSONValue] forKey:@"data"];
-    [request setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
-    [requests addObject:request];
+    NSMutableDictionary *storedRequest = [NSMutableDictionary dictionaryWithCapacity:2];
+    [storedRequest setObject:[row stringForColumn:@"biz"] forKey:@"biz"];
+    [storedRequest setObject:[row stringForColumn:@"type"] forKey:@"type"];
+    [storedRequest setObject:[[row stringForColumn:@"data"] JSONValue] forKey:@"data"];
+    [storedRequest setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
+
+    // Upload data
+    NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime", API_BASE_URL];
+    NSURL *smlURL = [NSURL URLWithString:smlURLString];
+    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
+    [request setShouldContinueWhenAppEntersBackground:YES];
+    request.requestMethod = POST;
+    [request addRequestHeader:@"Content-Type" value:@"gzip/json"];
+    [request addRequestHeader:@"Accept" value:@"application/json"];
+    [request setShouldCompressRequestBody:YES];
     
-    [requestIds addObject:[NSNumber numberWithInt:[row intForColumn:@"id"]]];
+    NSData *postData = [[storedRequest JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
+    request.postBody = [NSMutableData dataWithData:postData];
+    
+    request.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:[row intForColumn:@"id"]] forKey:@"storedRequestId"];
+    [request setCompletionBlock:^{
+      if (request.responseStatusCode > 200) {
+        NSLog(@"mealtime request failed with code: %d and message: %@", request.responseStatusCode, request.responseStatusMessage);
+      } else {
+        NSLog(@"mealtime request success: %@", request.responseString);
+        
+        // Delete row
+        NSString *query = @"DELETE FROM requests WHERE id = ?";
+        [[[PSDatabaseCenter defaultCenter] database] executeQuery:query parameters:[NSArray arrayWithObject:[request.userInfo objectForKey:@"storedRequestId"]]];
+      }
+    }];
+    
+    [request setFailedBlock:^{
+      NSLog(@"mealtime request failed, unreachable");
+    }];
+    
+    request.queuePriority = NSOperationQueuePriorityVeryLow;
+    [_requestQueue addOperation:request];
+//    [request startAsynchronous];
   }
-  
-  // Upload data
-  NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime", API_BASE_URL];
-  NSURL *smlURL = [NSURL URLWithString:smlURLString];
-  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
-  [request setShouldContinueWhenAppEntersBackground:YES];
-  request.requestMethod = POST;
-  [request addRequestHeader:@"Content-Type" value:@"gzip/json"];
-  [request addRequestHeader:@"Accept" value:@"application/json"];
-  [request setShouldCompressRequestBody:YES];
-
-  NSData *postData = [[requests JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
-
-  request.postBody = [NSMutableData dataWithData:postData];
-  
-  [request setCompletionBlock:^{
-    NSLog(@"mealtime request success: %@", request.responseString);
-    
-    // Delete rows
-    NSString *query = [NSString stringWithFormat:@"DELETE FROM requests WHERE id IN (%@)", [requestIds componentsJoinedByString:@","]];
-    [[[PSDatabaseCenter defaultCenter] database] executeQuery:query];
-  }];
-  
-  [request setFailedBlock:^{
-    NSLog(@"mealtime request failed");
-  }];
-  [request startAsynchronous];
-  
 }
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_requestQueue);
   [_navigationController release];
   [_window release];
   [super dealloc];

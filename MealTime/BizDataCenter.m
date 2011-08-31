@@ -71,7 +71,10 @@
   [request setFailedBlock:^{
     
   }];
-  [request startAsynchronous];
+  
+  request.queuePriority = NSOperationQueuePriorityVeryHigh;
+  [[PSNetworkQueue sharedQueue] addOperation:request];
+//  [request startAsynchronous];
 }
 
 - (void)fetchYelpMapForBiz:(NSString *)biz {
@@ -115,7 +118,9 @@
   [request setFailedBlock:^{
     
   }];
-  [request startAsynchronous];
+  
+  [[PSNetworkQueue sharedQueue] addOperation:request];
+//  [request startAsynchronous];
 }
 
 - (void)fetchYelpBizForBiz:(NSString *)biz {
@@ -160,7 +165,10 @@
   [request setFailedBlock:^{
     
   }];
-  [request startAsynchronous];
+  
+  request.queuePriority = NSOperationQueuePriorityHigh;
+  [[PSNetworkQueue sharedQueue] addOperation:request];  
+//  [request startAsynchronous];
 }
 
 - (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp {
@@ -205,7 +213,10 @@
     [[NSUserDefaults standardUserDefaults] setBool:NO forKey:biz];
     [[NSUserDefaults standardUserDefaults] synchronize];
   }];
-  [request startAsynchronous];
+  
+  request.queuePriority = NSOperationQueuePriorityLow;
+  [[PSNetworkQueue sharedQueue] addOperation:request];
+//  [request startAsynchronous];
 }
 
 @end

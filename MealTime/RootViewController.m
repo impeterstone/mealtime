@@ -170,7 +170,7 @@
   [toolbarItems addObject:currentLocationItem];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Filter" withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Distance" withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver]];
 
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
@@ -272,8 +272,9 @@
           _distance = 0.5;
           break;
       }
-      // Reload Location
-      [self findMyLocation];
+      // Reload dataSource
+      _pagingStart = 0;
+      [self loadDataSource];
       break;
     default:
       break;

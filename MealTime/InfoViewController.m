@@ -71,7 +71,7 @@
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   // Table
-  [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
+  [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
   
   // Map
   CGFloat mapHeight = 0.0;
@@ -147,10 +147,9 @@
 
 - (void)loadMap {
   // zoom to place
-  if ([_place objectForKey:@"coordinates"]) {
-    NSArray *coords = [[_place objectForKey:@"coordinates"] componentsSeparatedByString:@","];
-    _mapRegion.center.latitude = [[coords objectAtIndex:0] floatValue];
-    _mapRegion.center.longitude = [[coords objectAtIndex:1] floatValue];
+  if ([_place objectForKey:@"latitude"] && [_place objectForKey:@"longitude"]) {
+    _mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
+    _mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
     _mapRegion.span.latitudeDelta = 0.003;
     _mapRegion.span.longitudeDelta = 0.003;
     [_mapView setRegion:_mapRegion animated:NO];
@@ -180,9 +179,15 @@
   
   if ([[_place objectForKey:@"hours"] notNil]) {
     [_sectionTitles addObject:@"Hours"];
-    [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"hours"]]];
+    NSString *hours = [[_place objectForKey:@"hours"] componentsJoinedByString:@"\n"];
+    [self.items addObject:[NSArray arrayWithObject:hours]];
   }
   
+  if ([[_place objectForKey:@"snippets"] notNil]) {
+    [_sectionTitles addObject:[NSString stringWithFormat:@"What's Good Here?"]];
+    [self.items addObject:[_place objectForKey:@"snippets"]];
+  }
+
   if ([[_place objectForKey:@"category"] notNil]) {
     [_sectionTitles addObject:@"Category"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"category"]]];
@@ -192,12 +197,6 @@
     [_sectionTitles addObject:@"Price"];
     [self.items addObject:[NSArray arrayWithObject:[_place objectForKey:@"price"]]];
   }
-  
-  if ([[_place objectForKey:@"numreviews"] notNil]) {
-    [_sectionTitles addObject:@"Review Count"];
-    [self.items addObject:[NSArray arrayWithObject:[NSString stringWithFormat:@"%@ from Yelp", [_place objectForKey:@"numreviews"]]]];
-  }
-  
 }
 
 - (void)dataSourceDidLoad {
@@ -269,12 +268,12 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
   
-  NSString *meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  id meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   return [MetaCell rowHeightForObject:meta forInterfaceOrientation:[self interfaceOrientation]];
 }
 
 - (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
-  NSString *meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+  id meta = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   [cell fillCellWithObject:meta];
 }
 
@@ -343,7 +342,7 @@
 
   } else if (alertView.tag == kAlertDirections) {
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
-    NSString *address = [_place objectForKey:@"address"];
+    NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
     NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }

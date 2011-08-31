@@ -159,7 +159,7 @@
   // Set Frames
   _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
-  _ribbonView.frame = CGRectMake(self.contentView.width - 70, MARGIN_Y * 2, 70, 24);
+  _ribbonView.frame = CGRectMake(self.contentView.width - 80, MARGIN_Y * 2, 80, 24);
   
   _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 36, 24);
   
@@ -264,7 +264,7 @@
       [responseString release];
       
       // Save to DB
-      [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
+//      [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];

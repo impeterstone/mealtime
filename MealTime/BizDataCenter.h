@@ -17,11 +17,6 @@
 - (void)fetchYelpPhotosForBiz:(NSString *)biz start:(NSString *)start rpp:(NSString *)rpp;
 - (void)fetchYelpMapForBiz:(NSString *)biz;
 - (void)fetchYelpBizForBiz:(NSString *)biz;
-
-- (void)updatePlaceMapInDatabase:(NSDictionary *)place forBiz:(NSString *)biz ;
-- (void)updatePlaceBizInDatabase:(NSDictionary *)place forBiz:(NSString *)biz;
-- (void)updatePlacePhotosInDatabase:(NSDictionary *)place forBiz:(NSString *)biz;
-
-- (NSArray *)selectPlacePhotosInDatabaseForBiz:(NSString *)biz;
+- (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp;
 
 @end

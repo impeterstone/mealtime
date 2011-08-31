@@ -72,6 +72,7 @@
   // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
   _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
+  _infoButton.enabled = NO;
   self.navigationItem.rightBarButtonItem = _infoButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
@@ -147,9 +148,20 @@
   }
   
   [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
-  
-  [[BizDataCenter defaultCenter] fetchYelpMapForBiz:[_place objectForKey:@"biz"]];
   [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
+  
+  // Get ALL reviews for this place
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    NSInteger numReviews = [[_place objectForKey:@"numreviews"] integerValue];
+    int i = 0;
+    for (i = 0; i < numReviews; i = i + 400) {
+      // Fire off requests for reviews 400 at a time
+      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+    }
+  }
 }
 
 - (void)dataSourceDidLoad {
@@ -161,19 +173,6 @@
     [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
   }
   [super dataSourceDidLoad];
-}
-
-- (void)loadPhotosFromDatabase {
-  // Load photos from DB
-  NSArray *photos = [[BizDataCenter defaultCenter] selectPlacePhotosInDatabaseForBiz:[_place objectForKey:@"biz"]];
-  [self.items removeAllObjects];
-  
-  // Put response into items (datasource)
-  _photoCount = [photos count];
-  if (_photoCount > 0) {
-    [self.items addObject:photos];
-  }
-  [self dataSourceDidLoad];
 }
 
 #pragma mark - PSDataCenterDelegate
@@ -191,20 +190,33 @@
     }
 
     [self dataSourceDidLoad];
-  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"map"]) {
-    // Update metadata
+  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
+    // Address
     if ([response objectForKey:@"address"]) {
       [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
     }
-    if ([response objectForKey:@"coordinates"]) {
-      [_place setObject:[response objectForKey:@"coordinates"] forKey:@"coordinates"];
+    if ([response objectForKey:@"latitude"]) {
+      [_place setObject:[response objectForKey:@"latitude"] forKey:@"latitude"];
     }
-    // Load Map
-  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
+    if ([response objectForKey:@"longitude"]) {
+      [_place setObject:[response objectForKey:@"longitude"] forKey:@"longitude"];
+    }
     // Update Hours
     if ([response objectForKey:@"hours"]) {
       [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
     }
+    // Snippets
+    if ([response objectForKey:@"snippets"]) {
+      [_place setObject:[response objectForKey:@"snippets"] forKey:@"snippets"];
+    }
+    
+    _infoButton.enabled = YES;
+
+    // Update Reviews
+//    if ([response objectForKey:@"reviews"]) {
+//      [_place setObject:[response objectForKey:@"reviews"] forKey:@"reviews"];
+//    }
+    
     // Load Meta
   }
 }

@@ -55,7 +55,9 @@
       [responseString release];
       
       // Save to DB
-      [self updatePlacePhotosInDatabase:response forBiz:biz];
+      NSString *requestType = @"photos";
+      NSString *requestData = [response JSONRepresentation];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -72,6 +74,7 @@
 }
 
 - (void)fetchYelpMapForBiz:(NSString *)biz {
+  // DEPRECATED
   // http://lite.yelp.com/map/8Dg9wpIIO2AIM_qE9rniNQ
   NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/map/%@", biz];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
@@ -95,7 +98,9 @@
       [responseString release];
       
       // Save to DB
-      [self updatePlaceMapInDatabase:response forBiz:biz];
+      NSString *requestType = @"map";
+      NSString *requestData = [response JSONRepresentation];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -113,7 +118,9 @@
 
 - (void)fetchYelpBizForBiz:(NSString *)biz {
   // http://lite.yelp.com/biz/PDhfVvcVXgBinZf5I6s1KQ
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", biz];
+//  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", biz];
+  // By default, just scrape 10 reviews to show
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=10&sort_by=relevance_desc", biz];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -135,7 +142,9 @@
       [responseString release];
       
       // Save to DB
-      [self updatePlaceBizInDatabase:response forBiz:biz];
+      NSString *requestType = @"biz";
+      NSString *requestData = [response JSONRepresentation];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -151,37 +160,48 @@
   [request startAsynchronous];
 }
 
-- (void)updatePlaceMapInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET address = ?, coordinates = ? WHERE biz = ?", [place objectForKey:@"address"], [place objectForKey:@"coordinates"], biz, nil];
-}
-
-- (void)updatePlaceBizInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET hours = ? WHERE biz = ?", [place objectForKey:@"hours"], biz, nil];
-}
-
-- (void)updatePlacePhotosInDatabase:(NSDictionary *)place forBiz:(NSString *)biz {
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET numphotos = ? WHERE biz = ?", [place objectForKey:@"numphotos"], biz, nil];
+- (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp {
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=%d&start=%d", biz, rpp, start];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
-  // Create photos
-  for (NSDictionary *photo in [place objectForKey:@"photos"]) {
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT OR REPLACE INTO photos (biz, src, caption) VALUES (?, ?, ?)", biz, [photo objectForKey:@"src"], [photo objectForKey:@"caption"], nil];
-  }
-}
-
-- (NSArray *)selectPlacePhotosInDatabaseForBiz:(NSString *)biz {
-  EGODatabaseResult *result = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM photos WHERE biz = ?", biz, nil];
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
   
-  NSMutableArray *photos = [NSMutableArray array];
-  for(EGODatabaseRow *row in result) {
-    NSMutableDictionary *photo = [NSMutableDictionary dictionary];
-    
-    [photo setObject:[row stringForColumn:@"src"] forKey:@"src"];
-    [photo setObject:[row stringForColumn:@"caption"] forKey:@"caption"];
-    
-    [photos addObject:photo];
-  }
+  // UserInfo
+  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+  [userInfo setObject:biz forKey:@"biz"];
+  [userInfo setObject:@"reviews" forKey:@"requestType"];
+  [request setUserInfo:userInfo];
   
-  return photos;
+  [request setCompletionBlock:^{
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async([PSScrapeCenter sharedQueue], ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeReviewsWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      // Save to DB
+      NSString *requestType = @"reviews";
+      NSString *requestData = [response JSONRepresentation];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        // This call has no callback
+//        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
+//          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+//        }
+      });
+    });
+  }];
+  
+  [request setFailedBlock:^{
+    // If a review scrape failed, we should rescrape
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:biz];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+  }];
+  [request startAsynchronous];
 }
 
 @end

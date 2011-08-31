@@ -24,9 +24,8 @@
 	coordinate.longitude = -122.4100;
 	coordinate.latitude = 37.7805;
 #else
-  NSArray *coords = [[_place objectForKey:@"coordinates"] componentsSeparatedByString:@","];
-	coordinate.latitude = [[coords objectAtIndex:0] floatValue];
-	coordinate.longitude = [[coords objectAtIndex:1] floatValue];
+	coordinate.latitude = [[_place objectForKey:@"latitude"] floatValue];
+	coordinate.longitude = [[_place objectForKey:@"longitude"] floatValue];
 #endif
 	return coordinate;
 }
@@ -37,7 +36,7 @@
 
 // optional
 - (NSString *)subtitle {
-  return [_place objectForKey:@"address"];
+  return [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
 }
 
 @end

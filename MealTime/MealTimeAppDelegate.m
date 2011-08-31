@@ -10,10 +10,15 @@
 #import "PSConstants.h"
 #import "RootViewController.h"
 #import "PSFacebookCenter.h"
+#import "PSDatabaseCenter.h"
+#import "ASIHTTPRequest.h"
+#import "PSDataCenter.h"
 
 @interface MealTimeAppDelegate (Private)
 
 + (void)setupDefaults;
+
+- (void)sendRequestsHome;
 
 @end
 
@@ -56,6 +61,8 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  [self sendRequestsHome];
+  
   // Override StyleSheet
   [PSStyleSheet setStyleSheet:@"AppStyleSheet"];
   
@@ -99,6 +106,7 @@
   /*
    Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
    */
+  [self sendRequestsHome];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -115,6 +123,52 @@
    Save data if appropriate.
    See also applicationDidEnterBackground:.
    */
+}
+
+#pragma mark - Send Requests Home
+- (void)sendRequestsHome {
+  EGODatabaseResult *result = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT id, type, data, strftime('%s',timestamp) as timestamp from requests"];
+  
+  if ([result count] == 0) return;
+  
+  NSMutableArray *requestIds = [NSMutableArray arrayWithCapacity:1];
+  NSMutableArray *requests = [NSMutableArray arrayWithCapacity:1];
+  for (EGODatabaseRow *row in result) {
+    NSMutableDictionary *request = [NSMutableDictionary dictionaryWithCapacity:2];
+    [request setObject:[row stringForColumn:@"type"] forKey:@"type"];
+    [request setObject:[[row stringForColumn:@"data"] JSONValue] forKey:@"data"];
+    [request setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
+    [requests addObject:request];
+    
+    [requestIds addObject:[NSNumber numberWithInt:[row intForColumn:@"id"]]];
+  }
+  
+  // Upload data
+  NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime", API_BASE_URL];
+  NSURL *smlURL = [NSURL URLWithString:smlURLString];
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  request.requestMethod = POST;
+  [request addRequestHeader:@"Content-Type" value:@"application/json"];
+  [request addRequestHeader:@"Accept" value:@"application/json"];
+
+  NSData *postData = [[requests JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
+
+  request.postBody = [NSMutableData dataWithData:postData];
+  
+  [request setCompletionBlock:^{
+    NSLog(@"mealtime request success: %@", request.responseString);
+    
+    // Delete rows
+    NSString *query = [NSString stringWithFormat:@"DELETE FROM requests WHERE id IN (%@)", [requestIds componentsJoinedByString:@","]];
+    [[[PSDatabaseCenter defaultCenter] database] executeQuery:query];
+  }];
+  
+  [request setFailedBlock:^{
+    NSLog(@"mealtime request failed");
+  }];
+  [request startAsynchronous];
+  
 }
 
 - (void)dealloc

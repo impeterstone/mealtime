@@ -45,7 +45,7 @@
 {
   [super loadView];
   
-  _navTitleLabel.text = [_place objectForKey:@"address"];
+  _navTitleLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   // Map
@@ -59,10 +59,9 @@
 
 - (void)loadMap {
   // zoom to place
-  if ([_place objectForKey:@"coordinates"]) {
-    NSArray *coords = [[_place objectForKey:@"coordinates"] componentsSeparatedByString:@","];
-    _mapRegion.center.latitude = [[coords objectAtIndex:0] floatValue];
-    _mapRegion.center.longitude = [[coords objectAtIndex:1] floatValue];
+  if ([_place objectForKey:@"latitude"] && [_place objectForKey:@"longitude"]) {
+    _mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
+    _mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
     _mapRegion.span.latitudeDelta = 0.003;
     _mapRegion.span.longitudeDelta = 0.003;
     [_mapView setRegion:_mapRegion animated:NO];

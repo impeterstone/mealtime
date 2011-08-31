@@ -52,9 +52,13 @@
       [responseString release];
       
       // Save to DB
-      for (NSDictionary *place in [response objectForKey:@"places"]) {
-        [self insertPlaceInDatabase:place];
-      }
+      NSString *requestType = @"places";
+      NSString *requestData = [response JSONRepresentation];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      
+//      for (NSDictionary *place in [response objectForKey:@"places"]) {
+//        [self insertPlaceInDatabase:place];
+//      }
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {

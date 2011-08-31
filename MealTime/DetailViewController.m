@@ -221,6 +221,12 @@
   }
 }
 
+- (void)dataCenterDidFail:(ASIHTTPRequest *)request withError:(NSError *)error {
+  if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
+    [self dataSourceDidLoad];
+  }
+}
+
 #pragma mark - TableView
 //- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 //  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 30)] autorelease];

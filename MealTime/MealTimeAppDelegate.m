@@ -14,6 +14,7 @@
 #import "ASIHTTPRequest.h"
 #import "PSDataCenter.h"
 #import "PSNetworkQueue.h"
+#import "PSLocationCenter.h"
 
 @interface MealTimeAppDelegate (Private)
 
@@ -62,6 +63,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  // PSLocationCenter
+  [PSLocationCenter defaultCenter];
+  
   // Call home
   _requestQueue = [[PSNetworkQueue alloc] init];
   [_requestQueue setMaxConcurrentOperationCount:1];

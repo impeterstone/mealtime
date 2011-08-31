@@ -33,6 +33,7 @@
 - (void)pauseAnimations;
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
+//- (void)fetchYelpBizForPlace:(NSMutableDictionary *)place;
 
 - (void)setShouldAnimate:(NSNumber *)shouldAnimate;
 

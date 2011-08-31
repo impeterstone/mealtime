@@ -9,7 +9,9 @@
 #import "PlaceCell.h"
 #import "PSScrapeCenter.h"
 #import "ASIHTTPRequest.h"
-#import "BizDataCenter.h"
+#import "PSNetworkQueue.h"
+#import "PSDataCenter.h"
+#import "PSDatabaseCenter.h"
 
 @implementation PlaceCell
 
@@ -263,9 +265,6 @@
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
       [responseString release];
       
-      // Save to DB
-//      [[BizDataCenter defaultCenter] updatePlacePhotosInDatabase:response forBiz:[place objectForKey:@"biz"]];
-      
       dispatch_async(dispatch_get_main_queue(), ^{
         [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
         if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
@@ -304,6 +303,75 @@
   [[PSNetworkQueue sharedQueue] addOperation:request];
 //  [request startAsynchronous];
 }
+
+//- (void)fetchYelpBizForPlace:(NSMutableDictionary *)place {
+//  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=1&sort_by=relevance_desc", [_place objectForKey:@"biz"]];
+//  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+//  
+//  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+//  [request setShouldContinueWhenAppEntersBackground:YES];
+//  [request setUserAgent:USER_AGENT];
+//  
+//  // UserInfo
+//  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
+//  
+//  [request setCompletionBlock:^{
+//    // GCD
+//    NSString *responseString = [request.responseString copy];
+//    dispatch_async([PSScrapeCenter sharedQueue], ^{
+//      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString] retain];
+//      [responseString release];
+//      
+//      // Save to DB
+//      NSString *biz = [request.userInfo objectForKey:@"biz"];
+//      NSString *requestType = @"biz";
+//      NSString *requestData = [response JSONRepresentation];
+//      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
+//      
+//      dispatch_async(dispatch_get_main_queue(), ^{
+//        if ([[response objectForKey:@"photos"] count] > 0) {
+//          NSArray *srcArray = [[response objectForKey:@"photos"] subarrayWithRange:NSMakeRange(0, 4)];
+//          [place setObject:srcArray forKey:@"srcArray"];
+//          
+//          // Only update the image if cell hasn't been reused
+//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+//            
+//          }
+//          
+//        }
+//        
+//        
+//        
+//        if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+//          
+//          // Only update the image if cell hasn't been reused
+//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+//            _photoView.urlPathArray = [srcArray valueForKey:@"src"];
+//            [_photoView loadImageArray];
+//            
+//            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
+//            _ribbonView.alpha = 1.0;
+//          }
+//        } else {
+//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+//            [_photoView unloadImageArray];
+//            _photoView.image = _photoView.placeholderImage;
+//          }
+//          [place setObject:[NSNull null] forKey:@"src"];
+//          [place setObject:[NSNull null] forKey:@"srcArray"];
+//        }
+//        [response release];
+//      });
+//    });
+//  }];
+//  
+//  [request setFailedBlock:^{
+//    
+//  }];
+//  
+//  request.queuePriority = NSOperationQueuePriorityHigh;
+//  [[PSNetworkQueue sharedQueue] addOperation:request];
+//}
   
 - (void)resumeAnimations {
   [_photoView resumeAnimations];

@@ -20,7 +20,7 @@
 
 #if TARGET_IPHONE_SIMULATOR
   #define STAGING
-//  #define USE_LOCALHOST
+  #define USE_LOCALHOST
 #endif
 
 #ifdef STAGING

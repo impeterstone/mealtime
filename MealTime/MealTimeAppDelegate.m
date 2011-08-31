@@ -127,7 +127,7 @@
 
 #pragma mark - Send Requests Home
 - (void)sendRequestsHome {
-  EGODatabaseResult *result = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT id, type, data, strftime('%s',timestamp) as timestamp from requests"];
+  EGODatabaseResult *result = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT id, biz, type, data, strftime('%s',timestamp) as timestamp from requests"];
   
   if ([result count] == 0) return;
   
@@ -135,6 +135,7 @@
   NSMutableArray *requests = [NSMutableArray arrayWithCapacity:1];
   for (EGODatabaseRow *row in result) {
     NSMutableDictionary *request = [NSMutableDictionary dictionaryWithCapacity:2];
+    [request setObject:[row stringForColumn:@"biz"] forKey:@"biz"];
     [request setObject:[row stringForColumn:@"type"] forKey:@"type"];
     [request setObject:[[row stringForColumn:@"data"] JSONValue] forKey:@"data"];
     [request setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
@@ -149,8 +150,9 @@
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
   [request setShouldContinueWhenAppEntersBackground:YES];
   request.requestMethod = POST;
-  [request addRequestHeader:@"Content-Type" value:@"application/json"];
+  [request addRequestHeader:@"Content-Type" value:@"gzip/json"];
   [request addRequestHeader:@"Accept" value:@"application/json"];
+  [request setShouldCompressRequestBody:YES];
 
   NSData *postData = [[requests JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
 

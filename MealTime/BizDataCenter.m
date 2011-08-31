@@ -55,9 +55,10 @@
       [responseString release];
       
       // Save to DB
+      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"photos";
       NSString *requestData = [response JSONRepresentation];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -98,9 +99,10 @@
       [responseString release];
       
       // Save to DB
+      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"map";
       NSString *requestData = [response JSONRepresentation];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -120,7 +122,7 @@
   // http://lite.yelp.com/biz/PDhfVvcVXgBinZf5I6s1KQ
 //  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", biz];
   // By default, just scrape 10 reviews to show
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=10&sort_by=relevance_desc", biz];
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=1&sort_by=relevance_desc", biz];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -142,9 +144,10 @@
       [responseString release];
       
       // Save to DB
+      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"biz";
       NSString *requestData = [response JSONRepresentation];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
@@ -183,9 +186,10 @@
       [responseString release];
       
       // Save to DB
+      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"reviews";
       NSString *requestData = [response JSONRepresentation];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         // This call has no callback

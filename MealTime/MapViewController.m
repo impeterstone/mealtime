@@ -111,7 +111,7 @@
   
   if (alertView.tag == kAlertDirections) {
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
-    NSString *address = [_place objectForKey:@"address"];
+    NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
     NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }

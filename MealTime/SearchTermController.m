@@ -13,11 +13,10 @@
 
 @synthesize delegate = _delegate;
 
-- (id)init {
+- (id)initWithContainer:(NSString *)container {
   self = [super init];
   if (self) {
-//    _loadingLabel = [@"Searching..." retain];
-//    _emptyLabel = [@"Search for Photos by\nKeywords, Friends, or Places\nTap Search for Results" retain];
+    _container = [container copy];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -65,7 +64,11 @@
   [self.items removeAllObjects];
   
   // Always show "Current Location"
-  [self.items addObject:[NSArray arrayWithObject:@"Current Location"]];
+  if ([_container isEqual:@"where"]) {
+    [self.items addObject:[NSArray arrayWithObject:@"Current Location"]];
+  } else {
+    [self.items addObject:[NSArray array]];
+  }
   
   // Stub for search results
   [self.items addObject:[NSArray array]];
@@ -96,7 +99,7 @@
 
 #pragma mark - Search
 - (void)searchWithTerm:(NSString *)term {
-  NSArray *filteredArray = [[PSSearchCenter defaultCenter] searchResultsForTerm:term];
+  NSArray *filteredArray = [[PSSearchCenter defaultCenter] searchResultsForTerm:term inContainer:_container];
 
   if ([filteredArray count] > 0) {
     _dismissGesture.enabled = NO;
@@ -108,24 +111,24 @@
 }
 
 #pragma mark - Table
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-  if (section == 0) return nil;
-  
-  UIView *sectionHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 26)] autorelease];
-//  sectionHeaderView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_table_header.png"]];
-  sectionHeaderView.backgroundColor = SECTION_HEADER_COLOR;
-  
-  UILabel *sectionHeaderLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 0, 310, 24)] autorelease];
-  sectionHeaderLabel.backgroundColor = [UIColor clearColor];
-  sectionHeaderLabel.text = @"Previously Searched...";
-  sectionHeaderLabel.textColor = [UIColor whiteColor];
-  sectionHeaderLabel.shadowColor = [UIColor blackColor];
-  sectionHeaderLabel.shadowOffset = CGSizeMake(0, 1);
-  sectionHeaderLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12.0];
-  [sectionHeaderView addSubview:sectionHeaderLabel];
-  
-  return sectionHeaderView;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//  if (section == 0) return nil;
+//  
+//  UIView *sectionHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 26)] autorelease];
+////  sectionHeaderView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_table_header.png"]];
+//  sectionHeaderView.backgroundColor = SECTION_HEADER_COLOR;
+//  
+//  UILabel *sectionHeaderLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 0, 310, 24)] autorelease];
+//  sectionHeaderLabel.backgroundColor = [UIColor clearColor];
+//  sectionHeaderLabel.text = @"Previously Searched...";
+//  sectionHeaderLabel.textColor = [UIColor whiteColor];
+//  sectionHeaderLabel.shadowColor = [UIColor blackColor];
+//  sectionHeaderLabel.shadowOffset = CGSizeMake(0, 1);
+//  sectionHeaderLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12.0];
+//  [sectionHeaderView addSubview:sectionHeaderLabel];
+//  
+//  return sectionHeaderView;
+//}
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (tableView.style == UITableViewStylePlain) {
@@ -164,8 +167,8 @@
   NSString *term = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
   // Search term selected
-  if (self.delegate && [self.delegate respondsToSelector:@selector(searchTermSelected:)]) {
-    [self.delegate searchTermSelected:term];
+  if (self.delegate && [self.delegate respondsToSelector:@selector(searchTermSelected:inContainer:)]) {
+    [self.delegate searchTermSelected:term inContainer:_container];
   }
 }
 

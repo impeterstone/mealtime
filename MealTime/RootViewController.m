@@ -54,7 +54,8 @@
   RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
-  RELEASE_SAFELY(_searchTermController);
+  RELEASE_SAFELY(_whatTermController);
+  RELEASE_SAFELY(_whereTermController);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -73,7 +74,8 @@
   RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
-  RELEASE_SAFELY(_searchTermController);
+  RELEASE_SAFELY(_whatTermController);
+  RELEASE_SAFELY(_whereTermController);
   
   RELEASE_SAFELY(_cellCache);
   RELEASE_SAFELY(_whatQuery);
@@ -233,11 +235,17 @@
 }
 
 - (void)setupSearchTermController {
-  _searchTermController = [[SearchTermController alloc] init];
-  _searchTermController.delegate = self;
-  _searchTermController.view.frame = self.view.bounds;
-  _searchTermController.view.alpha = 0.0;
-  [self.view addSubview:_searchTermController.view];
+  _whatTermController = [[SearchTermController alloc] initWithContainer:@"what"];
+  _whatTermController.delegate = self;
+  _whatTermController.view.frame = self.view.bounds;
+  _whatTermController.view.alpha = 0.0;
+  [self.view addSubview:_whatTermController.view];
+  
+  _whereTermController = [[SearchTermController alloc] initWithContainer:@"where"];
+  _whereTermController.delegate = self;
+  _whereTermController.view.frame = self.view.bounds;
+  _whereTermController.view.alpha = 0.0;
+  [self.view addSubview:_whereTermController.view];
 }
 
 #pragma mark - Button Actios
@@ -518,23 +526,30 @@
 }
 
 - (void)searchTermChanged:(UITextField *)textField {
-  [_searchTermController searchWithTerm:textField.text];
+  if ([textField isEqual:_whatField]) {
+    [_whatTermController searchWithTerm:textField.text];
+  } else {
+    [_whereTermController searchWithTerm:textField.text];
+  }
 }
 
-- (void)searchWithTextField:(UITextField *)textField {
+- (void)executeSearch {
   [self dismissSearch];
   
   if ([_whatField.text length] > 0) {
+    // Store search term
+    [[PSSearchCenter defaultCenter] addTerm:_whatField.text inContainer:@"what"];
+    
     self.whatQuery = _whatField.text;
   }
   
-  if ([_whereField.text isEqualToString:@"Current Location"]) {
+  if ([_whereField.text isEqualToString:@"Current Location"]) {    
     _pagingStart = 0; // reset paging
     self.whereQuery = nil;
     [self loadDataSource];
   } else {
     // Store search term
-    [[PSSearchCenter defaultCenter] addTerm:_whereField.text];
+    [[PSSearchCenter defaultCenter] addTerm:_whereField.text inContainer:@"where"];
     
     // Search Yelp with Address
     _pagingStart = 0; // reset paging
@@ -544,11 +559,14 @@
 }
 
 #pragma mark - SearchTermDelegate
-- (void)searchTermSelected:(NSString *)searchTerm {
-  _whereField.text = searchTerm;
-  [self searchWithTextField:nil];
-//  _searchField.text = searchTerm;
-//  [self searchWithText:_searchField.text];
+- (void)searchTermSelected:(NSString *)searchTerm inContainer:(NSString *)container {
+  if ([container isEqualToString:@"what"]) {
+    _whatField.text = searchTerm;
+  } else {
+    _whereField.text = searchTerm;
+  }
+  
+  [self executeSearch];
 }
 
 - (void)searchCancelled {
@@ -582,10 +600,11 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
   if ([textField isEqual:_whatField]) {
-    
+    [self.view bringSubviewToFront:_whatTermController.view];
+    _whatTermController.view.alpha = 1.0;
   } else {
-    [self.view bringSubviewToFront:_searchTermController.view];
-    _searchTermController.view.alpha = 1.0;
+    [self.view bringSubviewToFront:_whereTermController.view];
+    _whereTermController.view.alpha = 1.0;
   }
 
   return YES;
@@ -593,9 +612,9 @@
 
 - (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
   if ([textField isEqual:_whatField]) {
-    
+    _whatTermController.view.alpha = 0.0;
   } else {
-    _searchTermController.view.alpha = 0.0;
+    _whereTermController.view.alpha = 0.0;
   }
   return YES;
 }
@@ -613,9 +632,9 @@
     [_whereField becomeFirstResponder];
   } else if ([textField.text length] == 0) {
     // Empty search
-    [self cancelSearch];
+    [self dismissSearch];
   } else {
-    [self searchWithTextField:textField];
+    [self executeSearch];
   }
   
   return YES;

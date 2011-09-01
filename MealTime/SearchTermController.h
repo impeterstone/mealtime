@@ -11,11 +11,14 @@
 #import "SearchTermDelegate.h"
 
 @interface SearchTermController : PSTableViewController {
+  NSString *_container;
   UITapGestureRecognizer *_dismissGesture;
   id <SearchTermDelegate> _delegate;
 }
 
 @property (nonatomic, assign) id <SearchTermDelegate> delegate;
+
+- (id)initWithContainer:(NSString *)container;
 
 - (void)searchWithTerm:(NSString *)term;
 

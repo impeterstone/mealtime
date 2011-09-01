@@ -21,7 +21,8 @@
   UILabel *_currentLocationLabel;
   NSArray *_currentAddress;
   
-  SearchTermController *_searchTermController;
+  SearchTermController *_whatTermController;
+  SearchTermController *_whereTermController;
   
   // This is used to reference cells
   // So that we can tell them to pause/resume animations
@@ -51,7 +52,7 @@
 - (void)sortResults;
 
 - (void)searchTermChanged:(UITextField *)textField;
-- (void)searchWithTextField:(UITextField *)textField;
+- (void)executeSearch;
 - (void)dismissSearch;
 
 @end

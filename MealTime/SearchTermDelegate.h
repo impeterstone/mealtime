@@ -12,7 +12,7 @@
 @protocol SearchTermDelegate <NSObject>
 
 @optional
-- (void)searchTermSelected:(NSString *)searchTerm;
+- (void)searchTermSelected:(NSString *)searchTerm inContainer:(NSString *)container;
 - (void)searchCancelled;
 
 @end

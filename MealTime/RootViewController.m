@@ -52,6 +52,7 @@
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_currentLocationLabel);
   RELEASE_SAFELY(_toolbar);
+  RELEASE_SAFELY(_searchView);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -72,6 +73,7 @@
   
   RELEASE_SAFELY(_currentLocationLabel);
   RELEASE_SAFELY(_toolbar);
+  RELEASE_SAFELY(_searchView);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -117,8 +119,7 @@
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _whatField.alpha = 1.0;
-                     _whereField.alpha = 1.0;
+                     _searchView.alpha = 1.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -137,8 +138,7 @@
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _whatField.alpha = 0.0;
-                     _whereField.alpha = 0.0;
+                     _searchView.alpha = 0.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -195,7 +195,7 @@
   // Setup Search
   CGFloat searchWidth = floorf(([[UIApplication sharedApplication] keyWindow].width - 20) / 2);
   
-  UIView *searchView = [[UIView alloc] initWithFrame:CGRectMake(5, 26, ([[UIApplication sharedApplication] keyWindow].width - 20), 30)];
+  _searchView = [[UIView alloc] initWithFrame:CGRectMake(5, 26, ([[UIApplication sharedApplication] keyWindow].width - 20), 30)];
   
   _whatField = [[PSTextField alloc] initWithFrame:CGRectMake(0, 0, searchWidth, 30) withInset:CGSizeMake(30, 6)];
   _whatField.autoresizingMask = UIViewAutoresizingNone;
@@ -208,7 +208,7 @@
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   [_whatField addTarget:self action:@selector(editingDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
   [_whatField addTarget:self action:@selector(editingDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-  [searchView addSubview:_whatField];
+  [_searchView addSubview:_whatField];
   
   _whereField = [[PSTextField alloc] initWithFrame:CGRectMake(searchWidth + 10, 0, searchWidth, 30) withInset:CGSizeMake(30, 6)];
   _whatField.autoresizingMask = UIViewAutoresizingNone;
@@ -221,10 +221,9 @@
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   [_whereField addTarget:self action:@selector(editingDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
   [_whereField addTarget:self action:@selector(editingDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
-  [searchView addSubview:_whereField];
+  [_searchView addSubview:_whereField];
   
-  [[[UIApplication sharedApplication] keyWindow] addSubview:searchView];
-  [searchView release];
+  [[[UIApplication sharedApplication] keyWindow] addSubview:_searchView];
   
   
   // Search Term Controller

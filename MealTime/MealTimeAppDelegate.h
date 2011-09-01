@@ -13,6 +13,8 @@
 @interface MealTimeAppDelegate : NSObject <UIApplicationDelegate> {
   UINavigationController *_navigationController;
   PSNetworkQueue *_requestQueue;
+  
+  BOOL _isBackgrounded;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;

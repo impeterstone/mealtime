@@ -24,6 +24,7 @@
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationUnchanged) name:kLocationUnchanged object:nil];
     
     _sortBy = [@"popularity" retain];
     _distance = 0.5;
@@ -39,6 +40,7 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_currentLocationLabel);
   RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_searchField);
@@ -54,6 +56,7 @@
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationUnchanged object:nil];
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
   [_searchField removeFromSuperview];
   
@@ -213,6 +216,7 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
   _searchField.text = @"Current Location";
+  _currentLocationLabel.text = @"Finding Your Location";
 }
 
 - (void)sort {
@@ -339,15 +343,10 @@
   
   // Create some edge cases for weird stuff
 
-  NSArray *addressArray = [NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil];
-  NSString *formattedAddress = [addressArray componentsJoinedByString:@" "];
+  RELEASE_SAFELY(_currentAddress);
+  _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
   
-  _currentLocationLabel.text = [NSString stringWithFormat:@"%@\n%@", [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1]];
-  
-  // fetch Yelp Places
-  _pagingStart = 0; // reset paging
-  self.fetchQuery = formattedAddress;
-  [self fetchDataSource];
+  [self updateCurrentLocation];
   
   _reverseGeocoder = nil;
   [geocoder release];
@@ -356,8 +355,25 @@
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
   
+  _currentLocationLabel.text = @"Can't Locate You";
+  
   _reverseGeocoder = nil;
   [geocoder release];
+}
+
+- (void)locationUnchanged {
+  [self updateCurrentLocation];
+}
+
+- (void)updateCurrentLocation {
+  _currentLocationLabel.text = [NSString stringWithFormat:@"%@\n%@", [_currentAddress objectAtIndex:0], [_currentAddress objectAtIndex:1]];
+  
+  NSString *formattedAddress = [_currentAddress componentsJoinedByString:@" "];
+  
+  // fetch Yelp Places
+  _pagingStart = 0; // reset paging
+  self.fetchQuery = formattedAddress;
+  [self fetchDataSource];
 }
 
 - (void)dataSourceDidLoad {

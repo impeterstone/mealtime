@@ -33,6 +33,7 @@
 
 // Notifications
 #define kLocationAcquired @"LocationAcquired"
+#define kLocationUnchanged @"LocationUnchanged"
 #define kLogoutRequested @"LogoutRequested"
 #define kOrientationChanged @"OrientationChangedNotification"
 

@@ -19,6 +19,7 @@
   UIBarButtonItem *_compassButton;
   UIBarButtonItem *_cancelButton;
   UILabel *_currentLocationLabel;
+  NSArray *_currentAddress;
   
   SearchTermController *_searchTermController;
   
@@ -42,6 +43,8 @@
 - (void)sort;
 - (void)filter;
 
+- (void)updateCurrentLocation;
+- (void)locationUnchanged;
 - (void)reverseGeocode;
 - (void)sortResults;
 

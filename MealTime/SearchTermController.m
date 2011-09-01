@@ -46,7 +46,7 @@
   // Nullview
   [_nullView setLoadingTitle:@"Searching" loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
-  [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
+  [self setupTableViewWithFrame:CGRectMake(0, 44, self.view.width, self.view.height - 44) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
   
   self.tableView.scrollsToTop = NO;
   

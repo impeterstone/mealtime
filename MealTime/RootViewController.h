@@ -35,6 +35,11 @@
   CGFloat _distance;
   NSString *_whatQuery;
   NSString *_whereQuery;
+  
+  BOOL _isSearchActive;
+  
+  // Autoreleased
+  UIBarButtonItem *_filterButton;
 }
 
 @property (nonatomic, retain) NSString *whatQuery;

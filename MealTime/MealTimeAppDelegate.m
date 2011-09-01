@@ -71,7 +71,7 @@
   
   // Call home
   _requestQueue = [[PSNetworkQueue alloc] init];
-  [_requestQueue setMaxConcurrentOperationCount:1];
+  [_requestQueue setMaxConcurrentOperationCount:2];
   [self sendRequestsHome];
   
   // Override StyleSheet
@@ -143,6 +143,7 @@
     [request addRequestHeader:@"Content-Type" value:@"gzip/json"];
     [request addRequestHeader:@"Accept" value:@"application/json"];
     [request setShouldCompressRequestBody:YES];
+    [request setValidatesSecureCertificate:NO];
     
     NSData *postData = [[storedRequest JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
     request.postBody = [NSMutableData dataWithData:postData];

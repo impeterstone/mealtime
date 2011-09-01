@@ -14,9 +14,17 @@
 #import "PSLocationCenter.h"
 #import "PSSearchCenter.h"
 
+@interface RootViewController (Private)
+
+- (void)editingDidBegin:(UITextField *)textField;
+- (void)editingDidEnd:(UITextField *)textField;
+
+@end
+
 @implementation RootViewController
 
-@synthesize fetchQuery = _fetchQuery;
+@synthesize whatQuery = _whatQuery;
+@synthesize whereQuery = _whereQuery;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -31,7 +39,8 @@
     _pagingStart = 0;
     _pagingCount = 25;
     _pagingTotal = 25;
-    _fetchQuery = nil;
+    _whatQuery = nil;
+    _whereQuery = nil;
     
     _cellCache = [[NSMutableArray alloc] init];
   }
@@ -43,9 +52,8 @@
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_currentLocationLabel);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_searchField);
-  RELEASE_SAFELY(_compassButton);
-  RELEASE_SAFELY(_cancelButton);
+  RELEASE_SAFELY(_whatField);
+  RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_searchTermController);
 }
 
@@ -58,17 +66,18 @@
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationUnchanged object:nil];
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
-  [_searchField removeFromSuperview];
+  [_whatField removeFromSuperview];
+  [_whereField removeFromSuperview];
   
   RELEASE_SAFELY(_currentLocationLabel);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_searchField);
-  RELEASE_SAFELY(_compassButton);
-  RELEASE_SAFELY(_cancelButton);
+  RELEASE_SAFELY(_whatField);
+  RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_searchTermController);
   
   RELEASE_SAFELY(_cellCache);
-  
+  RELEASE_SAFELY(_whatQuery);
+  RELEASE_SAFELY(_whereQuery);
   RELEASE_SAFELY(_sortBy);
   [super dealloc];
 }
@@ -106,7 +115,8 @@
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _searchField.alpha = 1.0;
+                     _whatField.alpha = 1.0;
+                     _whereField.alpha = 1.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -117,14 +127,16 @@
   
   [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
   
-  [_searchField resignFirstResponder];
+  [_whatField resignFirstResponder];
+  [_whereField resignFirstResponder];
   
   [UIView animateWithDuration:0.4
                         delay:0.0
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _searchField.alpha = 0.0;
+                     _whatField.alpha = 0.0;
+                     _whereField.alpha = 0.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -178,23 +190,40 @@
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
   
-  // Compass location finder
-  _compassButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_compass.png"] withTarget:self action:@selector(findMyLocation) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
-  self.navigationItem.rightBarButtonItem = _compassButton;
-  
   // Setup Search
-  _searchField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 26, self.view.width - 80, 30) withInset:CGSizeMake(30, 6)];
-  _searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
-  _searchField.font = NORMAL_FONT;
-  _searchField.delegate = self;
-  _searchField.returnKeyType = UIReturnKeySearch;
-  _searchField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:0];
-  _searchField.placeholder = @"Address, City, State or Zip";
-  [_searchField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  CGFloat searchWidth = floorf(([[UIApplication sharedApplication] keyWindow].width - 20) / 2);
   
-  [[[UIApplication sharedApplication] keyWindow] addSubview:_searchField];
+  UIView *searchView = [[UIView alloc] initWithFrame:CGRectMake(5, 26, ([[UIApplication sharedApplication] keyWindow].width - 20), 30)];
   
-  _cancelButton = [[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(cancelSearch) width:60 height:30 buttonType:BarButtonTypeSilver] retain];
+  _whatField = [[PSTextField alloc] initWithFrame:CGRectMake(0, 0, searchWidth, 30) withInset:CGSizeMake(30, 6)];
+  _whatField.autoresizingMask = UIViewAutoresizingNone;
+  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _whatField.font = NORMAL_FONT;
+  _whatField.delegate = self;
+  _whatField.returnKeyType = UIReturnKeyNext;
+  _whatField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:0];
+  _whatField.placeholder = @"What?";
+  [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  [_whatField addTarget:self action:@selector(editingDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
+  [_whatField addTarget:self action:@selector(editingDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
+  [searchView addSubview:_whatField];
+  
+  _whereField = [[PSTextField alloc] initWithFrame:CGRectMake(searchWidth + 10, 0, searchWidth, 30) withInset:CGSizeMake(30, 6)];
+  _whatField.autoresizingMask = UIViewAutoresizingNone;
+  _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _whereField.font = NORMAL_FONT;
+  _whereField.delegate = self;
+  _whereField.returnKeyType = UIReturnKeySearch;
+  _whereField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:0];
+  _whereField.placeholder = @"Where?";
+  [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  [_whereField addTarget:self action:@selector(editingDidBegin:) forControlEvents:UIControlEventEditingDidBegin];
+  [_whereField addTarget:self action:@selector(editingDidEnd:) forControlEvents:UIControlEventEditingDidEnd];
+  [searchView addSubview:_whereField];
+  
+  [[[UIApplication sharedApplication] keyWindow] addSubview:searchView];
+  [searchView release];
+  
   
   // Search Term Controller
   [self setupSearchTermController];
@@ -215,7 +244,8 @@
 - (void)findMyLocation {
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
-  _searchField.text = @"Current Location";
+  
+  _whereField.text = @"Current Location";
   _currentLocationLabel.text = @"Finding Your Location";
 }
 
@@ -295,7 +325,7 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForAddress:self.fetchQuery distance:_distance start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:_distance start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -311,7 +341,7 @@
 
 - (void)loadDataSource {
   [super loadDataSource];
-  if (_fetchQuery) {
+  if (_whereQuery) {
     [self fetchDataSource];
   } else {
     [self findMyLocation];
@@ -372,7 +402,7 @@
   
   // fetch Yelp Places
   _pagingStart = 0; // reset paging
-  self.fetchQuery = formattedAddress;
+  self.whereQuery = formattedAddress;
   [self fetchDataSource];
 }
 
@@ -472,70 +502,101 @@
 }
 
 #pragma mark - Search
-- (void)cancelSearch {
-//  [UIView animateWithDuration:0.4
-//                   animations:^{
-//                     _searchField.width = 60;
-//                   }
-//                   completion:^(BOOL finished) {
-//                   }];
+- (void)dismissSearch {
+  CGFloat screenWidth = [[UIApplication sharedApplication] keyWindow].width;
+  CGFloat searchWidth = floorf((screenWidth - 20) / 2);
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _whatField.frame = CGRectMake(_whatField.left, _whatField.top, searchWidth, _whatField.height);
+                     _whereField.frame = CGRectMake(screenWidth - searchWidth - 5, _whereField.top, searchWidth, _whereField.height);
+                   }
+                   completion:^(BOOL finished) {
+                   }];
   
-  self.navigationItem.rightBarButtonItem = _compassButton;
-  [_searchField resignFirstResponder];
+  [_whatField resignFirstResponder];
+  [_whereField resignFirstResponder];
 }
 
 - (void)searchTermChanged:(UITextField *)textField {
   [_searchTermController searchWithTerm:textField.text];
 }
 
-- (void)searchWithText:(NSString *)searchText {
-  self.navigationItem.rightBarButtonItem = _compassButton;
-  [_searchField resignFirstResponder];
+- (void)searchWithTextField:(UITextField *)textField {
+  [self dismissSearch];
   
-  if ([searchText isEqualToString:@"Current Location"]) {
+  if ([_whatField.text length] > 0) {
+    self.whatQuery = _whatField.text;
+  }
+  
+  if ([_whereField.text isEqualToString:@"Current Location"]) {
     _pagingStart = 0; // reset paging
-    self.fetchQuery = nil;
+    self.whereQuery = nil;
     [self loadDataSource];
   } else {
     // Store search term
-    [[PSSearchCenter defaultCenter] addTerm:searchText];
+    [[PSSearchCenter defaultCenter] addTerm:_whereField.text];
     
     // Search Yelp with Address
     _pagingStart = 0; // reset paging
-    self.fetchQuery = searchText;
+    self.whereQuery = _whereField.text;
     [self fetchDataSource];
   }
 }
 
 #pragma mark - SearchTermDelegate
 - (void)searchTermSelected:(NSString *)searchTerm {
-  _searchField.text = searchTerm;
-  [self searchWithText:_searchField.text];
+  _whereField.text = searchTerm;
+  [self searchWithTextField:nil];
+//  _searchField.text = searchTerm;
+//  [self searchWithText:_searchField.text];
 }
 
 - (void)searchCancelled {
-  [self cancelSearch];
+  [self dismissSearch];
 }
 
 #pragma mark - UITextFieldDelegate
+- (void)editingDidBegin:(UITextField *)textField {
+  // Animate Search Fields
+  CGFloat screenWidth = [[UIApplication sharedApplication] keyWindow].width;
+  CGFloat expandedWidth = screenWidth - 20 - 60;
+  CGFloat collapsedWidth = 60;
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     // width - 20 - 60
+                     if ([textField isEqual:_whatField]) {
+                       _whatField.width = expandedWidth;
+                       _whereField.frame = CGRectMake(screenWidth - collapsedWidth - 5, _whereField.top, collapsedWidth, _whereField.height);
+                     } else {
+                       _whatField.width = collapsedWidth;
+                       _whereField.frame = CGRectMake(screenWidth - expandedWidth - 5, _whereField.top, expandedWidth, _whereField.height);
+                     }
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+}
+
+- (void)editingDidEnd:(UITextField *)textField {
+  
+}
+
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
-  self.navigationItem.rightBarButtonItem = _cancelButton;
-  [self.view bringSubviewToFront:_searchTermController.view];
-  _searchTermController.view.alpha = 1.0;
-  
-//  [UIView animateWithDuration:0.4
-//                   animations:^{
-//                     _searchField.width = self.view.width - 80;
-//                     //                     _searchTermController.view.alpha = 1.0;
-//                   }
-//                   completion:^(BOOL finished) {
-//                   }];
-  
+  if ([textField isEqual:_whatField]) {
+    
+  } else {
+    [self.view bringSubviewToFront:_searchTermController.view];
+    _searchTermController.view.alpha = 1.0;
+  }
+
   return YES;
 }
 
-- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {  
-  _searchTermController.view.alpha = 0.0;
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+  if ([textField isEqual:_whatField]) {
+    
+  } else {
+    _searchTermController.view.alpha = 0.0;
+  }
   return YES;
 }
 
@@ -547,11 +608,14 @@
   if (![textField isEditing]) {
     [textField becomeFirstResponder];
   }
-  if ([textField.text length] == 0) {
+  
+  if ([textField isEqual:_whatField]) {
+    [_whereField becomeFirstResponder];
+  } else if ([textField.text length] == 0) {
     // Empty search
     [self cancelSearch];
   } else {
-    [self searchWithText:textField.text];
+    [self searchWithTextField:textField];
   }
   
   return YES;

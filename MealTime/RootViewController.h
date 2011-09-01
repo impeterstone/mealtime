@@ -15,9 +15,9 @@
 
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate, UIActionSheetDelegate, SearchTermDelegate> {
   UIToolbar *_toolbar;
-  PSTextField *_searchField;
-  UIBarButtonItem *_compassButton;
-  UIBarButtonItem *_cancelButton;
+  PSTextField *_whatField;
+  PSTextField *_whereField;
+
   UILabel *_currentLocationLabel;
   NSArray *_currentAddress;
   
@@ -31,10 +31,12 @@
   
   NSString *_sortBy;
   CGFloat _distance;
-  NSString *_fetchQuery;
+  NSString *_whatQuery;
+  NSString *_whereQuery;
 }
 
-@property (nonatomic, retain) NSString *fetchQuery;
+@property (nonatomic, retain) NSString *whatQuery;
+@property (nonatomic, retain) NSString *whereQuery;
 
 - (void)setupSearchTermController;
 
@@ -47,5 +49,9 @@
 - (void)locationUnchanged;
 - (void)reverseGeocode;
 - (void)sortResults;
+
+- (void)searchTermChanged:(UITextField *)textField;
+- (void)searchWithTextField:(UITextField *)textField;
+- (void)dismissSearch;
 
 @end

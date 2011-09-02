@@ -467,7 +467,7 @@
 }
 
 - (void)dataCenterDidFail:(ASIHTTPRequest *)request withError:(NSError *)error {
-  [self dataSourceDidLoad];
+  [super dataSourceDidLoad];
 }
 
 #pragma mark - TableView

@@ -138,6 +138,7 @@
     NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime", API_BASE_URL];
     NSURL *smlURL = [NSURL URLWithString:smlURLString];
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
+    request.numberOfTimesToRetryOnTimeout = 1;
     [request setShouldContinueWhenAppEntersBackground:YES];
     request.requestMethod = POST;
     [request addRequestHeader:@"Content-Type" value:@"gzip/json"];

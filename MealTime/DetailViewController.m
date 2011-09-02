@@ -223,7 +223,7 @@
 
 - (void)dataCenterDidFail:(ASIHTTPRequest *)request withError:(NSError *)error {
   if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
-    [self dataSourceDidLoad];
+    [super dataSourceDidLoad];
   }
 }
 

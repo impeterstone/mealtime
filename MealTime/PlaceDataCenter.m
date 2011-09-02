@@ -41,6 +41,7 @@
   NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/search?find_desc=%@&cflt=restaurants&rflt=all&sortby=composite&find_loc=%@&radius=%f&start=%d&rpp=%d", urlEncodedQuery, urlEncodedAddress, distance, start, rpp];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  request.numberOfTimesToRetryOnTimeout = 3;
   [request setShouldContinueWhenAppEntersBackground:YES];
   [request setUserAgent:USER_AGENT];
   

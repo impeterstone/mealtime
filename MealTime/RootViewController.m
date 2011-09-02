@@ -353,9 +353,15 @@
 }
 
 - (void)loadMore {
+  [super loadMore];
   _pagingTotal += _pagingCount;
   _pagingStart += _pagingCount; // load another page
-  [self loadDataSource];
+  
+  if (_whereQuery) {
+    [self fetchDataSource];
+  } else {
+    [self findMyLocation];
+  }
 }
 
 - (void)loadDataSource {
@@ -367,6 +373,25 @@
   }
 }
 
+- (void)dataSourceDidLoad {
+  if (_pagingStart == 0) {
+    [self.tableView setContentOffset:CGPointMake(0, 0)];
+  }
+  if ([self dataIsAvailable]) {
+    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
+  }
+  [self.tableView reloadData];
+  if ([self dataIsAvailable]) {
+    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
+  }
+  if (_pagingStart == 0) {
+    [super dataSourceDidLoad];
+  } else {
+    [super dataSourceDidLoadMore];
+  }
+}
+
+#pragma mark - Actions
 - (void)reverseGeocode {
   if (_reverseGeocoder && _reverseGeocoder.querying) {
     return;
@@ -419,20 +444,6 @@
   _pagingStart = 0; // reset paging
   self.whereQuery = formattedAddress;
   [self fetchDataSource];
-}
-
-- (void)dataSourceDidLoad {
-  if (_pagingStart == 0) {
-    [self.tableView setContentOffset:CGPointMake(0, 0)];
-  }
-  if ([self dataIsAvailable]) {
-    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
-  }
-  [self.tableView reloadData];
-  if ([self dataIsAvailable]) {
-    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
-  }
-  [super dataSourceDidLoad];
 }
 
 #pragma mark - PSDataCenterDelegate

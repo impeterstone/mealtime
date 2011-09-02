@@ -32,7 +32,6 @@
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationUnchanged) name:kLocationUnchanged object:nil];
     
     _sortBy = [@"popularity" retain];
     _distance = 0.5;
@@ -68,7 +67,6 @@
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationUnchanged object:nil];
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
   [_whatField removeFromSuperview];
   [_whereField removeFromSuperview];
@@ -410,10 +408,6 @@
   
   _reverseGeocoder = nil;
   [geocoder release];
-}
-
-- (void)locationUnchanged {
-  [self updateCurrentLocation];
 }
 
 - (void)updateCurrentLocation {

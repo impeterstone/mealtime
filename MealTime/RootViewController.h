@@ -53,7 +53,6 @@
 - (void)filter;
 
 - (void)updateCurrentLocation;
-- (void)locationUnchanged;
 - (void)reverseGeocode;
 - (void)sortResults;
 

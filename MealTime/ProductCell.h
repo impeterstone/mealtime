@@ -36,6 +36,4 @@
 @property (nonatomic, assign) PSURLCacheImageView *photoView;
 @property (nonatomic, assign) id <ProductCellDelegate> delegate;
 
-- (void)setShouldAnimate:(NSNumber *)shouldAnimate;
-
 @end

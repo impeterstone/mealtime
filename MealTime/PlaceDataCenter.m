@@ -24,7 +24,7 @@
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"json"];
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
-  id fixtureResponse = [fixtureData JSONValue];
+  id fixtureResponse = [fixtureData objectFromJSONData];
   
   if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
     [self.delegate dataCenterDidFinish:nil withResponse:fixtureResponse];
@@ -55,7 +55,7 @@
       
       // Save to DB
       NSString *requestType = @"places";
-      NSString *requestData = [response JSONRepresentation];
+      NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
 //      for (NSDictionary *place in [response objectForKey:@"places"]) {

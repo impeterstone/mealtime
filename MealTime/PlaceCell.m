@@ -236,12 +236,12 @@
   _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
   _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
-  NSString *freshOrRotten = nil;
-  if ([[place objectForKey:@"score"] floatValue] < 50) {
-    freshOrRotten = @"rotten";
-  } else {
-    freshOrRotten = @"fresh";
-  }
+//  NSString *freshOrRotten = nil;
+//  if ([[place objectForKey:@"score"] floatValue] < 50) {
+//    freshOrRotten = @"rotten";
+//  } else {
+//    freshOrRotten = @"fresh";
+//  }
   
   _scoreLabel.text = [NSString stringWithFormat:@"%@", [place objectForKey:@"score"]];
   

@@ -24,7 +24,7 @@
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"products" ofType:@"json"];
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
-  id fixtureResponse = [fixtureData JSONValue];
+  id fixtureResponse = [fixtureData objectFromJSONData];
   
   if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
     [self.delegate dataCenterDidFinish:nil withResponse:fixtureResponse];
@@ -58,7 +58,7 @@
       // Save to DB
       NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"photos";
-      NSString *requestData = [response JSONRepresentation];
+      NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
@@ -106,7 +106,7 @@
       // Save to DB
       NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"map";
-      NSString *requestData = [response JSONRepresentation];
+      NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
@@ -154,7 +154,7 @@
       // Save to DB
       NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"biz";
-      NSString *requestData = [response JSONRepresentation];
+      NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
@@ -200,10 +200,11 @@
       // Save to DB
       NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"reviews";
-      NSString *requestData = [response JSONRepresentation];
+      NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
+        [response release];
         // This call has no callback
 //        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
 //          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];

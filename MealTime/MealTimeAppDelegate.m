@@ -131,7 +131,7 @@
     NSMutableDictionary *storedRequest = [NSMutableDictionary dictionaryWithCapacity:2];
     [storedRequest setObject:[row stringForColumn:@"biz"] forKey:@"biz"];
     [storedRequest setObject:[row stringForColumn:@"type"] forKey:@"type"];
-    [storedRequest setObject:[[row stringForColumn:@"data"] JSONValue] forKey:@"data"];
+    [storedRequest setObject:[[row stringForColumn:@"data"] objectFromJSONString] forKey:@"data"];
     [storedRequest setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
 
     // Upload data
@@ -146,7 +146,7 @@
     [request setShouldCompressRequestBody:YES];
     [request setValidatesSecureCertificate:NO];
     
-    NSData *postData = [[storedRequest JSONRepresentation] dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *postData = [storedRequest JSONData];
     request.postBody = [NSMutableData dataWithData:postData];
     
     request.userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:[row intForColumn:@"id"]] forKey:@"storedRequestId"];

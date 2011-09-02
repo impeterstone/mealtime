@@ -161,9 +161,18 @@
   // Set Frames
   _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
-  _ribbonView.frame = CGRectMake(self.contentView.width - 80, MARGIN_Y * 2, 80, 24);
+  _ribbonView.frame = CGRectMake(self.contentView.width - 85, MARGIN_Y * 2, 85, 24);
+  _ribbonLabel.frame = CGRectMake(0, 0, _ribbonView.width - MARGIN_X, _ribbonView.height);
   
   _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 36, 24);
+  NSInteger metaScore = [[_place objectForKey:@"score"] integerValue];
+  if (metaScore >= 33 && metaScore <= 66) {
+    _scoreLabel.textColor = [UIColor yellowColor];
+  } else if (metaScore < 33) {
+    _scoreLabel.textColor = [UIColor redColor];
+  } else if (metaScore > 66) {
+    _scoreLabel.textColor = [UIColor greenColor];
+  }
   
   // Labels
   CGFloat top = self.contentView.height - 40 - MARGIN_Y;
@@ -223,7 +232,7 @@
       [_photoView unloadImageArray];
       _photoView.image = _photoView.placeholderImage;
     } else {
-      _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
+      _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
       _photoView.urlPathArray = [srcArray valueForKey:@"src"];
       [_photoView loadImageArray];
       _ribbonView.alpha = 1.0;
@@ -281,7 +290,7 @@
             _photoView.urlPathArray = [srcArray valueForKey:@"src"];
             [_photoView loadImageArray];
 
-            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
+            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
             _ribbonView.alpha = 1.0;
           }
         } else {
@@ -350,7 +359,7 @@
 //            _photoView.urlPathArray = [srcArray valueForKey:@"src"];
 //            [_photoView loadImageArray];
 //            
-//            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos ", [place objectForKey:@"numphotos"]] : @"0 photos ";
+//            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
 //            _ribbonView.alpha = 1.0;
 //          }
 //        } else {

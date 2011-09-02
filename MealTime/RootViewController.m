@@ -204,7 +204,7 @@
   searchbg.autoresizingMask = ~UIViewAutoresizingNone;
   [_searchView addSubview:searchbg];
   
-  _whatField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(0, 0)];
+  _whatField = [[UITextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30)];
   _whatField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.font = NORMAL_FONT;
@@ -216,7 +216,7 @@
   _whatField.placeholder = @"What? (Food or Restaurant)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whereField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(5, 5)];
+  _whereField = [[UITextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30)];
   _whereField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whereField.font = NORMAL_FONT;

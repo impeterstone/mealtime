@@ -16,8 +16,8 @@
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate, UIActionSheetDelegate, SearchTermDelegate> {
   UIToolbar *_toolbar;
   UIView *_searchView;
-  PSTextField *_whatField;
-  PSTextField *_whereField;
+  UITextField *_whatField;
+  UITextField *_whereField;
 
   UILabel *_currentLocationLabel;
   NSArray *_currentAddress;

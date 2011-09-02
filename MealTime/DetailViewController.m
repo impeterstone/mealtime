@@ -155,7 +155,7 @@
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    NSInteger numReviews = [[_place objectForKey:@"numreviews"] integerValue];
+    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
     int i = 0;
     for (i = 0; i < numReviews; i = i + 400) {
       // Fire off requests for reviews 400 at a time

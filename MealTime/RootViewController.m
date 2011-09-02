@@ -206,23 +206,27 @@
   searchbg.autoresizingMask = ~UIViewAutoresizingNone;
   [_searchView addSubview:searchbg];
   
-  _whatField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(30, 6)];
-  _whatField.autoresizingMask = UIViewAutoresizingNone;
+  _whatField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(0, 0)];
+  _whatField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.font = NORMAL_FONT;
   _whatField.delegate = self;
   _whatField.returnKeyType = UIReturnKeySearch;
-  _whatField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:30];
+  _whatField.leftViewMode = UITextFieldViewModeAlways;
+  _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_searchfield.png"]] autorelease];
+  _whatField.borderStyle = UITextBorderStyleRoundedRect;
   _whatField.placeholder = @"What? (Food or Restaurant)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whereField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(30, 6)];
-  _whatField.autoresizingMask = UIViewAutoresizingNone;
+  _whereField = [[PSTextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30) withInset:CGSizeMake(5, 5)];
+  _whereField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whereField.font = NORMAL_FONT;
   _whereField.delegate = self;
   _whereField.returnKeyType = UIReturnKeySearch;
-  _whereField.background = [UIImage stretchableImageNamed:@"bg_searchbar_textfield.png" withLeftCapWidth:30 topCapWidth:30];
+  _whereField.leftViewMode = UITextFieldViewModeAlways;
+  _whereField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_place.png"]] autorelease];
+  _whereField.borderStyle = UITextBorderStyleRoundedRect;
   _whereField.placeholder = @"Where? (Address, City, State or Zip) ";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
@@ -548,7 +552,7 @@
     // Store search term
     [[PSSearchCenter defaultCenter] addTerm:_whereField.text inContainer:@"where"];
     
-    self.whereQuery = _whereField.text;
+    self.whereQuery = _whereField.text;;
   } else {
     // Current Location
     self.whereQuery = nil;
@@ -610,7 +614,7 @@
     // Animate Search Fields
     [UIView animateWithDuration:0.4
                      animations:^{
-                       _searchView.height = 88;
+                       _searchView.height = 81;
                        _whereField.top = 44;
                      }
                      completion:^(BOOL finished) {

@@ -13,7 +13,7 @@
 
 @class SearchTermController;
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, ADBannerViewDelegate, UIActionSheetDelegate, SearchTermDelegate> {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, UIActionSheetDelegate, SearchTermDelegate> {
   UIToolbar *_toolbar;
   UIView *_searchView;
   UITextField *_whatField;
@@ -28,6 +28,7 @@
   // This is used to reference cells
   // So that we can tell them to pause/resume animations
   NSMutableArray *_cellCache;
+  NSInteger _scrollCount;
   
   MKReverseGeocoder *_reverseGeocoder;
   
@@ -49,9 +50,10 @@
 
 // Buttons
 - (void)findMyLocation;
-- (void)sort;
+- (void)saved;
 - (void)filter;
 
+- (void)locationAcquired;
 - (void)updateCurrentLocation;
 - (void)reverseGeocode;
 - (void)sortResults;

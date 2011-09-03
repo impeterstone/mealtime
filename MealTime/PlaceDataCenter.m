@@ -22,13 +22,25 @@
 
 - (void)getPlacesFromFixtures
 {
-  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"json"];
+  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"html"];
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
-  id fixtureResponse = [fixtureData objectFromJSONData];
+  NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
   
-  if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-    [self.delegate dataCenterDidFinish:nil withResponse:fixtureResponse];
-  }
+  dispatch_async([PSScrapeCenter sharedQueue], ^{
+    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
+    [responseString release];
+    
+    // Save to DB
+    NSString *requestType = @"places";
+    NSString *requestData = [response JSONString];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+        [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:nil];
+      }
+    });
+  });
 }
 
 - (void)fetchYelpPlacesForQuery:(NSString *)query andAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp {
@@ -58,13 +70,9 @@
       NSString *requestData = [response JSONString];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
-//      for (NSDictionary *place in [response objectForKey:@"places"]) {
-//        [self insertPlaceInDatabase:place];
-//      }
-      
       dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinish:withResponse:)]) {
-          [self.delegate dataCenterDidFinish:[request autorelease] withResponse:[response autorelease]];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+          [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
         }
       });
     });

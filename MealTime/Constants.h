@@ -11,6 +11,8 @@
 #import "NetworkConstants.h"
 #import "LocalyticsSession.h"
 
+//#define USE_FIXTURES 1
+
 // Core Data (From PSConstants.h)
 #define CORE_DATA_SQL_FILE @"spotlight.sqlite"
 #define CORE_DATA_MOM @"MealTime"

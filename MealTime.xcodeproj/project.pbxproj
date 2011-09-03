@@ -147,7 +147,6 @@
 		28417EC7140609970050C04D /* icon_compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC5140609970050C04D /* icon_compass.png */; };
 		28417EC8140609970050C04D /* icon_compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC6140609970050C04D /* icon_compass@2x.png */; };
 		28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417ECE14060A4A0050C04D /* PSLocationCenter.m */; };
-		28417ED814062CD80050C04D /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28417ED714062CD80050C04D /* iAd.framework */; };
 		284885481408641B00F68014 /* InfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284885471408641B00F68014 /* InfoViewController.m */; };
 		285570B1140C6DA5004D34EF /* SearchTermController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570AF140C6DA4004D34EF /* SearchTermController.m */; };
 		285570BE140C7827004D34EF /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570B4140C7827004D34EF /* Facebook.m */; };
@@ -156,7 +155,6 @@
 		285570C1140C7827004D34EF /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BB140C7827004D34EF /* FBLoginDialog.m */; };
 		285570C2140C7827004D34EF /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BD140C7827004D34EF /* FBRequest.m */; };
 		285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570C4140C7949004D34EF /* PSFacebookCenter.m */; };
-		285FD8B8140647CC00026293 /* UIViewController+Ad.m in Sources */ = {isa = PBXBuildFile; fileRef = 285FD8B7140647CC00026293 /* UIViewController+Ad.m */; };
 		2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863B8C5140720820021946C /* UIToolbar+Custom.m */; };
 		2863B8CA140721C30021946C /* bg_toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C8140721C30021946C /* bg_toolbar.png */; };
 		2863B8CB140721C30021946C /* bg_toolbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C9140721C30021946C /* bg_toolbar@2x.png */; };
@@ -244,6 +242,9 @@
 		28F7491A13F207220056D111 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F7491913F207220056D111 /* RootViewController.m */; };
 		28F7492513F209A00056D111 /* bg_navigationbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7492313F209A00056D111 /* bg_navigationbar.png */; };
 		28F7492613F209A00056D111 /* bg_navigationbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28F7492413F209A00056D111 /* bg_navigationbar@2x.png */; };
+		28FC9B30141235AC0047E11C /* places.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B2F141235AC0047E11C /* places.html */; };
+		28FC9B32141236970047E11C /* photos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B31141236970047E11C /* photos.html */; };
+		28FC9B341412379A0047E11C /* biz.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B331412379A0047E11C /* biz.html */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -456,7 +457,6 @@
 		28417EC6140609970050C04D /* icon_compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_compass@2x.png"; sourceTree = "<group>"; };
 		28417ECD14060A490050C04D /* PSLocationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSLocationCenter.h; sourceTree = "<group>"; };
 		28417ECE14060A4A0050C04D /* PSLocationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSLocationCenter.m; sourceTree = "<group>"; };
-		28417ED714062CD80050C04D /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
 		284885461408641B00F68014 /* InfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoViewController.h; sourceTree = "<group>"; };
 		284885471408641B00F68014 /* InfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoViewController.m; sourceTree = "<group>"; };
 		285570AE140C6DA4004D34EF /* SearchTermController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTermController.h; sourceTree = "<group>"; };
@@ -475,8 +475,6 @@
 		285570BD140C7827004D34EF /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
 		285570C3140C7949004D34EF /* PSFacebookCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSFacebookCenter.h; sourceTree = "<group>"; };
 		285570C4140C7949004D34EF /* PSFacebookCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSFacebookCenter.m; sourceTree = "<group>"; };
-		285FD8B6140647CC00026293 /* UIViewController+Ad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+Ad.h"; sourceTree = "<group>"; };
-		285FD8B7140647CC00026293 /* UIViewController+Ad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+Ad.m"; sourceTree = "<group>"; };
 		2863B8C4140720820021946C /* UIToolbar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIToolbar+Custom.h"; sourceTree = "<group>"; };
 		2863B8C5140720820021946C /* UIToolbar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIToolbar+Custom.m"; sourceTree = "<group>"; };
 		2863B8C8140721C30021946C /* bg_toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_toolbar.png; sourceTree = "<group>"; };
@@ -596,6 +594,9 @@
 		28F7491913F207220056D111 /* RootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RootViewController.m; sourceTree = "<group>"; };
 		28F7492313F209A00056D111 /* bg_navigationbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_navigationbar.png; sourceTree = "<group>"; };
 		28F7492413F209A00056D111 /* bg_navigationbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_navigationbar@2x.png"; sourceTree = "<group>"; };
+		28FC9B2F141235AC0047E11C /* places.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = places.html; sourceTree = "<group>"; };
+		28FC9B31141236970047E11C /* photos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = photos.html; sourceTree = "<group>"; };
+		28FC9B331412379A0047E11C /* biz.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = biz.html; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -616,7 +617,6 @@
 				28A1B27613F1CFB000EB971E /* UIKit.framework in Frameworks */,
 				28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */,
 				28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */,
-				28417ED814062CD80050C04D /* iAd.framework in Frameworks */,
 				28B58A5014088C4200F0EDB6 /* libicucore.A.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -632,6 +632,9 @@
 				28DD65B91405944600B42F20 /* yelpplaces50.html */,
 				2814E2F713F1EFA200D7A85A /* places.json */,
 				2814E2F813F1EFA200D7A85A /* products.json */,
+				28FC9B2F141235AC0047E11C /* places.html */,
+				28FC9B31141236970047E11C /* photos.html */,
+				28FC9B331412379A0047E11C /* biz.html */,
 			);
 			path = Fixtures;
 			sourceTree = "<group>";
@@ -667,8 +670,6 @@
 				2814E31513F1F01400D7A85A /* UIView+SML.m */,
 				28A9FB1E13F3239800EFB191 /* UIColor+SML.h */,
 				28A9FB1F13F3239800EFB191 /* UIColor+SML.m */,
-				285FD8B6140647CC00026293 /* UIViewController+Ad.h */,
-				285FD8B7140647CC00026293 /* UIViewController+Ad.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -955,7 +956,6 @@
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
 				28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */,
-				28417ED714062CD80050C04D /* iAd.framework */,
 				28DD65BE140599B800B42F20 /* CoreLocation.framework */,
 				28DD65BB140597D600B42F20 /* MapKit.framework */,
 				28B0EF8A13F1DF73004813B2 /* MobileCoreServices.framework */,
@@ -1431,6 +1431,9 @@
 				286A578B1410BEBB001D9490 /* icon_thumbs_down@2x.png in Resources */,
 				286A578C1410BEBB001D9490 /* icon_thumbs_up.png in Resources */,
 				286A578D1410BEBB001D9490 /* icon_thumbs_up@2x.png in Resources */,
+				28FC9B30141235AC0047E11C /* places.html in Resources */,
+				28FC9B32141236970047E11C /* photos.html in Resources */,
+				28FC9B341412379A0047E11C /* biz.html in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1511,7 +1514,6 @@
 				28E9BCD51405D2B700A0F3BA /* PSScrapeCenter.m in Sources */,
 				28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */,
 				28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */,
-				285FD8B8140647CC00026293 /* UIViewController+Ad.m in Sources */,
 				2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */,
 				28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */,
 				284885481408641B00F68014 /* InfoViewController.m in Sources */,

@@ -32,6 +32,7 @@
 - (void)resumeAnimations;
 - (void)pauseAnimations;
 
+- (void)getCoverPhotoFromFixtureForPlace:(NSMutableDictionary *)place;
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
 //- (void)fetchYelpBizForPlace:(NSMutableDictionary *)place;
 

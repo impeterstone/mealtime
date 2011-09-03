@@ -79,7 +79,7 @@
   [_nullView setLoadingTitle:@"Loading" loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
   // iAd
-  _adView = [self newAdBannerViewWithDelegate:self];
+//  _adView = [self newAdBannerViewWithDelegate:self];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -147,8 +147,13 @@
     rpp = @"-1";
   }
   
+#if USE_FIXTURES
+  [[BizDataCenter defaultCenter] getPhotosFromFixturesForBiz:[_place objectForKey:@"biz"]];
+  [[BizDataCenter defaultCenter] getBizFromFixturesForBiz:[_place objectForKey:@"biz"]];
+#else
   [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
   [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
+#endif
   
   // Get ALL reviews for this place
   if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
@@ -176,11 +181,11 @@
 }
 
 #pragma mark - PSDataCenterDelegate
-- (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
+- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
   // Match biz from request to current, make sure this request is still valid
-  if (![[request.userInfo objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) return;
+  if (![[userInfo objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) return;
   
-  if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
+  if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
     [self.items removeAllObjects];
     
     // Put response into items (datasource)
@@ -190,7 +195,7 @@
     }
 
     [self dataSourceDidLoad];
-  } else if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
+  } else if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
     // Address
     if ([response objectForKey:@"address"]) {
       [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
@@ -221,8 +226,8 @@
   }
 }
 
-- (void)dataCenterDidFail:(ASIHTTPRequest *)request withError:(NSError *)error {
-  if ([[request.userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
+- (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
+  if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
     [super dataSourceDidLoad];
   }
 }

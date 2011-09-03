@@ -31,7 +31,7 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reverseGeocode) name:kLocationAcquired object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired) name:kLocationAcquired object:nil];
     
     _sortBy = [@"popularity" retain];
     _distance = 0.5;
@@ -44,6 +44,7 @@
     _isSearchActive = NO;
     
     _cellCache = [[NSMutableArray alloc] init];
+    _scrollCount = 0;
   }
   return self;
 }
@@ -168,7 +169,7 @@
   _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
 
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Sort" withTarget:self action:@selector(sort) width:60 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Saved" withTarget:self action:@selector(saved) width:60 height:30 buttonType:BarButtonTypeSilver]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
   UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
@@ -267,7 +268,7 @@
   _whereField.text = @"Current Location";
 }
 
-- (void)sort {
+- (void)saved {
   [[[[UIAlertView alloc] initWithTitle:@"Oh Noes!" message:@"Broken for now..." delegate:nil cancelButtonTitle:@"Aww" otherButtonTitles:nil] autorelease] show];
   
 //  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
@@ -277,7 +278,7 @@
 }
 
 - (void)filter {
-  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"0.2 miles", @"0.5 miles", @"1.0 miles", @"3.0 miles", @"5.0 miles", nil] autorelease];
+  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Nearby (1/4 mile)", @"Walking (1/2 mile)", @"Biking (1 mile)", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil] autorelease];
   as.tag = kFilterActionSheet;
   as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
   [as showFromToolbar:_toolbar];
@@ -288,21 +289,6 @@
   if (buttonIndex == actionSheet.cancelButtonIndex) return;
   
   switch (actionSheet.tag) {
-    case kSortActionSheet:
-      switch (buttonIndex) {
-        case 0:
-          _sortBy = @"index";
-          break;
-        case 1:
-          _sortBy = @"distance";
-          break;
-        default:
-          _sortBy = @"index";
-          break;
-      }
-      // Sort results
-//      [self sortResults];
-      break;
     case kFilterActionSheet:
       switch (buttonIndex) {
         case 0:
@@ -319,6 +305,12 @@
           break;
         case 4:
           _distance = 5.0;
+          break;
+        case 5:
+          _distance = 10.0;
+          break;
+        case 6:
+          _distance = 20.0;
           break;
         default:
           _distance = 0.5;
@@ -344,7 +336,11 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
+#if USE_FIXTURES
+  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
+#else
   [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:_distance start:_pagingStart rpp:_pagingCount];
+#endif
 }
 
 #pragma mark - State Machine
@@ -392,6 +388,20 @@
 }
 
 #pragma mark - Actions
+- (void)locationAcquired {
+// 10330 N Wolfe Rd Cupertino, CA 95014
+#if USE_FIXTURES
+  _currentLocationLabel.text = @"10330 N Wolfe Rd Cupertino, CA 95014";
+  
+  // fetch Yelp Places
+  _pagingStart = 0; // reset paging
+  self.whereQuery = _currentLocationLabel.text;
+  [self fetchDataSource];
+#else
+  [self reverseGeocode];
+#endif
+}
+
 - (void)reverseGeocode {
   if (_reverseGeocoder && _reverseGeocoder.querying) {
     return;
@@ -447,7 +457,7 @@
 }
 
 #pragma mark - PSDataCenterDelegate
-- (void)dataCenterDidFinish:(ASIHTTPRequest *)request withResponse:(id)response {
+- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
   // Check hasMore
   NSDictionary *paging = [response objectForKey:@"paging"];
   NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
@@ -477,7 +487,7 @@
   [self dataSourceDidLoad];
 }
 
-- (void)dataCenterDidFail:(ASIHTTPRequest *)request withError:(NSError *)error {
+- (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
   [super dataSourceDidLoad];
 }
 
@@ -653,5 +663,34 @@
   
   return YES;
 }
+
+#pragma mark - UIScrollViewDelegate
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+//  [super scrollViewDidScroll:scrollView];
+//  
+//  if (_scrollCount == 0) {
+//    _scrollCount++;
+//    [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
+//  }
+//}
+//
+//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+//  [super scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+//  
+//  if (!decelerate && (_scrollCount == 1)) {
+//    _scrollCount--;
+//    [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
+//  }
+//  
+//}
+//
+//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+//  [super scrollViewDidEndDecelerating:scrollView];
+//  
+//  if (_scrollCount == 1) {
+//    _scrollCount--;
+//    [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
+//  }
+//}
 
 @end

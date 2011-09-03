@@ -238,7 +238,11 @@
       _ribbonView.alpha = 1.0;
     }
   } else {
-    [self fetchYelpCoverPhotoForPlace:place];
+#if USE_FIXTURES
+  [self getCoverPhotoFromFixtureForPlace:place];
+#else
+  [self fetchYelpCoverPhotoForPlace:place];
+#endif
   }
   
   _nameLabel.text = [place objectForKey:@"name"];
@@ -257,6 +261,47 @@
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];
 //  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
+}
+
+- (void)getCoverPhotoFromFixtureForPlace:(NSMutableDictionary *)place {
+  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"photos" ofType:@"html"];
+  NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
+  NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
+  
+  dispatch_async([PSScrapeCenter sharedQueue], ^{
+    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+    [responseString release];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
+      if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+        // randomObject - causes too many reloading of pictures
+        NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
+        [place setObject:src forKey:@"src"];
+        
+        NSArray *srcArray = [response objectForKey:@"photos"]; 
+        [place setObject:srcArray forKey:@"srcArray"];
+        
+        // Only update the image if cell hasn't been reused
+        if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+          _photoView.urlPathArray = [srcArray valueForKey:@"src"];
+          [_photoView loadImageArray];
+          
+          _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
+          _ribbonView.alpha = 1.0;
+        }
+      } else {
+        if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
+          [_photoView unloadImageArray];
+          _photoView.image = _photoView.placeholderImage;
+        }
+        [place setObject:[NSNull null] forKey:@"src"];
+        [place setObject:[NSNull null] forKey:@"srcArray"];
+      }
+      [response release];
+    });
+  });
+  
 }
 
 - (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {

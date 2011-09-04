@@ -10,7 +10,7 @@
 #import "PSTableViewController.h"
 #import "SearchTermDelegate.h"
 
-@interface SearchTermController : PSTableViewController {
+@interface SearchTermController : PSTableViewController <UIGestureRecognizerDelegate> {
   NSString *_container;
   UITapGestureRecognizer *_dismissGesture;
   id <SearchTermDelegate> _delegate;

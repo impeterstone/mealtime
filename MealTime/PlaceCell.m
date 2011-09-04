@@ -26,7 +26,7 @@
     
     // Photo
     _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
-    _photoView.shouldAnimate = YES;
+    _photoView.shouldAnimate = NO;
     _photoView.delegate = self;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     _photoView.placeholderImage = [UIImage imageNamed:@"place_placeholder.png"];
@@ -226,36 +226,21 @@
 {
   NSMutableDictionary *place = (NSMutableDictionary *)object;
   _place = place;
-  id srcArray = [place objectForKey:@"srcArray"];
-  if (srcArray) {
-    if (srcArray == [NSNull null]) {
-      [_photoView unloadImageArray];
-      _photoView.image = _photoView.placeholderImage;
-    } else {
-      _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
-      _photoView.urlPathArray = [srcArray valueForKey:@"src"];
-      [_photoView loadImageArray];
-      _ribbonView.alpha = 1.0;
-    }
+  id coverPhotos = [place objectForKey:@"coverPhotos"];
+  if (coverPhotos && [coverPhotos notNil]) {
+    _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
+    _photoView.urlPathArray = [coverPhotos valueForKey:@"src"];
+    [_photoView loadImageArray];
+    _ribbonView.alpha = 1.0;
   } else {
-#if USE_FIXTURES
-  [self getCoverPhotoFromFixtureForPlace:place];
-#else
-  [self fetchYelpCoverPhotoForPlace:place];
-#endif
+    [_photoView unloadImageArray];
+    _photoView.image = _photoView.placeholderImage;
   }
   
   _nameLabel.text = [place objectForKey:@"name"];
   _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
   _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
-//  NSString *freshOrRotten = nil;
-//  if ([[place objectForKey:@"score"] floatValue] < 50) {
-//    freshOrRotten = @"rotten";
-//  } else {
-//    freshOrRotten = @"fresh";
-//  }
-  
   _scoreLabel.text = [NSString stringWithFormat:@"%@", [place objectForKey:@"score"]];
   
 //  _ribbonLabel.text = nil;

@@ -76,7 +76,7 @@
   self.navigationItem.rightBarButtonItem = _infoButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
-  [_nullView setLoadingTitle:@"Loading" loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"No Photos" emptySubtitle:@"This Place Has No Photos" image:nil];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];

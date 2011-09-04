@@ -15,6 +15,7 @@
 
 - (void)getPlacesFromFixtures;
 - (void)fetchYelpPlacesForQuery:(NSString *)query andAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp;
+- (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places;
 
 - (void)insertPlaceInDatabase:(NSDictionary *)place;
 

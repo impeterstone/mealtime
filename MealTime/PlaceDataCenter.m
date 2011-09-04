@@ -65,6 +65,10 @@
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
       [responseString release];
       
+      // Download cover photos (synchronously in the current dispatch)
+      // Iterate thru places, download photos metadata
+      [self fetchYelpCoverPhotoForPlaces:[response objectForKey:@"places"]];
+      
       // Save to DB
       NSString *requestType = @"places";
       NSString *requestData = [response JSONString];
@@ -86,6 +90,49 @@
 //  [request startAsynchronous];
 }
 
+- (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places {
+  NSMutableArray *placesToRemove = [[NSMutableArray alloc] initWithCapacity:1];
+  
+  for (NSMutableDictionary *place in places) {
+    NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
+    NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+    
+    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+    request.numberOfTimesToRetryOnTimeout = 1;
+    [request setShouldContinueWhenAppEntersBackground:YES];
+    [request setUserAgent:USER_AGENT];
+    
+    [request setCompletionBlock:^{
+      // GCD
+      NSString *responseString = [request.responseString copy];
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+      [responseString release];
+      [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
+      if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+        [place setObject:[response objectForKey:@"photos"] forKey:@"coverPhotos"];
+      } else {
+//        [place setObject:[NSNull null] forKey:@"coverPhotos"];
+        [placesToRemove addObject:place];
+      }
+      [response release];
+    }];
+    
+    [request setFailedBlock:^{
+//      [place setObject:[NSNull null] forKey:@"coverPhotos"];
+      [placesToRemove addObject:place];
+    }];
+    
+    [request startSynchronous];
+  }
+  
+  // Remove all places with no photos
+  [places removeObjectsInArray:placesToRemove];
+  [placesToRemove removeAllObjects];
+  [placesToRemove release];
+}
+
+
+#pragma mark - Database
 - (void)insertPlaceInDatabase:(NSDictionary *)place {
   [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT OR REPLACE INTO places (biz, name, rating, phone, numreviews, price, category, distance, city, score, address, coordinates, hours, numphotos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT address FROM places WHERE biz = ?), (SELECT coordinates FROM places WHERE biz = ?), (SELECT hours FROM places WHERE biz = ?), (SELECT numphotos FROM places WHERE biz = ?))", [place objectForKey:@"biz"], [place objectForKey:@"name"], [place objectForKey:@"rating"], [place objectForKey:@"phone"], [place objectForKey:@"numreviews"], [place objectForKey:@"price"], [place objectForKey:@"category"], [place objectForKey:@"distance"], [place objectForKey:@"city"], [place objectForKey:@"score"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], [place objectForKey:@"biz"], nil];
 }

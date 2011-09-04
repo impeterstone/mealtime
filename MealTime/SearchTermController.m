@@ -46,13 +46,13 @@
   // Nullview
   [_nullView setLoadingTitle:@"Searching" loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
-  [self setupTableViewWithFrame:CGRectMake(0, 37, self.view.width, self.view.height - 37) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleSingleLine];
+  [self setupTableViewWithFrame:CGRectMake(0, 37, self.view.width, self.view.height - 37) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   self.tableView.scrollsToTop = NO;
   
   _dismissGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancelSearch)];
-  [_nullView addGestureRecognizer:_dismissGesture];
-  _dismissGesture.enabled = YES;
+  _dismissGesture.delegate = self;
+  [_tableView addGestureRecognizer:_dismissGesture];
   
   // Populate datasource
   [self loadDataSource];
@@ -85,6 +85,14 @@
   return NO;
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+  if ([touch.view isEqual:gestureRecognizer.view]) {
+    return YES;
+  } else {
+    return NO;
+  }
+}
+
 #pragma mark - Setup
 - (void)setupTableFooter {
   UIView *footerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)] autorelease];
@@ -92,7 +100,7 @@
 }
 
 - (void)cancelSearch {
-  if (self.delegate && [self.delegate respondsToSelector:@selector(cancelSearch)]) {
+  if (self.delegate && [self.delegate respondsToSelector:@selector(searchCancelled)]) {
     [self.delegate searchCancelled];
   }
 }
@@ -101,11 +109,6 @@
 - (void)searchWithTerm:(NSString *)term {
   NSArray *filteredArray = [[PSSearchCenter defaultCenter] searchResultsForTerm:term inContainer:_container];
 
-  if ([filteredArray count] > 0) {
-    _dismissGesture.enabled = NO;
-  } else {
-    _dismissGesture.enabled = YES;
-  }
   [self.items replaceObjectAtIndex:1 withObject:filteredArray];
   [self dataSourceDidLoad];
 }
@@ -133,7 +136,7 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
   if (tableView.style == UITableViewStylePlain) {
     UIView *backgroundView = [[UIView alloc] initWithFrame:cell.bounds];
-    backgroundView.backgroundColor = LIGHT_GRAY;
+    backgroundView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"row_gradient.png"]];
     cell.backgroundView = backgroundView;
     
     UIView *selectedBackgroundView = [[UIView alloc] initWithFrame:cell.bounds];

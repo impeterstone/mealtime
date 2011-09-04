@@ -151,7 +151,7 @@
   self.view.backgroundColor = [UIColor blackColor];
 //  _navTitleLabel.text = @"MealTime";
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Nearby Restaurants" emptyTitle:@"Fail" emptySubtitle:@"No Restaurants Found" image:[UIImage imageNamed:@"nullview_photos.png"]];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Oh Noes" emptySubtitle:@"No Restaurants Found" image:[UIImage imageNamed:@"nullview_photos.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -373,13 +373,13 @@
   if (_pagingStart == 0) {
     [self.tableView setContentOffset:CGPointMake(0, 0)];
   }
-  if ([self dataIsAvailable]) {
-    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
-  }
+//  if ([self dataIsAvailable]) {
+//    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
+//  }
   [self.tableView reloadData];
-  if ([self dataIsAvailable]) {
-    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
-  }
+//  if ([self dataIsAvailable]) {
+//    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
+//  }
   if (_pagingStart == 0) {
     [super dataSourceDidLoad];
   } else {

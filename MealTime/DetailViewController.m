@@ -255,16 +255,16 @@
 //  }
   if ([[_place objectForKey:@"hours"] notNil]) {
     _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@", "];
-    CGSize desiredSize = [UILabel sizeForText:_hoursLabel.text width:INT_MAX font:_hoursLabel.font numberOfLines:_hoursLabel.numberOfLines lineBreakMode:_hoursLabel.lineBreakMode];
-    _hoursLabel.width = desiredSize.width;
-    _hoursLabel.height = desiredSize.height;
-    _hoursLabel.left = 10;
-    _hoursLabel.top = 5;
-    
-    _captionView.contentSize = CGSizeMake(desiredSize.width + 20, _captionView.height);
   } else {
-    _captionBg.alpha = 0.0;
+    _hoursLabel.text = @"No hours listed";
   }
+  
+  CGSize desiredSize = [UILabel sizeForText:_hoursLabel.text width:INT_MAX font:_hoursLabel.font numberOfLines:_hoursLabel.numberOfLines lineBreakMode:_hoursLabel.lineBreakMode];
+  _hoursLabel.width = desiredSize.width;
+  _hoursLabel.height = _captionView.height;
+  _hoursLabel.left = 10;
+  
+  _captionView.contentSize = CGSizeMake(desiredSize.width + 20, _captionView.height);
 }
 
 - (void)toggleInfo {

@@ -62,8 +62,8 @@
   if ([_place objectForKey:@"latitude"] && [_place objectForKey:@"longitude"]) {
     _mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
     _mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
-    _mapRegion.span.latitudeDelta = 0.003;
-    _mapRegion.span.longitudeDelta = 0.003;
+    _mapRegion.span.latitudeDelta = 0.006;
+    _mapRegion.span.longitudeDelta = 0.006;
     [_mapView setRegion:_mapRegion animated:NO];
   }
   
@@ -87,7 +87,7 @@
     placePinView.pinColor = MKPinAnnotationColorRed;
     placePinView.animatesDrop = YES;
     placePinView.canShowCallout = YES;
-    placePinView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+//    placePinView.rightCalloutAccessoryView = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
   } else {
     placePinView.annotation = annotation;
   }

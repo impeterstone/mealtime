@@ -13,7 +13,7 @@
 
 @class InfoViewController;
 
-@interface DetailViewController : PSTableViewController <MKMapViewDelegate, ProductCellDelegate> {
+@interface DetailViewController : PSTableViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, ProductCellDelegate> {
   UIToolbar *_toolbar;
   NSMutableDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
@@ -23,6 +23,10 @@
   MKMapView *_mapView;
   InfoViewController *_ivc;
   UIBarButtonItem *_infoButton;
+  UIImageView *_captionBg;
+  UIScrollView *_captionView;
+  UILabel *_addressLabel;
+  UILabel *_hoursLabel;
   
   NSInteger _photoCount;
 }

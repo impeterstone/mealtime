@@ -10,10 +10,21 @@
 #import "InfoViewController.h"
 #import "BizDataCenter.h"
 #import "ZoomViewController.h"
+#import "MapViewController.h"
+#import "WebViewController.h"
+#import "PSLocationCenter.h"
+#import "PlaceAnnotation.h"
 
 @interface DetailViewController (Private)
 
+- (void)setupMap;
 - (void)setupToolbar;
+- (void)loadDetails;
+- (void)loadMap;
+- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer;
+- (void)call;
+- (void)reviews;
+- (void)directions;
 
 @end
 
@@ -36,6 +47,10 @@
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_infoButton);
+  RELEASE_SAFELY(_captionBg);
+  RELEASE_SAFELY(_captionView);
+  RELEASE_SAFELY(_addressLabel);
+  RELEASE_SAFELY(_hoursLabel);
 }
 
 - (void)dealloc
@@ -47,6 +62,10 @@
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_infoButton);
+  RELEASE_SAFELY(_captionBg);
+  RELEASE_SAFELY(_captionView);
+  RELEASE_SAFELY(_addressLabel);
+  RELEASE_SAFELY(_hoursLabel);
   [super dealloc];
 }
 
@@ -96,11 +115,79 @@
   
   _tableView.rowHeight = self.tableView.width;
   
+  // Map
+  [self setupMap];
+  
   // Toolbar
   [self setupToolbar];
   
   // Populate datasource
   [self loadDataSource];
+}
+
+- (void)setupMap {
+  // Map
+  CGFloat mapHeight = 0.0;
+  if (isDeviceIPad()) {
+    mapHeight = 400.0;
+  } else {
+    mapHeight = 200.0;
+  }
+  _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
+  _mapView.delegate = self;
+  _mapView.zoomEnabled = NO;
+  _mapView.scrollEnabled = NO;
+  
+  UITapGestureRecognizer *mapTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMap:)] autorelease];
+  mapTap.numberOfTapsRequired = 1;
+  mapTap.delegate = self;
+  [_mapView addGestureRecognizer:mapTap];
+  
+  // Table Header View
+  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)] autorelease];
+  [tableHeaderView addSubview:_mapView];
+  
+  // Caption BG
+  _captionBg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]];
+  _captionBg.frame = CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30);
+  _captionBg.autoresizingMask = ~UIViewAutoresizingNone;
+  [tableHeaderView addSubview:_captionBg];
+  
+  // Caption
+  _captionView = [[UIScrollView alloc] initWithFrame:CGRectZero];
+  _captionView.showsVerticalScrollIndicator = NO;
+  _captionView.showsHorizontalScrollIndicator = NO;
+  _captionView.frame = CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30);
+  _captionView.backgroundColor = [UIColor clearColor];
+  
+  // Hours
+  _hoursLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+  _hoursLabel.numberOfLines = 1;
+  _hoursLabel.backgroundColor = [UIColor clearColor];
+  _hoursLabel.textAlignment = UITextAlignmentLeft;
+  _hoursLabel.font = [PSStyleSheet fontForStyle:@"hoursLabel"];
+  _hoursLabel.textColor = [PSStyleSheet textColorForStyle:@"hoursLabel"];
+  _hoursLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"hoursLabel"];
+  _hoursLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"hoursLabel"];
+  _hoursLabel.frame = _captionView.bounds;
+  
+//  // Address Label
+//  _addressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+//  _addressLabel.numberOfLines = 1;
+//  _addressLabel.backgroundColor = [UIColor clearColor];
+//  _addressLabel.textAlignment = UITextAlignmentCenter;
+//  _addressLabel.font = [PSStyleSheet fontForStyle:@"addressLabel"];
+//  _addressLabel.textColor = [PSStyleSheet textColorForStyle:@"addressLabel"];
+//  _addressLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"addressLabel"];
+//  _addressLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"addressLabel"];
+//  _addressLabel.frame = _captionView.bounds;
+//  [_captionView addSubview:_addressLabel];
+  
+  [_captionView addSubview:_hoursLabel];
+  [tableHeaderView addSubview:_captionView];  
+  
+  _tableView.tableHeaderView = tableHeaderView;
+  _tableView.tableHeaderView.alpha = 0.0;
 }
 
 - (void)setupToolbar {
@@ -117,37 +204,74 @@
   [self setupFooterWithView:_toolbar];
 }
 
+#pragma mark - Actions
+- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
+  MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
+  [self.navigationController pushViewController:mvc animated:YES];
+  [mvc release];
+}
+
+- (void)call {  
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertCall;
+  [av show];
+}
+
+- (void)reviews {
+  WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
+  [self.navigationController pushViewController:wvc animated:YES];
+  [wvc release];
+}
+
+- (void)directions {
+  CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
+  NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+  NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
+}
+
+#pragma mark - Load Data
+- (void)loadMap {
+  // zoom to place
+  if ([_place objectForKey:@"latitude"] && [_place objectForKey:@"longitude"]) {
+    _mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
+    _mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
+    _mapRegion.span.latitudeDelta = 0.006;
+    _mapRegion.span.longitudeDelta = 0.006;
+    [_mapView setRegion:_mapRegion animated:NO];
+  }
+  
+  NSArray *oldAnnotations = [_mapView annotations];
+  [_mapView removeAnnotations:oldAnnotations];
+  
+  PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
+  [_mapView addAnnotation:placeAnnotation];
+  [placeAnnotation release];
+}
+
+- (void)loadDetails {
+//  if ([[_place objectForKey:@"address"] notNil]) {
+//    _addressLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+//  }
+  if ([[_place objectForKey:@"hours"] notNil]) {
+    _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@", "];
+    CGSize desiredSize = [UILabel sizeForText:_hoursLabel.text width:INT_MAX font:_hoursLabel.font numberOfLines:_hoursLabel.numberOfLines lineBreakMode:_hoursLabel.lineBreakMode];
+    _hoursLabel.width = desiredSize.width;
+    _hoursLabel.height = desiredSize.height;
+    _hoursLabel.left = 10;
+    _hoursLabel.top = 5;
+    
+    _captionView.contentSize = CGSizeMake(desiredSize.width + 20, _captionView.height);
+  } else {
+    _captionBg.alpha = 0.0;
+  }
+}
+
 - (void)toggleInfo {
   // Info VC
   _ivc = [[InfoViewController alloc] initWithPlace:_place];
   [self.navigationController pushViewController:_ivc animated:YES];
   [_ivc release];
-  
-//  UIView *currentView = nil;
-//  UIView *newView = nil;
-//  UIViewAnimationOptions options;
-//  if (_isInfoShowing) {
-//    _isInfoShowing = NO;
-//    currentView = _ivc.view;
-//    newView = _tableView;
-//    _ivc.tableView.scrollsToTop = NO;
-//    self.tableView.scrollsToTop = YES;
-//    options = UIViewAnimationOptionTransitionFlipFromLeft;
-//  } else {
-//    _isInfoShowing = YES;
-//    currentView = _tableView;
-//    newView = _ivc.view;
-//    _ivc.tableView.scrollsToTop = YES;
-//    self.tableView.scrollsToTop = NO;
-//    options = UIViewAnimationOptionTransitionFlipFromRight;
-//  }
-//  
-//  [UIView transitionFromView:currentView
-//                      toView:newView
-//                    duration:0.6
-//                     options:options
-//                  completion:^(BOOL finished) {
-//                  }];
 }
 
 #pragma mark - State Machine
@@ -196,6 +320,10 @@
   if ([self dataIsAvailable]) {
     [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
   }
+  
+  [self loadDetails];
+  [self loadMap];
+  _tableView.tableHeaderView.alpha = 1.0; // Show header now
   [super dataSourceDidLoad];
 }
 
@@ -311,6 +439,38 @@
   [self presentModalViewController:zvc animated:YES];
   zvc.imageView.image = cell.photoView.image;
   [zvc release];
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+//  if ([touch.view isKindOfClass:[MKPinAnnotationView class]]) {
+//    return NO;
+//  } else {
+//    return YES;
+//  }
+//}
+
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
+  static NSString *placeAnnotationIdentifier = @"placeAnnotationIdentifier";
+  
+  MKPinAnnotationView *placePinView = (MKPinAnnotationView *)
+  [mapView dequeueReusableAnnotationViewWithIdentifier:placeAnnotationIdentifier];
+  if (!placePinView) {
+    placePinView = [[[MKPinAnnotationView alloc]
+                     initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
+    placePinView.pinColor = MKPinAnnotationColorRed;
+    placePinView.animatesDrop = YES;
+    placePinView.canShowCallout = YES;
+  } else {
+    placePinView.annotation = annotation;
+  }
+  
+  return  placePinView;
+}
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+  [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
 }
 
 #pragma mark - ProductCellDelegate

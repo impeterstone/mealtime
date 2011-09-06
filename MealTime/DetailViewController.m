@@ -11,6 +11,12 @@
 #import "BizDataCenter.h"
 #import "ZoomViewController.h"
 
+@interface DetailViewController (Private)
+
+- (void)setupToolbar;
+
+@end
+
 @implementation DetailViewController
 
 - (id)initWithPlace:(NSDictionary *)place {
@@ -27,6 +33,8 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  RELEASE_SAFELY(_mapView);
+  RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_infoButton);
 }
 
@@ -36,6 +44,8 @@
   RELEASE_SAFELY(_place);
   RELEASE_SAFELY(_imageSizeCache);
   
+  RELEASE_SAFELY(_mapView);
+  RELEASE_SAFELY(_toolbar);
   RELEASE_SAFELY(_infoButton);
   [super dealloc];
 }
@@ -86,8 +96,25 @@
   
   _tableView.rowHeight = self.tableView.width;
   
+  // Toolbar
+  [self setupToolbar];
+  
   // Populate datasource
   [self loadDataSource];
+}
+
+- (void)setupToolbar {
+  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Reviews" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeSilver]];
+  
+  [_toolbar setItems:toolbarItems];
+  [self setupFooterWithView:_toolbar];
 }
 
 - (void)toggleInfo {
@@ -135,24 +162,16 @@
   // No sense of order from server right now
 //  [self loadPhotosFromDatabase];
   
-  // Load from server
-  NSString *numPhotos = [_place objectForKey:@"numphotos"];
-  NSString *start = @"0";
-  
-  // Results per page
-  NSString *rpp = nil;
-  if (numPhotos && [numPhotos integerValue] <= 8) {
-    rpp = numPhotos;
-  } else {
-    rpp = @"-1";
-  }
   
 #if USE_FIXTURES
   [[BizDataCenter defaultCenter] getPhotosFromFixturesForBiz:[_place objectForKey:@"biz"]];
   [[BizDataCenter defaultCenter] getBizFromFixturesForBiz:[_place objectForKey:@"biz"]];
 #else
-  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
-  [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
+  // Combined call
+  [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
+  
+//  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
+//  [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
 #endif
   
   // Get ALL reviews for this place
@@ -182,48 +201,16 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
-  // Match biz from request to current, make sure this request is still valid
-  if (![[userInfo objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) return;
+  // Match place from request to current, make sure this request is still valid
+  if (![[userInfo objectForKey:@"place"] isEqual:_place]) return;
   
-  if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
-    [self.items removeAllObjects];
-    
-    // Put response into items (datasource)
-    NSArray *photos = [response objectForKey:@"photos"];
-    if ([photos count] > 0) {
-      [self.items addObject:photos];
-    }
-
-    [self dataSourceDidLoad];
-  } else if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"biz"]) {
-    // Address
-    if ([response objectForKey:@"address"]) {
-      [_place setObject:[response objectForKey:@"address"] forKey:@"address"];
-    }
-    if ([response objectForKey:@"latitude"]) {
-      [_place setObject:[response objectForKey:@"latitude"] forKey:@"latitude"];
-    }
-    if ([response objectForKey:@"longitude"]) {
-      [_place setObject:[response objectForKey:@"longitude"] forKey:@"longitude"];
-    }
-    // Update Hours
-    if ([response objectForKey:@"hours"]) {
-      [_place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
-    }
-    // Snippets
-    if ([response objectForKey:@"snippets"]) {
-      [_place setObject:[response objectForKey:@"snippets"] forKey:@"snippets"];
-    }
-    
-    _infoButton.enabled = YES;
-
-    // Update Reviews
-//    if ([response objectForKey:@"reviews"]) {
-//      [_place setObject:[response objectForKey:@"reviews"] forKey:@"reviews"];
-//    }
-    
-    // Load Meta
+  [self.items removeAllObjects];
+  NSArray *photos = [_place objectForKey:@"photos"];
+  if ([photos count] > 0) {
+    [self.items addObject:photos];
   }
+  
+  [self dataSourceDidLoad];
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {

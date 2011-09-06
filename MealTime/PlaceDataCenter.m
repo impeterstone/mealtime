@@ -93,6 +93,9 @@
 - (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places {
   NSMutableArray *placesToRemove = [[NSMutableArray alloc] initWithCapacity:1];
   
+  ASINetworkQueue *coverPhotoQueue = [[ASINetworkQueue alloc] init];
+  coverPhotoQueue.maxConcurrentOperationCount = 10;
+  
   for (NSMutableDictionary *place in places) {
     NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
     NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
@@ -115,15 +118,21 @@
         [placesToRemove addObject:place];
       }
       [response release];
+      
+      NSLog(@"cover completed");
     }];
     
     [request setFailedBlock:^{
 //      [place setObject:[NSNull null] forKey:@"coverPhotos"];
       [placesToRemove addObject:place];
     }];
-    
-    [request startSynchronous];
+
+    [coverPhotoQueue addOperation:request];
+    //    [request startSynchronous];
   }
+  
+  [coverPhotoQueue go];
+  [coverPhotoQueue waitUntilAllOperationsAreFinished];
   
   // Remove all places with no photos
   [places removeObjectsInArray:placesToRemove];

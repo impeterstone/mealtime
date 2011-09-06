@@ -15,6 +15,8 @@
 #import "PSSearchCenter.h"
 
 @interface RootViewController (Private)
+// View Setup
+- (void)setupToolbar;
 
 - (void)editingDidBegin:(UITextField *)textField;
 - (void)editingDidEnd:(UITextField *)textField;
@@ -165,35 +167,8 @@
     _tableView.rowHeight = 160.0;
   }
   
-  // Toolbar
-  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
-  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Saved" withTarget:self action:@selector(saved) width:60 height:30 buttonType:BarButtonTypeSilver]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  
-  UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
-  titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-  _currentLocationLabel = [[UILabel alloc] initWithFrame:titleView.bounds];
-  _currentLocationLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-  _currentLocationLabel.textAlignment = UITextAlignmentCenter;
-  _currentLocationLabel.numberOfLines = 3;
-  _currentLocationLabel.font = [PSStyleSheet fontForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.textColor = [PSStyleSheet textColorForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.shadowOffset = CGSizeMake(0, 1);
-  _currentLocationLabel.backgroundColor = [UIColor clearColor];
-  [titleView addSubview:_currentLocationLabel];
-  UIBarButtonItem *currentLocationItem = [[[UIBarButtonItem alloc] initWithCustomView:titleView] autorelease];
-  [toolbarItems addObject:currentLocationItem];
-  
-  _filterButton = [UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"%.1f mi", _distance] withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver];
-  
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:_filterButton];
-
-  [_toolbar setItems:toolbarItems];
-  [self setupFooterWithView:_toolbar];
+  // Setup Toolbar
+  [self setupToolbar];
   
   // Setup Search
   CGFloat searchWidth = [[UIApplication sharedApplication] keyWindow].width - 10;
@@ -240,6 +215,37 @@
   
   // Get initial location
   [self loadDataSource];
+}
+
+- (void)setupToolbar {
+  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Saved" withTarget:self action:@selector(saved) width:60 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  
+  UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
+  titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+  _currentLocationLabel = [[UILabel alloc] initWithFrame:titleView.bounds];
+  _currentLocationLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+  _currentLocationLabel.textAlignment = UITextAlignmentCenter;
+  _currentLocationLabel.numberOfLines = 3;
+  _currentLocationLabel.font = [PSStyleSheet fontForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.textColor = [PSStyleSheet textColorForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"currentLocationLabel"];
+  _currentLocationLabel.shadowOffset = CGSizeMake(0, 1);
+  _currentLocationLabel.backgroundColor = [UIColor clearColor];
+  [titleView addSubview:_currentLocationLabel];
+  UIBarButtonItem *currentLocationItem = [[[UIBarButtonItem alloc] initWithCustomView:titleView] autorelease];
+  [toolbarItems addObject:currentLocationItem];
+  
+  _filterButton = [UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"%.1f mi", _distance] withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver];
+  
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:_filterButton];
+  
+  [_toolbar setItems:toolbarItems];
+  [self setupFooterWithView:_toolbar];
 }
 
 - (void)setupSearchTermController {

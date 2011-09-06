@@ -7,16 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 #import "ProductCell.h"
 
 @class InfoViewController;
 
-@interface DetailViewController : PSTableViewController <ProductCellDelegate> {
+@interface DetailViewController : PSTableViewController <MKMapViewDelegate, ProductCellDelegate> {
+  UIToolbar *_toolbar;
   NSMutableDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
+  MKCoordinateRegion _mapRegion;
   
   // Views
+  MKMapView *_mapView;
   InfoViewController *_ivc;
   UIBarButtonItem *_infoButton;
   

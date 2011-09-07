@@ -37,6 +37,7 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
+    _isSavedPlace = NO;
     NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithBiz:[place objectForKey:@"biz"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
@@ -114,8 +115,17 @@
   
   // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
-  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_star.png"] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
+  
+  // Favorite Star
+  NSString *iconStar = nil;
+  if (_isSavedPlace) {
+    iconStar = @"icon_star_selected.png";
+  } else {
+    iconStar = @"icon_star.png";
+  }
+  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
   _starButton.enabled = YES;
+  
   self.navigationItem.rightBarButtonItem = _starButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
@@ -303,8 +313,19 @@
 }
 
 - (void)toggleStar {
-  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:@"icon_star_selected.png"] forState:UIControlStateNormal];
-  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:@"icon_star_selected.png"] forState:UIControlStateHighlighted];
+  NSString *iconStar = nil;
+  if (_isSavedPlace) {
+    _isSavedPlace = NO;
+    iconStar = @"icon_star.png";
+  } else {
+    _isSavedPlace = YES;
+    iconStar = @"icon_star_selected.png";
+  }
+  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateNormal];
+  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateHighlighted];
+  
+  NSNumber *isSavedPlace = [NSNumber numberWithBool:_isSavedPlace];
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET saved = ? WHERE biz = ?", isSavedPlace, [_place objectForKey:@"biz"], nil];
 }
 
 - (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz {
@@ -312,8 +333,10 @@
   
   if ([res count] > 0) {
     NSData *placeData = [[[res rows] lastObject] dataForColumn:@"data"];
+    _isSavedPlace = (BOOL)[[[res rows] lastObject] boolForColumn:@"saved"];
     return [NSKeyedUnarchiver unarchiveObjectWithData:placeData];
   } else {
+    _isSavedPlace = NO;
     return nil;
   }
 }

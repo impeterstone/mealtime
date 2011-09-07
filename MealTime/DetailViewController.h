@@ -32,6 +32,7 @@
   NSInteger _photoCount;
   
   BOOL _isCachedPlace;
+  BOOL _isSavedPlace;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;

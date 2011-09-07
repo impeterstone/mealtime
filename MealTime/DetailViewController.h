@@ -22,16 +22,16 @@
   // Views
   MKMapView *_mapView;
   InfoViewController *_ivc;
-  UIBarButtonItem *_infoButton;
-  UIImageView *_captionBg;
-  UIScrollView *_captionView;
+  UIBarButtonItem *_starButton;
+  UIView *_addressView;
   UILabel *_addressLabel;
+  UIView *_hoursView;
+  UIScrollView *_hoursScrollView;
   UILabel *_hoursLabel;
   
   NSInteger _photoCount;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;
-- (void)toggleInfo;
 
 @end

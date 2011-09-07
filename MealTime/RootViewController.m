@@ -38,8 +38,8 @@
     _sortBy = [@"popularity" retain];
     _distance = 0.5;
     _pagingStart = 0;
-    _pagingCount = 25;
-    _pagingTotal = 25;
+    _pagingCount = 5;
+    _pagingTotal = 5;
     _whatQuery = nil;
     _whereQuery = nil;
     

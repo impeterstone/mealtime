@@ -7,7 +7,6 @@
 //
 
 #import "DetailViewController.h"
-#import "InfoViewController.h"
 #import "BizDataCenter.h"
 #import "ZoomViewController.h"
 #import "MapViewController.h"
@@ -25,6 +24,7 @@
 - (void)call;
 - (void)reviews;
 - (void)directions;
+- (void)toggleStar;
 
 @end
 
@@ -46,10 +46,11 @@
   [super viewDidUnload];
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_infoButton);
-  RELEASE_SAFELY(_captionBg);
-  RELEASE_SAFELY(_captionView);
+  RELEASE_SAFELY(_starButton);
+  RELEASE_SAFELY(_hoursView);
+  RELEASE_SAFELY(_addressView);
   RELEASE_SAFELY(_addressLabel);
+  RELEASE_SAFELY(_hoursScrollView);
   RELEASE_SAFELY(_hoursLabel);
 }
 
@@ -61,10 +62,11 @@
   
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_infoButton);
-  RELEASE_SAFELY(_captionBg);
-  RELEASE_SAFELY(_captionView);
+  RELEASE_SAFELY(_starButton);
+  RELEASE_SAFELY(_hoursView);
+  RELEASE_SAFELY(_addressView);
   RELEASE_SAFELY(_addressLabel);
+  RELEASE_SAFELY(_hoursScrollView);
   RELEASE_SAFELY(_hoursLabel);
   [super dealloc];
 }
@@ -100,9 +102,9 @@
   
   // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
-  _infoButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_info.png"] withTarget:self action:@selector(toggleInfo) width:40 height:30 buttonType:BarButtonTypeBlue] retain];
-  _infoButton.enabled = NO;
-  self.navigationItem.rightBarButtonItem = _infoButton;
+  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_star.png"] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
+  _starButton.enabled = YES;
+  self.navigationItem.rightBarButtonItem = _starButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"No Photos" emptySubtitle:@"This Place Has No Photos" image:nil];
@@ -125,66 +127,79 @@
   [self loadDataSource];
 }
 
-- (void)setupMap {
+- (void)setupMap {  
   // Map
   CGFloat mapHeight = 0.0;
   if (isDeviceIPad()) {
-    mapHeight = 400.0;
+    mapHeight = 360.0;
   } else {
-    mapHeight = 200.0;
+    mapHeight = 180.0;
   }
+  
+  // Table Header View
+  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)] autorelease];
+
+  // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
   _mapView.delegate = self;
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
+  [_mapView addGradientLayer];
+  [tableHeaderView addSubview:_mapView];
   
+  // Map Gesture
   UITapGestureRecognizer *mapTap = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showMap:)] autorelease];
   mapTap.numberOfTapsRequired = 1;
   mapTap.delegate = self;
   [_mapView addGestureRecognizer:mapTap];
   
-  // Table Header View
-  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)] autorelease];
-  [tableHeaderView addSubview:_mapView];
+  // Address
+  _addressView = [[UIView alloc] initWithFrame:CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30)];
+  _addressView.backgroundColor = [UIColor clearColor];
+//  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+//  abg.frame = _addressView.bounds;
+//  abg.autoresizingMask = ~UIViewAutoresizingNone;
+//  [_addressView addSubview:abg];
+  [tableHeaderView addSubview:_addressView];
   
-  // Caption BG
-  _captionBg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]];
-  _captionBg.frame = CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30);
-  _captionBg.autoresizingMask = ~UIViewAutoresizingNone;
-  [tableHeaderView addSubview:_captionBg];
-  
-  // Caption
-  _captionView = [[UIScrollView alloc] initWithFrame:CGRectZero];
-  _captionView.showsVerticalScrollIndicator = NO;
-  _captionView.showsHorizontalScrollIndicator = NO;
-  _captionView.frame = CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30);
-  _captionView.backgroundColor = [UIColor clearColor];
+  // Address Label
+  _addressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+  _addressLabel.numberOfLines = 1;
+  _addressLabel.backgroundColor = [UIColor clearColor];
+  _addressLabel.textAlignment = UITextAlignmentCenter;
+  _addressLabel.font = [PSStyleSheet fontForStyle:@"addressLabel"];
+  _addressLabel.textColor = [PSStyleSheet textColorForStyle:@"addressLabel"];
+  _addressLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"addressLabel"];
+  _addressLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"addressLabel"];
+  _addressLabel.frame = _addressView.bounds;
+  [_addressView addSubview:_addressLabel];
   
   // Hours
+  _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
+  _hoursView.frame = CGRectMake(0, 0, tableHeaderView.width, 30);
+  _hoursView.backgroundColor = [UIColor clearColor];
+  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+  hbg.frame = _hoursView.bounds;
+  hbg.autoresizingMask = ~UIViewAutoresizingNone;
+  [_hoursView addSubview:hbg];
+  [tableHeaderView addSubview:_hoursView];
+  
+  // Hours
+  _hoursScrollView = [[UIScrollView alloc] initWithFrame:_hoursView.bounds];
+  _hoursScrollView.showsVerticalScrollIndicator = NO;
+  _hoursScrollView.showsHorizontalScrollIndicator = NO;
+  [_hoursView addSubview:_hoursScrollView];
+  
   _hoursLabel = [[UILabel alloc] initWithFrame:CGRectZero];
   _hoursLabel.numberOfLines = 1;
   _hoursLabel.backgroundColor = [UIColor clearColor];
-  _hoursLabel.textAlignment = UITextAlignmentLeft;
+  _hoursLabel.textAlignment = UITextAlignmentCenter;
   _hoursLabel.font = [PSStyleSheet fontForStyle:@"hoursLabel"];
   _hoursLabel.textColor = [PSStyleSheet textColorForStyle:@"hoursLabel"];
   _hoursLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"hoursLabel"];
   _hoursLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"hoursLabel"];
-  _hoursLabel.frame = _captionView.bounds;
-  
-//  // Address Label
-//  _addressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-//  _addressLabel.numberOfLines = 1;
-//  _addressLabel.backgroundColor = [UIColor clearColor];
-//  _addressLabel.textAlignment = UITextAlignmentCenter;
-//  _addressLabel.font = [PSStyleSheet fontForStyle:@"addressLabel"];
-//  _addressLabel.textColor = [PSStyleSheet textColorForStyle:@"addressLabel"];
-//  _addressLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"addressLabel"];
-//  _addressLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"addressLabel"];
-//  _addressLabel.frame = _captionView.bounds;
-//  [_captionView addSubview:_addressLabel];
-  
-  [_captionView addSubview:_hoursLabel];
-  [tableHeaderView addSubview:_captionView];  
+  _hoursLabel.frame = _hoursView.bounds;
+  [_hoursScrollView addSubview:_hoursLabel];
   
   _tableView.tableHeaderView = tableHeaderView;
   _tableView.tableHeaderView.alpha = 0.0;
@@ -218,9 +233,14 @@
 }
 
 - (void)reviews {
-  WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
-  [self.navigationController pushViewController:wvc animated:YES];
-  [wvc release];
+  if (isYelpInstalled()) {
+  // yelp:///biz/the-sentinel-san-francisco
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
+  } else {
+    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
+    [self.navigationController pushViewController:wvc animated:YES];
+    [wvc release];
+  }
 }
 
 - (void)directions {
@@ -250,9 +270,12 @@
 }
 
 - (void)loadDetails {
-//  if ([[_place objectForKey:@"address"] notNil]) {
-//    _addressLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
-//  }
+  if ([[_place objectForKey:@"address"] notNil]) {
+    _addressLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+  } else {
+    _addressLabel.text = @"No address listed";
+  }
+  
   if ([[_place objectForKey:@"hours"] notNil]) {
     _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@", "];
   } else {
@@ -261,17 +284,15 @@
   
   CGSize desiredSize = [UILabel sizeForText:_hoursLabel.text width:INT_MAX font:_hoursLabel.font numberOfLines:_hoursLabel.numberOfLines lineBreakMode:_hoursLabel.lineBreakMode];
   _hoursLabel.width = desiredSize.width;
-  _hoursLabel.height = _captionView.height;
+  _hoursLabel.height = _hoursView.height;
   _hoursLabel.left = 10;
   
-  _captionView.contentSize = CGSizeMake(desiredSize.width + 20, _captionView.height);
+  _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, _hoursScrollView.height);
 }
 
-- (void)toggleInfo {
-  // Info VC
-  _ivc = [[InfoViewController alloc] initWithPlace:_place];
-  [self.navigationController pushViewController:_ivc animated:YES];
-  [_ivc release];
+- (void)toggleStar {
+  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:@"icon_star_selected.png"] forState:UIControlStateNormal];
+  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:@"icon_star_selected.png"] forState:UIControlStateHighlighted];
 }
 
 #pragma mark - State Machine
@@ -461,12 +482,12 @@
                      initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
     placePinView.pinColor = MKPinAnnotationColorRed;
     placePinView.animatesDrop = YES;
-    placePinView.canShowCallout = YES;
+    placePinView.canShowCallout = NO;
   } else {
     placePinView.annotation = annotation;
   }
   
-  return  placePinView;
+  return placePinView;
 }
 
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {

@@ -212,6 +212,7 @@
   _hoursScrollView = [[UIScrollView alloc] initWithFrame:_hoursView.bounds];
   _hoursScrollView.showsVerticalScrollIndicator = NO;
   _hoursScrollView.showsHorizontalScrollIndicator = NO;
+  _hoursScrollView.scrollsToTop = NO;
   [_hoursView addSubview:_hoursScrollView];
   
   _hoursLabel = [[UILabel alloc] initWithFrame:CGRectZero];

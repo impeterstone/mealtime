@@ -124,7 +124,7 @@
     iconStar = @"icon_star.png";
   }
   _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
-  _starButton.enabled = YES;
+  _starButton.enabled = NO;
   
   self.navigationItem.rightBarButtonItem = _starButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
@@ -153,9 +153,9 @@
   // Map
   CGFloat mapHeight = 0.0;
   if (isDeviceIPad()) {
-    mapHeight = 360.0;
+    mapHeight = 400.0;
   } else {
-    mapHeight = 180.0;
+    mapHeight = 200.0;
   }
   
   // Table Header View
@@ -166,7 +166,9 @@
   _mapView.delegate = self;
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
-  [_mapView addGradientLayer];
+  
+  [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.2) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.01], [NSNumber numberWithFloat:0.5], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
+//  [_mapView addGradientLayer];
   [tableHeaderView addSubview:_mapView];
   
   // Map Gesture
@@ -200,10 +202,10 @@
   _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
   _hoursView.frame = CGRectMake(0, 0, tableHeaderView.width, 30);
   _hoursView.backgroundColor = [UIColor clearColor];
-  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
-  hbg.frame = _hoursView.bounds;
-  hbg.autoresizingMask = ~UIViewAutoresizingNone;
-  [_hoursView addSubview:hbg];
+//  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+//  hbg.frame = _hoursView.bounds;
+//  hbg.autoresizingMask = ~UIViewAutoresizingNone;
+//  [_hoursView addSubview:hbg];
   [tableHeaderView addSubview:_hoursView];
   
   // Hours
@@ -213,9 +215,9 @@
   [_hoursView addSubview:_hoursScrollView];
   
   _hoursLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-  _hoursLabel.numberOfLines = 1;
+  _hoursLabel.numberOfLines = 0;
   _hoursLabel.backgroundColor = [UIColor clearColor];
-  _hoursLabel.textAlignment = UITextAlignmentCenter;
+  _hoursLabel.textAlignment = UITextAlignmentLeft;
   _hoursLabel.font = [PSStyleSheet fontForStyle:@"hoursLabel"];
   _hoursLabel.textColor = [PSStyleSheet textColorForStyle:@"hoursLabel"];
   _hoursLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"hoursLabel"];
@@ -299,17 +301,20 @@
   }
   
   if ([[_place objectForKey:@"hours"] notNil]) {
-    _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@", "];
+    _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@"\n"];
   } else {
     _hoursLabel.text = @"No hours listed";
   }
   
   CGSize desiredSize = [UILabel sizeForText:_hoursLabel.text width:INT_MAX font:_hoursLabel.font numberOfLines:_hoursLabel.numberOfLines lineBreakMode:_hoursLabel.lineBreakMode];
   _hoursLabel.width = desiredSize.width;
-  _hoursLabel.height = _hoursView.height;
+  _hoursLabel.height = desiredSize.height;
   _hoursLabel.left = 10;
+  _hoursLabel.top = 5;
   
-  _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, _hoursScrollView.height);
+  _hoursView.frame = CGRectMake(0, 0, desiredSize.width + 20, desiredSize.height + 10);
+  _hoursScrollView.frame = _hoursView.bounds;
+  _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, desiredSize.height + 10);
 }
 
 - (void)toggleStar {
@@ -394,6 +399,7 @@
     [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
   }
   
+  _starButton.enabled = YES;
   [self loadDetails];
   [self loadMap];
   _tableView.tableHeaderView.alpha = 1.0; // Show header now

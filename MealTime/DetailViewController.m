@@ -332,25 +332,11 @@
   
   
 #if USE_FIXTURES
-  [[BizDataCenter defaultCenter] getPhotosFromFixturesForBiz:[_place objectForKey:@"biz"]];
-  [[BizDataCenter defaultCenter] getBizFromFixturesForBiz:[_place objectForKey:@"biz"]];
+
 #else
   // Combined call
   if (!_isCachedPlace) {
     [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
-    
-    // Get ALL reviews for this place
-    if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
-      [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
-      [[NSUserDefaults standardUserDefaults] synchronize];
-      
-      NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
-      int i = 0;
-      for (i = 0; i < numReviews; i = i + 400) {
-        // Fire off requests for reviews 400 at a time
-        [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
-      }
-    }
   } else {
     [self.items removeAllObjects];
     NSArray *photos = [_place objectForKey:@"photos"];
@@ -359,6 +345,19 @@
     }
     
     [self dataSourceDidLoad];
+  }
+  
+  // Get ALL reviews for this place
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
+    int i = 0;
+    for (i = 0; i < numReviews; i = i + 400) {
+      // Fire off requests for reviews 400 at a time
+      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+    }
   }
 #endif
 }

@@ -18,8 +18,8 @@
 
 - (void)fetchDetailsForPlace:(NSDictionary *)place;
 
-- (ASIHTTPRequest *)requestForPhotosForPlace:(NSMutableDictionary *)place start:(NSString *)start rpp:(NSString *)rpp;
-- (ASIHTTPRequest *)requestForBizForPlace:(NSMutableDictionary *)place;
+- (void)requestForPhotosForPlace:(NSMutableDictionary *)place start:(NSString *)start rpp:(NSString *)rpp;
+- (void)requestForBizForPlace:(NSMutableDictionary *)place;
 
 
 - (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp;

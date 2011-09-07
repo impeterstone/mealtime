@@ -10,7 +10,13 @@
 #import "PSScrapeCenter.h"
 #import "PSDatabaseCenter.h"
 
+static NSLock *_placesToRemoveLock = nil;
+
 @implementation PlaceDataCenter
+
++ (void)initialize {
+  _placesToRemoveLock = [[NSLock alloc] init];
+}
 
 + (id)defaultCenter {
   static id defaultCenter = nil;
@@ -93,51 +99,89 @@
 - (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places {
   NSMutableArray *placesToRemove = [[NSMutableArray alloc] initWithCapacity:1];
   
-  ASINetworkQueue *coverPhotoQueue = [[ASINetworkQueue alloc] init];
+  NSOperationQueue *coverPhotoQueue = [[NSOperationQueue alloc] init];
   coverPhotoQueue.maxConcurrentOperationCount = 10;
   
   for (NSMutableDictionary *place in places) {
-    NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
-    NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
-    
-    __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
-    request.numberOfTimesToRetryOnTimeout = 1;
-    [request setShouldContinueWhenAppEntersBackground:YES];
-    [request setUserAgent:USER_AGENT];
-    
-    [request setCompletionBlock:^{
-      // GCD
-      NSString *responseString = [request.responseString copy];
-      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
-      [responseString release];
-      [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
-      if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
-        [place setObject:[response objectForKey:@"photos"] forKey:@"coverPhotos"];
-      } else {
-//        [place setObject:[NSNull null] forKey:@"coverPhotos"];
-        [placesToRemove addObject:place];
-      }
-      [response release];
-      
-      NSLog(@"cover completed");
+    [coverPhotoQueue addOperationWithBlock:^{
+      [self fetchCoverPhotosForPlace:place placesToRemove:placesToRemove];
     }];
-    
-    [request setFailedBlock:^{
-//      [place setObject:[NSNull null] forKey:@"coverPhotos"];
-      [placesToRemove addObject:place];
-    }];
-
-    [coverPhotoQueue addOperation:request];
-    //    [request startSynchronous];
   }
   
-  [coverPhotoQueue go];
   [coverPhotoQueue waitUntilAllOperationsAreFinished];
+  [coverPhotoQueue release];
   
-  // Remove all places with no photos
+//  // Remove all places with no photos
   [places removeObjectsInArray:placesToRemove];
   [placesToRemove removeAllObjects];
   [placesToRemove release];
+}
+
+- (void)fetchCoverPhotosForPlace:(NSMutableDictionary *)place placesToRemove:(NSMutableArray *)placesToRemove {
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
+  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+  
+  // Run this synchronously
+  ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  [request startSynchronous];
+  NSError *error = [request error];
+  if (!error) {
+    NSString *responseString = request.responseString;
+    
+    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+
+    [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
+    
+    if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+      [place setObject:[response objectForKey:@"photos"] forKey:@"coverPhotos"];
+    } else {
+      [_placesToRemoveLock lock];
+      @try {
+        [placesToRemove addObject:place];
+      }
+      @finally {
+        [_placesToRemoveLock unlock];
+      }
+    }
+  } else {
+    [_placesToRemoveLock lock];
+    @try {
+      [placesToRemove addObject:place];
+    }
+    @finally {
+      [_placesToRemoveLock unlock];
+    }
+  }
+  
+//  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+//  request.numberOfTimesToRetryOnTimeout = 1;
+//  [request setShouldContinueWhenAppEntersBackground:YES];
+//  [request setUserAgent:USER_AGENT];
+//  
+//  [request setCompletionBlock:^{
+//    // GCD
+//    NSString *responseString = [request.responseString copy];
+//    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+//    [responseString release];
+//    [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
+//    if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+//      [place setObject:[response objectForKey:@"photos"] forKey:@"coverPhotos"];
+//    } else {
+//      //        [place setObject:[NSNull null] forKey:@"coverPhotos"];
+//      [placesToRemove addObject:place];
+//    }
+//    [response release];
+//    
+//    NSLog(@"cover completed");
+//  }];
+//  
+//  [request setFailedBlock:^{
+//    //      [place setObject:[NSNull null] forKey:@"coverPhotos"];
+//    [placesToRemove addObject:place];
+//  }];
+//  
+//  [coverPhotoQueue addOperation:request];
+//  //    [request startSynchronous];
 }
 
 

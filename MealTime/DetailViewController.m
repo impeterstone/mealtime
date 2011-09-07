@@ -14,7 +14,11 @@
 #import "PSLocationCenter.h"
 #import "PlaceAnnotation.h"
 
+#import "PSDatabaseCenter.h"
+
 @interface DetailViewController (Private)
+
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz;
 
 - (void)setupMap;
 - (void)setupToolbar;
@@ -33,7 +37,15 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _place = [[NSMutableDictionary alloc] initWithDictionary:place];
+    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithBiz:[place objectForKey:@"biz"]];
+    if (cachedPlace) {
+      _isCachedPlace = YES;
+      _place = [cachedPlace retain];
+    } else {
+      _isCachedPlace = NO;
+      _place = [[NSMutableDictionary alloc] initWithDictionary:place];
+    }
+    
     _imageSizeCache = [[NSMutableDictionary alloc] init];
     [[BizDataCenter defaultCenter] setDelegate:self];
     
@@ -295,6 +307,17 @@
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:@"icon_star_selected.png"] forState:UIControlStateHighlighted];
 }
 
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz {
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE biz = ?", biz, nil];
+  
+  if ([res count] > 0) {
+    NSData *placeData = [[[res rows] lastObject] dataForColumn:@"data"];
+    return [NSKeyedUnarchiver unarchiveObjectWithData:placeData];
+  } else {
+    return nil;
+  }
+}
+
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
   return NO;
@@ -313,24 +336,31 @@
   [[BizDataCenter defaultCenter] getBizFromFixturesForBiz:[_place objectForKey:@"biz"]];
 #else
   // Combined call
-  [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
-  
-//  [[BizDataCenter defaultCenter] fetchYelpPhotosForBiz:[_place objectForKey:@"biz"] start:start rpp:rpp];
-//  [[BizDataCenter defaultCenter] fetchYelpBizForBiz:[_place objectForKey:@"biz"]];
-#endif
-  
-  // Get ALL reviews for this place
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+  if (!_isCachedPlace) {
+    [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
     
-    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
-    int i = 0;
-    for (i = 0; i < numReviews; i = i + 400) {
-      // Fire off requests for reviews 400 at a time
-      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+    // Get ALL reviews for this place
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
+      [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+      
+      NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
+      int i = 0;
+      for (i = 0; i < numReviews; i = i + 400) {
+        // Fire off requests for reviews 400 at a time
+        [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+      }
     }
+  } else {
+    [self.items removeAllObjects];
+    NSArray *photos = [_place objectForKey:@"photos"];
+    if ([photos count] > 0) {
+      [self.items addObject:photos];
+    }
+    
+    [self dataSourceDidLoad];
   }
+#endif
 }
 
 - (void)dataSourceDidLoad {

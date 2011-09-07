@@ -30,6 +30,8 @@
   UILabel *_hoursLabel;
   
   NSInteger _photoCount;
+  
+  BOOL _isCachedPlace;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;

@@ -43,11 +43,33 @@
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:initialDefaults];
     
+    // Set app version if first launch
+    NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"appVersion"]) {
+      
+      [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+    } else {
+      // App version was set, compare it to current
+      NSString *savedAppVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"appVersion"];
+      if (![appVersion isEqualToString:savedAppVersion]) {
+        // Version DOES NOT MATCH
+        DLog(@"App Version CHANGED FROM OLD: %@ <---> TO NEW: %@", savedAppVersion, appVersion);
+        [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // Reset the SQLite DB
+        NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
+      }
+    }
+    
     // Copy SQLite to Documents
     NSString *sqlitePath = [[NSBundle mainBundle] pathForResource:SQLITE_DB ofType:@"sqlite"];
     assert(sqlitePath != nil);
     
-    NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"sml.sqlite"];
+    NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
     
     NSError *error = nil;
     [[NSFileManager defaultManager] copyItemAtPath:sqlitePath 
@@ -62,7 +84,7 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+{        
   _isBackgrounded = NO;
   
   // PSLocationCenter set default behavior

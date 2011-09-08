@@ -84,7 +84,9 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{        
+{
+  NSLog(@"fonts: %@",[UIFont familyNames]);
+  
   _isBackgrounded = NO;
   
   // PSLocationCenter set default behavior

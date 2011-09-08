@@ -164,7 +164,7 @@
   _ribbonView.frame = CGRectMake(self.contentView.width - 85, MARGIN_Y * 2, 85, 24);
   _ribbonLabel.frame = CGRectMake(0, 0, _ribbonView.width - MARGIN_X, _ribbonView.height);
   
-  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 36, 24);
+  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 48, 24);
   NSInteger metaScore = [[_place objectForKey:@"score"] integerValue];
   if (metaScore >= 33 && metaScore <= 66) {
     _scoreLabel.textColor = [UIColor yellowColor];
@@ -241,7 +241,7 @@
   _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
   _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
-  _scoreLabel.text = [NSString stringWithFormat:@"%@", [place objectForKey:@"score"]];
+  _scoreLabel.text = [NSString stringWithFormat:@"%@%%", [place objectForKey:@"score"]];
   
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];

@@ -119,9 +119,9 @@
   // Favorite Star
   NSString *iconStar = nil;
   if (_isSavedPlace) {
-    iconStar = @"icon_star_selected.png";
+    iconStar = @"icon_star_gold.png";
   } else {
-    iconStar = @"icon_star.png";
+    iconStar = @"icon_star_silver.png";
   }
   _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
   _starButton.enabled = NO;
@@ -167,7 +167,7 @@
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
   
-  [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.2) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.01], [NSNumber numberWithFloat:0.5], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
+  [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.01], [NSNumber numberWithFloat:0.6], [NSNumber numberWithFloat:0.85], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
 //  [_mapView addGradientLayer];
   [tableHeaderView addSubview:_mapView];
   
@@ -180,10 +180,10 @@
   // Address
   _addressView = [[UIView alloc] initWithFrame:CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30)];
   _addressView.backgroundColor = [UIColor clearColor];
-//  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
-//  abg.frame = _addressView.bounds;
-//  abg.autoresizingMask = ~UIViewAutoresizingNone;
-//  [_addressView addSubview:abg];
+  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+  abg.frame = _addressView.bounds;
+  abg.autoresizingMask = ~UIViewAutoresizingNone;
+  [_addressView addSubview:abg];
   [tableHeaderView addSubview:_addressView];
   
   // Address Label
@@ -322,10 +322,10 @@
   NSString *iconStar = nil;
   if (_isSavedPlace) {
     _isSavedPlace = NO;
-    iconStar = @"icon_star.png";
+    iconStar = @"icon_star_silver.png";
   } else {
     _isSavedPlace = YES;
-    iconStar = @"icon_star_selected.png";
+    iconStar = @"icon_star_gold.png";
   }
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateNormal];
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateHighlighted];

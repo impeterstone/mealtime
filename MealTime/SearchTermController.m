@@ -46,7 +46,7 @@
   // Nullview
   [_nullView setLoadingTitle:@"Searching" loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
   
-  [self setupTableViewWithFrame:CGRectMake(0, 37, self.view.width, self.view.height - 37) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
+  [self setupTableViewWithFrame:CGRectMake(0, 0, self.view.width, self.view.height) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   self.tableView.scrollsToTop = NO;
   
@@ -209,10 +209,10 @@
 #endif  
   
   // Animate up or down
-  NSString *dir = up ? @"up" : @"down";
-  [UIView beginAnimations:dir context:nil];
-  [UIView setAnimationDuration:animationDuration];
-  [UIView setAnimationCurve:animationCurve];
+//  NSString *dir = up ? @"up" : @"down";
+//  [UIView beginAnimations:dir context:nil];
+//  [UIView setAnimationDuration:animationDuration];
+//  [UIView setAnimationCurve:animationCurve];
   
   if (up) {
     self.view.height = self.view.height - keyboardFrame.size.height;
@@ -220,7 +220,7 @@
     self.view.height = self.view.height + keyboardFrame.size.height;
   }
   
-  [UIView commitAnimations];
+//  [UIView commitAnimations];
 }
 
 @end

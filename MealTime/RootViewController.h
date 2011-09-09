@@ -14,12 +14,14 @@
 @class SearchTermController;
 
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, UIActionSheetDelegate, SearchTermDelegate> {
+  UIView *_headerView;
   UIToolbar *_toolbar;
-  UIView *_searchView;
   UITextField *_whatField;
   UITextField *_whereField;
+  UILabel *_headerLabel;
+  UIButton *_headerTopButton;
+  UIButton *_headerDistanceButton;
 
-  UILabel *_currentLocationLabel;
   NSArray *_currentAddress;
   
   SearchTermController *_whatTermController;
@@ -36,6 +38,7 @@
   CGFloat _distance;
   NSString *_whatQuery;
   NSString *_whereQuery;
+  NSInteger _numResults;
   
   BOOL _isSearchActive;
   
@@ -51,7 +54,7 @@
 // Buttons
 - (void)findMyLocation;
 - (void)saved;
-- (void)filter;
+- (void)distance;
 
 - (void)locationAcquired;
 - (void)updateCurrentLocation;

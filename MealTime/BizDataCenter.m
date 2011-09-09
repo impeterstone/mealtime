@@ -140,7 +140,7 @@ static NSLock *_placeLock = nil;
     }
     
     // Save to DB
-    NSString *biz = [request.userInfo objectForKey:@"biz"];
+    NSString *biz = [place objectForKey:@"biz"];
     NSString *requestType = @"photos";
     NSString *requestData = [response JSONString];
     [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
@@ -221,7 +221,7 @@ static NSLock *_placeLock = nil;
     }
 
     // Save to DB
-    NSString *biz = [request.userInfo objectForKey:@"biz"];
+    NSString *biz = [place objectForKey:@"biz"];
     NSString *requestType = @"biz";
     NSString *requestData = [response JSONString];
     [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];

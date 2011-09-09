@@ -107,6 +107,12 @@
 }
 
 #pragma mark - View
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  
+  [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+
 - (void)loadView
 {
   [super loadView];

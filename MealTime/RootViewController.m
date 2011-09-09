@@ -16,6 +16,7 @@
 
 @interface RootViewController (Private)
 // View Setup
+- (void)setupHeader;
 - (void)setupToolbar;
 
 - (void)editingDidBegin:(UITextField *)textField;
@@ -42,6 +43,7 @@
     _pagingTotal = 10;
     _whatQuery = nil;
     _whereQuery = nil;
+    _numResults = 0;
     
     _isSearchActive = NO;
     
@@ -54,9 +56,9 @@
 - (void)viewDidUnload {
   [super viewDidUnload];
   RELEASE_SAFELY(_currentAddress);
-  RELEASE_SAFELY(_currentLocationLabel);
+  RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_searchView);
+  RELEASE_SAFELY(_headerLabel);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -74,9 +76,9 @@
   [_whatField removeFromSuperview];
   [_whereField removeFromSuperview];
   
-  RELEASE_SAFELY(_currentLocationLabel);
+  RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_searchView);
+  RELEASE_SAFELY(_headerLabel);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -115,6 +117,8 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
+  [self.navigationController setNavigationBarHidden:YES animated:animated];
+  
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
   
   [UIView animateWithDuration:0.4
@@ -122,7 +126,6 @@
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _searchView.alpha = 1.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -141,7 +144,6 @@
    
                       options:UIViewAnimationCurveEaseOut
                    animations:^{
-                     _searchView.alpha = 0.0;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -167,20 +169,30 @@
     _tableView.rowHeight = 160.0;
   }
   
+  // Setup Header
+  [self setupHeader];
+  
   // Setup Toolbar
-  [self setupToolbar];
+//  [self setupToolbar];
   
-  // Setup Search
-  CGFloat searchWidth = [[UIApplication sharedApplication] keyWindow].width - 10;
+  // Search Term Controller
+  [self setupSearchTermController];
   
-  _searchView = [[UIView alloc] initWithFrame:CGRectMake(0, 20, [[UIApplication sharedApplication] keyWindow].width, 44)];
-  _searchView.clipsToBounds = YES;
-  UIImageView *searchbg = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"bg_searchbar.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:22]] autorelease];
-  searchbg.frame = _searchView.bounds;
-  searchbg.autoresizingMask = ~UIViewAutoresizingNone;
-  [_searchView addSubview:searchbg];
+  // Get initial location
+  [self loadDataSource];
+}
+
+- (void)setupHeader {
+  _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 60.0)];
+  UIImageView *bg = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"bg_searchbar.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:0]] autorelease];
+  bg.autoresizingMask = ~UIViewAutoresizingNone;
+  bg.frame = _headerView.bounds;
+  [_headerView addSubview:bg];
   
-  _whatField = [[UITextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30)];
+  // Search Bar
+  CGFloat searchWidth = _headerView.width - 20 - 40;
+  
+  _whatField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whatField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.font = NORMAL_FONT;
@@ -192,7 +204,7 @@
   _whatField.placeholder = @"What? (Food or Restaurant)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whereField = [[UITextField alloc] initWithFrame:CGRectMake(5, 7, searchWidth, 30)];
+  _whereField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whereField.font = NORMAL_FONT;
@@ -204,17 +216,39 @@
   _whereField.placeholder = @"Where? (Address, City, State or Zip) ";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
+  // Header Label
+  _headerLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 40, _headerView.width - 20, 16)];
+  _headerLabel.backgroundColor = [UIColor clearColor];
+  _headerLabel.textAlignment = UITextAlignmentCenter;
+  _headerLabel.font = [PSStyleSheet fontForStyle:@"headerLabel"];
+  _headerLabel.textColor = [PSStyleSheet textColorForStyle:@"headerLabel"];
+  _headerLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"headerLabel"];
+  _headerLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"headerLabel"];
+  _headerLabel.text = @"Searching for places...";
   
-  [_searchView addSubview:_whereField];
-  [_searchView addSubview:_whatField];
-  [[[UIApplication sharedApplication] keyWindow] addSubview:_searchView];
+  // Buttons
+  _headerTopButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  _headerTopButton.frame = CGRectMake(_headerView.width - 40, 7, 30, 30);
+  [_headerTopButton setImage:[UIImage imageNamed:@"icon_star_gold.png"] forState:UIControlStateNormal];
+  [_headerTopButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
+  [_headerTopButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_highlighted_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
+  [_headerTopButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
   
+  _headerDistanceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  _headerDistanceButton.frame = CGRectMake(_headerView.width - 40, 7, 30, 30);
+  [_headerDistanceButton setImage:[UIImage imageNamed:@"icon_distance.png"] forState:UIControlStateNormal];
+  [_headerDistanceButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
+  [_headerDistanceButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_highlighted_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
+  [_headerDistanceButton addTarget:self action:@selector(distance) forControlEvents:UIControlEventTouchUpInside];
   
-  // Search Term Controller
-  [self setupSearchTermController];
+  [_headerView addSubview:_headerLabel];
+  [_headerView addSubview:_headerDistanceButton];
+  [_headerView addSubview:_headerTopButton];
   
-  // Get initial location
-  [self loadDataSource];
+  [_headerView addSubview:_whereField];
+  [_headerView addSubview:_whatField];
+  
+  [self setupHeaderWithView:_headerView];
 }
 
 - (void)setupToolbar {
@@ -226,20 +260,11 @@
   
   UIView *titleView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 60 - 60 - 40, _toolbar.height)] autorelease];
   titleView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-  _currentLocationLabel = [[UILabel alloc] initWithFrame:titleView.bounds];
-  _currentLocationLabel.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-  _currentLocationLabel.textAlignment = UITextAlignmentCenter;
-  _currentLocationLabel.numberOfLines = 3;
-  _currentLocationLabel.font = [PSStyleSheet fontForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.textColor = [PSStyleSheet textColorForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"currentLocationLabel"];
-  _currentLocationLabel.shadowOffset = CGSizeMake(0, 1);
-  _currentLocationLabel.backgroundColor = [UIColor clearColor];
-  [titleView addSubview:_currentLocationLabel];
+
   UIBarButtonItem *currentLocationItem = [[[UIBarButtonItem alloc] initWithCustomView:titleView] autorelease];
   [toolbarItems addObject:currentLocationItem];
   
-  _filterButton = [UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"%.1f mi", _distance] withTarget:self action:@selector(filter) width:60 height:30 buttonType:BarButtonTypeSilver];
+  _filterButton = [UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"%.1f mi", _distance] withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeSilver];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   [toolbarItems addObject:_filterButton];
@@ -251,18 +276,20 @@
 - (void)setupSearchTermController {
   _whatTermController = [[SearchTermController alloc] initWithContainer:@"what"];
   _whatTermController.delegate = self;
-  _whatTermController.view.frame = self.view.bounds;
-//  _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
+//  _whatTermController.view.frame = self.view.bounds;
+  _whatTermController.view.frame = CGRectMake(0, 60, self.view.width, self.view.height - 60);
   _whatTermController.view.alpha = 0.0;
-  [self.view addSubview:_whatTermController.view];
+  [self.view insertSubview:_whatTermController.view aboveSubview:_headerView];
+//  [self.view addSubview:_whatTermController.view];
   
   _whereTermController = [[SearchTermController alloc] initWithContainer:@"where"];
   _whereTermController.delegate = self;
-  _whereTermController.view.frame = self.view.bounds;
-//  _whereTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44)
+//  _whereTermController.view.frame = self.view.bounds;
+  _whereTermController.view.frame = CGRectMake(0, 60, self.view.width, self.view.height - 60)
   ;
   _whereTermController.view.alpha = 0.0;
-  [self.view addSubview:_whereTermController.view];
+  [self.view insertSubview:_whereTermController.view aboveSubview:_headerView];
+//  [self.view addSubview:_whereTermController.view];
 }
 
 #pragma mark - Button Actios
@@ -270,7 +297,6 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
   
-  _currentLocationLabel.text = @"Finding Your Location";
   _whereField.text = @"Current Location";
 }
 
@@ -283,11 +309,11 @@
 //  [as showFromToolbar:_toolbar];
 }
 
-- (void)filter {
+- (void)distance {
   UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Nearby (1/4 mile)", @"Walking (1/2 mile)", @"Biking (1 mile)", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil] autorelease];
   as.tag = kFilterActionSheet;
   as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-  [as showFromToolbar:_toolbar];
+  [as showInView:self.view];
 }
 
 #pragma mark - UIActionSheetDelegate
@@ -322,10 +348,6 @@
           _distance = 0.5;
           break;
       }
-      [(UIButton *)_filterButton.customView setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
-      // Reload dataSource
-      _pagingStart = 0;
-      [self loadDataSource];
       break;
     default:
       break;
@@ -342,6 +364,7 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
+  _headerLabel.text = @"Searching for places...";
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else
@@ -397,11 +420,10 @@
 - (void)locationAcquired {
 // 10330 N Wolfe Rd Cupertino, CA 95014
 #if USE_FIXTURES
-  _currentLocationLabel.text = @"10330 N Wolfe Rd Cupertino, CA 95014";
   
   // fetch Yelp Places
   _pagingStart = 0; // reset paging
-  self.whereQuery = _currentLocationLabel.text;
+  self.whereQuery = [_currentAddress componentsJoinedByString:@" "];
   [self fetchDataSource];
 #else
   [self reverseGeocode];
@@ -445,15 +467,11 @@
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
   
-  _currentLocationLabel.text = @"Can't Locate You";
-  
   _reverseGeocoder = nil;
   [geocoder release];
 }
 
 - (void)updateCurrentLocation {
-  _currentLocationLabel.text = [NSString stringWithFormat:@"%@\n%@", [_currentAddress objectAtIndex:0], [_currentAddress objectAtIndex:1]];
-  
   NSString *formattedAddress = [_currentAddress componentsJoinedByString:@" "];
   
   // fetch Yelp Places
@@ -472,6 +490,14 @@
     _hasMore = NO;
   } else {
     _hasMore = YES;
+  }
+  
+  // Num results
+  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
+  if (_numResults > 0) {
+    _headerLabel.text = [NSString stringWithFormat:@"Showing %d places within %.1f mi of %@", _numResults, _distance, _whereField.text];
+  } else {
+    _headerLabel.text = [NSString stringWithFormat:@"Showing %d places within %.1f mi of %@", _numResults, _distance, _whereField.text];
   }
   
   // Put response into items (datasource)
@@ -498,6 +524,10 @@
 }
 
 #pragma mark - TableView
+//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+//  return [NSString stringWithFormat:@"%d places within %.1f mile(s)", _numResults, _distance];
+//}
+
 //- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
 //  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 30)] autorelease];
 //  headerView.autoresizingMask = ~UIViewAutoresizingNone;
@@ -587,11 +617,20 @@
 - (void)dismissSearch {
   _isSearchActive = NO;
   
+  // Update Header
+  [_headerTopButton setImage:[UIImage imageNamed:@"icon_star_gold.png"] forState:UIControlStateNormal];
+  [_headerTopButton removeTarget:self action:@selector(dismissSearch) forControlEvents:UIControlEventTouchUpInside];
+  [_headerTopButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
+  
   // Animate Search Fields
   [UIView animateWithDuration:0.4
                    animations:^{
-                     _searchView.height = 44;
+                     _headerLabel.alpha = 1.0;
+                     _whatTermController.view.frame = CGRectMake(0, 60, self.view.width, self.view.height - 60);
+                     _whereTermController.view.frame = CGRectMake(0, 60, self.view.width, self.view.height - 60);
+                     _headerView.height = 60;
                      _whereField.top = 7;
+                     _headerDistanceButton.top = 7;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -626,6 +665,11 @@
   if (!_isSearchActive) {
     _isSearchActive = YES;
     
+    // Update Header
+    [_headerTopButton setImage:[UIImage imageNamed:@"icon_cancel.png"] forState:UIControlStateNormal];
+    [_headerTopButton removeTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
+    [_headerTopButton addTarget:self action:@selector(dismissSearch) forControlEvents:UIControlEventTouchUpInside];
+    
     if ([textField isEqual:_whatField]) {
       [_whatTermController searchWithTerm:textField.text];
     } else {
@@ -635,8 +679,12 @@
     // Animate Search Fields
     [UIView animateWithDuration:0.4
                      animations:^{
-                       _searchView.height = 81;
-                       _whereField.top = 44;
+                       _headerLabel.alpha = 0.0;
+                       _whatTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
+                       _whereTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
+                       _headerView.height = 80;
+                       _whereField.top = 42;
+                       _headerDistanceButton.top = 42;
                      }
                      completion:^(BOOL finished) {
                      }];

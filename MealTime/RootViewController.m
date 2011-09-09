@@ -204,7 +204,7 @@
   _whatField.leftViewMode = UITextFieldViewModeAlways;
   _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_searchfield.png"]] autorelease];
   _whatField.borderStyle = UITextBorderStyleRoundedRect;
-  _whatField.placeholder = @"What? (e.g. Pizza, Tea, Subway)";
+  _whatField.placeholder = @"What? (e.g. Pizza, Subway)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
   _whereField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
@@ -442,7 +442,10 @@
   //
   NSArray *places = [response objectForKey:@"places"];
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
-  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
+//  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
+  BOOL tableViewCellShouldAnimate = YES;
+  UITableViewRowAnimation rowAnimation = isReload ? UITableViewRowAnimationNone : UITableViewRowAnimationFade;
+  
   /**
    SECTIONS
    If an existing section doesn't exist, create one
@@ -521,7 +524,7 @@
     
     // These are the new rows that need to be inserted
     if ([newIndexPaths count] > 0) {
-      [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:UITableViewRowAnimationFade];
+      [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:rowAnimation];
     }
     
     [_tableView endUpdates];

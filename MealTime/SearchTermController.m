@@ -44,7 +44,7 @@
   [super loadView];
   
   // Nullview
-  [_nullView setLoadingTitle:nil loadingSubtitle:nil emptyTitle:@"Find Something to Eat!" emptySubtitle:@"Try dishes, cuisines, or the name of the restaurant. Type an address, city/state, or zip. Leave the where field blank to search near you." image:nil];
+//  [_nullView setLoadingTitle:nil loadingSubtitle:nil emptyTitle:@"Find Something to Eat!" emptySubtitle:@"Try dishes, cuisines, or the name of the restaurant. Type an address, city/state, or zip. Leave the where field blank to search near you." image:nil];
   
   [self setupTableViewWithFrame:CGRectMake(0, 0, self.view.width, self.view.height) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   

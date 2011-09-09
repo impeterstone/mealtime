@@ -192,6 +192,7 @@
 		28A59DCA14107DC600866272 /* icon_place.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A59DC814107DC500866272 /* icon_place.png */; };
 		28A59DCB14107DC600866272 /* icon_place@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A59DC914107DC500866272 /* icon_place@2x.png */; };
 		28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */; };
+		28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 28A87F1D141A392D001ACC62 /* Settings.bundle */; };
 		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
 		28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */; };
 		28A9FAC713F2887B00EFB191 /* disclosure_indicator_white_bordered.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FAC513F2887B00EFB191 /* disclosure_indicator_white_bordered.png */; };
@@ -537,6 +538,7 @@
 		28A59DC914107DC500866272 /* icon_place@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_place@2x.png"; sourceTree = "<group>"; };
 		28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetPicker.h; sourceTree = "<group>"; };
 		28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetPicker.m; sourceTree = "<group>"; };
+		28A87F1D141A392D001ACC62 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 		28A9FAB513F26FA200EFB191 /* PlaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceCell.h; sourceTree = "<group>"; };
 		28A9FAB613F26FA200EFB191 /* PlaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceCell.m; sourceTree = "<group>"; };
 		28A9FABE13F27CFD00EFB191 /* PlaceDataCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceDataCenter.h; sourceTree = "<group>"; };
@@ -1035,6 +1037,7 @@
 				28A1B28113F1CFB000EB971E /* main.m */,
 				28A1B28313F1CFB000EB971E /* MealTime-Prefix.pch */,
 				28A1B28713F1CFB000EB971E /* MainWindow.xib */,
+				28A87F1D141A392D001ACC62 /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1314,6 +1317,7 @@
 				28A1B26D13F1CFB000EB971E /* Sources */,
 				28A1B26E13F1CFB000EB971E /* Frameworks */,
 				28A1B26F13F1CFB000EB971E /* Resources */,
+				28A87F1A141A33FC001ACC62 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1499,10 +1503,27 @@
 				280154D61419A22400E76144 /* icon_cancel@2x.png in Resources */,
 				280154D91419A5D400E76144 /* icon_distance.png in Resources */,
 				280154DA1419A5D400E76144 /* icon_distance@2x.png in Resources */,
+				28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		28A87F1A141A33FC001ACC62 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n# Auto Increment Version Script\n# Found here: <a href=\"http://davedelong.com/blog/2009/04/15/incrementing-build-numbers-xcode<br />\n#<br />\n#\" title=\"http://davedelong.com/blog/2009/04/15/incrementing-build-numbers-xcode<br />\n#<br />\n#\">http://davedelong.com/blog/2009/04/15/incrementing-build-numbers-xcode<br />\n#<br />\n#</a> Set the paths to the build and settings Plist\nbuildPlist=${INFOPLIST_FILE}\nsettingsPlist=\"Settings.bundle/Root.plist\"\n\n# Get the existing buildVersion and buildNumber values from the buildPlist\nbuildVersion=$(/usr/libexec/PlistBuddy -c \"Print CFBuildVersion\" $buildPlist)\nbuildNumber=$(/usr/libexec/PlistBuddy -c \"Print CFBuildNumber\" $buildPlist)\n\n# Increment the buildNumber\nbuildNumber=$(($buildNumber + 1))\n\n# Set the version numbers in the buildPlist\n/usr/libexec/PlistBuddy -c \"Set :CFBuildNumber $buildNumber\" $buildPlist\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildVersion.$buildNumber\" $buildPlist\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString $buildVersion\" $buildPlist\n\n# Set the version numbers in the settingsPlist (Your path to the key you store your version number may vary, mine is in item 0)\n/usr/libexec/PlistBuddy -c \"Set :PreferenceSpecifiers:0:DefaultValue $buildVersion.$buildNumber\" $settingsPlist\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		28A1B26D13F1CFB000EB971E /* Sources */ = {

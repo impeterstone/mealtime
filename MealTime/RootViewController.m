@@ -367,10 +367,12 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
-  if (_pagingStart == 0) {
+  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  if (isReload) {
     NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
     _headerLabel.text = [NSString stringWithFormat:@"Searching for places within %.1f mi of %@", _distance, where];
   }
+  
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else

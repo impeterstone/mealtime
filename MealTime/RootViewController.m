@@ -364,7 +364,7 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
-  _headerLabel.text = @"Searching for places...";
+  _headerLabel.text = [NSString stringWithFormat:@"Searching for places within %.1f mi of %@", _distance, _whereField.text];
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else

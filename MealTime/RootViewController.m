@@ -13,6 +13,7 @@
 #import "SearchTermController.h"
 #import "PSLocationCenter.h"
 #import "PSSearchCenter.h"
+#import "ActionSheetPicker.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -21,6 +22,8 @@
 
 - (void)editingDidBegin:(UITextField *)textField;
 - (void)editingDidEnd:(UITextField *)textField;
+
+- (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
 
 @end
 
@@ -190,7 +193,7 @@
   [_headerView addSubview:bg];
   
   // Search Bar
-  CGFloat searchWidth = _headerView.width - 20 - 40;
+  CGFloat searchWidth = _headerView.width - 20 - 50;
   
   _whatField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whatField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
@@ -201,7 +204,7 @@
   _whatField.leftViewMode = UITextFieldViewModeAlways;
   _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_searchfield.png"]] autorelease];
   _whatField.borderStyle = UITextBorderStyleRoundedRect;
-  _whatField.placeholder = @"What? (Food or Restaurant)";
+  _whatField.placeholder = @"What? (e.g. Pizza, Tea, Subway)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
   _whereField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
@@ -212,8 +215,18 @@
   _whereField.returnKeyType = UIReturnKeySearch;
   _whereField.leftViewMode = UITextFieldViewModeAlways;
   _whereField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_place.png"]] autorelease];
+  
+  UILabel *rightView = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, 40, 15)] autorelease];
+  rightView.font = [PSStyleSheet fontForStyle:@"whereRightView"];
+  rightView.textColor = [PSStyleSheet textColorForStyle:@"whereRightView"];
+  rightView.shadowColor = [PSStyleSheet shadowColorForStyle:@"whereRightView"];
+  rightView.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"whereRightView"];
+  rightView.text = [NSString stringWithFormat:@"%.1f mi", _distance];
+  rightView.textAlignment = UITextAlignmentRight;
+  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
+  _whereField.rightView = rightView;
   _whereField.borderStyle = UITextBorderStyleRoundedRect;
-  _whereField.placeholder = @"Where? (Address, City, State or Zip) ";
+  _whereField.placeholder = @"Where? (Current Location)";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
   // Header Label
@@ -228,14 +241,14 @@
   
   // Buttons
   _headerTopButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  _headerTopButton.frame = CGRectMake(_headerView.width - 40, 7, 30, 30);
+  _headerTopButton.frame = CGRectMake(_headerView.width - 50, 7, 40, 30);
   [_headerTopButton setImage:[UIImage imageNamed:@"icon_star_gold.png"] forState:UIControlStateNormal];
   [_headerTopButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
   [_headerTopButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_highlighted_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
   [_headerTopButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
   
   _headerDistanceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  _headerDistanceButton.frame = CGRectMake(_headerView.width - 40, 7, 30, 30);
+  _headerDistanceButton.frame = CGRectMake(_headerView.width - 50, 7, 40, 30);
   [_headerDistanceButton setImage:[UIImage imageNamed:@"icon_distance.png"] forState:UIControlStateNormal];
   [_headerDistanceButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateNormal];
   [_headerDistanceButton setBackgroundImage:[[UIImage imageNamed:@"navbar_normal_highlighted_button.png"] stretchableImageWithLeftCapWidth:4 topCapHeight:0] forState:UIControlStateHighlighted];
@@ -296,8 +309,6 @@
 - (void)findMyLocation {
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
-  
-  _whereField.text = @"Current Location";
 }
 
 - (void)saved {
@@ -310,48 +321,40 @@
 }
 
 - (void)distance {
-  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Distance" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Nearby (1/4 mile)", @"Walking (1/2 mile)", @"Biking (1 mile)", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil] autorelease];
-  as.tag = kFilterActionSheet;
-  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-  [as showInView:self.view];
+  NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil];
+  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:1 target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
 }
 
-#pragma mark - UIActionSheetDelegate
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-  if (buttonIndex == actionSheet.cancelButtonIndex) return;
-  
-  switch (actionSheet.tag) {
-    case kFilterActionSheet:
-      switch (buttonIndex) {
-        case 0:
-          _distance = 0.2;
-          break;
-        case 1:
-          _distance = 0.5;
-          break;
-        case 2:
-          _distance = 1.0;
-          break;
-        case 3:
-          _distance = 3.0;
-          break;
-        case 4:
-          _distance = 5.0;
-          break;
-        case 5:
-          _distance = 10.0;
-          break;
-        case 6:
-          _distance = 20.0;
-          break;
-        default:
-          _distance = 0.5;
-          break;
-      }
+- (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view {
+  switch ([selectedIndex integerValue]) {
+    case 0:
+      _distance = 0.2;
+      break;
+    case 1:
+      _distance = 0.5;
+      break;
+    case 2:
+      _distance = 1.0;
+      break;
+    case 3:
+      _distance = 3.0;
+      break;
+    case 4:
+      _distance = 5.0;
+      break;
+    case 5:
+      _distance = 10.0;
+      break;
+    case 6:
+      _distance = 20.0;
       break;
     default:
+      _distance = 0.5;
       break;
   }
+  
+  // Update Distance Label
+  [(UILabel *)[_whereField rightView] setText:[NSString stringWithFormat:@"%.1f mi", _distance]];
 }
 
 #pragma mark - Sort
@@ -364,7 +367,10 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
-  _headerLabel.text = [NSString stringWithFormat:@"Searching for places within %.1f mi of %@", _distance, _whereField.text];
+  if (_pagingStart == 0) {
+    NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+    _headerLabel.text = [NSString stringWithFormat:@"Searching for places within %.1f mi of %@", _distance, where];
+  }
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else

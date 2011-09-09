@@ -44,7 +44,7 @@
   [super loadView];
   
   // Nullview
-  [_nullView setLoadingTitle:@"Searching" loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Epic Fail" emptySubtitle:@"FFFFFUUUUUUUU" image:nil];
+  [_nullView setLoadingTitle:nil loadingSubtitle:nil emptyTitle:@"Find Something to Eat!" emptySubtitle:@"Try dishes, cuisines, or the name of the restaurant. Type an address, city/state, or zip. Leave the where field blank to search near you." image:nil];
   
   [self setupTableViewWithFrame:CGRectMake(0, 0, self.view.width, self.view.height) andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
@@ -64,11 +64,11 @@
   [self.items removeAllObjects];
   
   // Always show "Current Location"
-  if ([_container isEqual:@"where"]) {
-    [self.items addObject:[NSArray arrayWithObject:@"Current Location"]];
-  } else {
-    [self.items addObject:[NSArray array]];
-  }
+//  if ([_container isEqual:@"where"]) {
+//    [self.items addObject:[NSArray arrayWithObject:@"Current Location"]];
+//  } else {
+//    [self.items addObject:[NSArray array]];
+//  }
   
   // Stub for search results
   [self.items addObject:[NSArray array]];
@@ -109,7 +109,8 @@
 - (void)searchWithTerm:(NSString *)term {
   NSArray *filteredArray = [[PSSearchCenter defaultCenter] searchResultsForTerm:term inContainer:_container];
 
-  [self.items replaceObjectAtIndex:1 withObject:filteredArray];
+  [self.items removeAllObjects];
+  [self.items addObject:filteredArray];
   [self dataSourceDidLoad];
 }
 

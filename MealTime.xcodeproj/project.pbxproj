@@ -191,6 +191,7 @@
 		28A1B3C913F1DAC100EB971E /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A513F1DAC100EB971E /* UploaderThread.m */; };
 		28A59DCA14107DC600866272 /* icon_place.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A59DC814107DC500866272 /* icon_place.png */; };
 		28A59DCB14107DC600866272 /* icon_place@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A59DC914107DC500866272 /* icon_place@2x.png */; };
+		28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */; };
 		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
 		28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */; };
 		28A9FAC713F2887B00EFB191 /* disclosure_indicator_white_bordered.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A9FAC513F2887B00EFB191 /* disclosure_indicator_white_bordered.png */; };
@@ -534,6 +535,8 @@
 		28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
 		28A59DC814107DC500866272 /* icon_place.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_place.png; sourceTree = "<group>"; };
 		28A59DC914107DC500866272 /* icon_place@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_place@2x.png"; sourceTree = "<group>"; };
+		28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetPicker.h; sourceTree = "<group>"; };
+		28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetPicker.m; sourceTree = "<group>"; };
 		28A9FAB513F26FA200EFB191 /* PlaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceCell.h; sourceTree = "<group>"; };
 		28A9FAB613F26FA200EFB191 /* PlaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceCell.m; sourceTree = "<group>"; };
 		28A9FABE13F27CFD00EFB191 /* PlaceDataCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceDataCenter.h; sourceTree = "<group>"; };
@@ -1083,6 +1086,7 @@
 		28A1B29713F1D0DC00EB971E /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				28A87F14141A2E3C001ACC62 /* ActionSheetPicker */,
 				285570B2140C7827004D34EF /* Facebook */,
 				28A1B39F13F1DAC100EB971E /* Localytics */,
 			);
@@ -1167,6 +1171,15 @@
 				28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */,
 			);
 			path = Localytics;
+			sourceTree = "<group>";
+		};
+		28A87F14141A2E3C001ACC62 /* ActionSheetPicker */ = {
+			isa = PBXGroup;
+			children = (
+				28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */,
+				28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */,
+			);
+			path = ActionSheetPicker;
 			sourceTree = "<group>";
 		};
 		28A9FABD13F27CD400EFB191 /* DataCenters */ = {
@@ -1588,6 +1601,7 @@
 				285570C2140C7827004D34EF /* FBRequest.m in Sources */,
 				285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */,
 				286A57851410B614001D9490 /* JSONKit.m in Sources */,
+				28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

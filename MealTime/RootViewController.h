@@ -13,7 +13,7 @@
 
 @class SearchTermController;
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, UIActionSheetDelegate, SearchTermDelegate> {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate> {
   UIView *_headerView;
   UIToolbar *_toolbar;
   UITextField *_whatField;

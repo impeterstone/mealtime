@@ -405,26 +405,141 @@
 }
 
 - (void)dataSourceDidLoad {
-  if (_pagingStart == 0) {
-    [self.tableView setContentOffset:CGPointMake(0, 0)];
-  }
-//  if ([self dataIsAvailable]) {
-//    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:NO]];
-//  }
-  [self.tableView reloadData];
-//  if ([self dataIsAvailable]) {
-//    [[self.tableView visibleCells] makeObjectsPerformSelector:@selector(setShouldAnimate:) withObject:[NSNumber numberWithBool:YES]];
-//  }
-  if (_pagingStart == 0) {
+  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  
+  if (isReload) {
     [super dataSourceDidLoad];
   } else {
     [super dataSourceDidLoadMore];
   }
 }
 
+#pragma mark - PSDataCenterDelegate
+- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
+  // Check hasMore
+  NSDictionary *paging = [response objectForKey:@"paging"];
+  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
+  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
+  if (currentPage == numPages) {
+    _hasMore = NO;
+  } else {
+    _hasMore = YES;
+  }
+  
+  // Num results
+  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
+  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+  if (_numResults > 0) {
+    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
+  } else {
+    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
+  }
+  
+  //
+  // PREPARE DATASOURCE
+  //
+  NSArray *places = [response objectForKey:@"places"];
+  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
+  /**
+   SECTIONS
+   If an existing section doesn't exist, create one
+   */
+  
+  NSIndexSet *sectionIndexSet = nil;
+  
+  int sectionStart = 0;
+  if ([self.items count] == 0) {
+    // No section created yet, make one
+    [self.items addObject:[NSMutableArray arrayWithCapacity:1]];
+    sectionIndexSet = [NSIndexSet indexSetWithIndex:sectionStart];
+  }
+  
+  /**
+   ROWS
+   Determine if this is a refresh/firstload or a load more
+   */
+  
+  // Table Row Insert/Delete/Update indexPaths
+  NSMutableArray *newIndexPaths = [NSMutableArray arrayWithCapacity:1];
+  NSMutableArray *deleteIndexPaths = [NSMutableArray arrayWithCapacity:1];
+  //  NSMutableArray *updateIndexPaths = [NSMutableArray arrayWithCapacity:1];
+  
+  int rowStart = 0;
+  if (isReload) {
+    // This is a FRESH reload
+    
+    // We should scroll the table to the top
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    
+    // Check to see if the first section is empty
+    if ([[self.items objectAtIndex:0] count] == 0) {
+      // empty section, insert
+      [[self.items objectAtIndex:0] addObjectsFromArray:places];
+      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
+        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
+      }
+    } else {
+      // section has data, delete and reinsert
+      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
+        [deleteIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
+      }
+      [[self.items objectAtIndex:0] removeAllObjects];
+      // reinsert
+      [[self.items objectAtIndex:0] addObjectsFromArray:places];
+      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
+        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
+      }
+    }
+  } else {
+    // This is a load more
+    
+    rowStart = [[self.items objectAtIndex:0] count]; // row starting offset for inserting
+    [[self.items objectAtIndex:0] addObjectsFromArray:places];
+    for (int row = rowStart; row < [[self.items objectAtIndex:0] count]; row++) {
+      [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
+    }
+  }
+  
+  if (tableViewCellShouldAnimate) {
+    //
+    // BEGIN TABLEVIEW ANIMATION BLOCK
+    //
+    [_tableView beginUpdates];
+    
+    // These are the sections that need to be inserted
+    if (sectionIndexSet) {
+      [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
+    }
+    
+    // These are the rows that need to be deleted
+    if ([deleteIndexPaths count] > 0) {
+      [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+    }
+    
+    // These are the new rows that need to be inserted
+    if ([newIndexPaths count] > 0) {
+      [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:UITableViewRowAnimationFade];
+    }
+    
+    [_tableView endUpdates];
+    //
+    // END TABLEVIEW ANIMATION BLOCK
+    //
+  } else {
+    [_tableView reloadData];
+  }
+  
+  [self dataSourceDidLoad];
+}
+
+- (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
+  [super dataSourceDidLoad];
+}
+
 #pragma mark - Actions
 - (void)locationAcquired {
-// 10330 N Wolfe Rd Cupertino, CA 95014
+  // 10330 N Wolfe Rd Cupertino, CA 95014
 #if USE_FIXTURES
   
   // fetch Yelp Places
@@ -460,7 +575,7 @@
   NSLog(@"add: %@", address);
   
   // Create some edge cases for weird stuff
-
+  
   RELEASE_SAFELY(_currentAddress);
   _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
   
@@ -486,48 +601,6 @@
   [self fetchDataSource];
 }
 
-#pragma mark - PSDataCenterDelegate
-- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
-  // Check hasMore
-  NSDictionary *paging = [response objectForKey:@"paging"];
-  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
-  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
-  if (currentPage == numPages) {
-    _hasMore = NO;
-  } else {
-    _hasMore = YES;
-  }
-  
-  // Num results
-  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
-  if (_numResults > 0) {
-    _headerLabel.text = [NSString stringWithFormat:@"Showing %d places within %.1f mi of %@", _numResults, _distance, _whereField.text];
-  } else {
-    _headerLabel.text = [NSString stringWithFormat:@"Showing %d places within %.1f mi of %@", _numResults, _distance, _whereField.text];
-  }
-  
-  // Put response into items (datasource)
-  NSArray *places = [response objectForKey:@"places"];
-  if ([places count] > 0) {
-    if (_pagingStart == 0) {
-      // First load
-      [self.items removeAllObjects];
-      [self.items addObject:places];
-    } else {
-      // Load more
-      NSArray *newPlaces = [[self.items objectAtIndex:0] arrayByAddingObjectsFromArray:places];
-      [self.items replaceObjectAtIndex:0 withObject:newPlaces];
-    }
-  } else {
-    [self.items removeAllObjects];
-  }
-  
-  [self dataSourceDidLoad];
-}
-
-- (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
-  [super dataSourceDidLoad];
-}
 
 #pragma mark - TableView
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {

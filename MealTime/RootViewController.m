@@ -15,6 +15,8 @@
 #import "PSSearchCenter.h"
 #import "ActionSheetPicker.h"
 
+#import "PSDatabaseCenter.h"
+
 @interface RootViewController (Private)
 // View Setup
 - (void)setupHeader;
@@ -312,7 +314,28 @@
 }
 
 - (void)saved {
-  [[[[UIAlertView alloc] initWithTitle:@"Oh Noes!" message:@"Broken for now..." delegate:nil cancelButtonTitle:@"Aww" otherButtonTitles:nil] autorelease] show];
+  [super loadDataSource];
+  
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1"];
+  
+  NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
+  for (EGODatabaseRow *row in res) {
+    NSData *placeData = [row dataForColumn:@"data"];
+    [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
+  }
+  
+  _pagingStart = 0; // reset paging
+  _hasMore = NO;
+  _numResults = [res count];
+  if (_numResults > 0) {
+    _headerLabel.text = [NSString stringWithFormat:@"Found %d saved places", _numResults];
+  } else {
+    _headerLabel.text = [NSString stringWithFormat:@"You have no saved places"];
+  }
+  
+  [self dataSourceShouldLoadObjects:savedPlaces];
+  
+//  [[[[UIAlertView alloc] initWithTitle:@"Oh Noes!" message:@"Broken for now..." delegate:nil cancelButtonTitle:@"Aww" otherButtonTitles:nil] autorelease] show];
   
 //  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
 //  as.tag = kSortActionSheet;
@@ -416,33 +439,13 @@
   }
 }
 
-#pragma mark - PSDataCenterDelegate
-- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
-  // Check hasMore
-  NSDictionary *paging = [response objectForKey:@"paging"];
-  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
-  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
-  if (currentPage == numPages) {
-    _hasMore = NO;
-  } else {
-    _hasMore = YES;
-  }
-  
-  // Num results
-  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
-  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-  if (_numResults > 0) {
-    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
-  } else {
-    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
-  }
-  
+- (void)dataSourceShouldLoadObjects:(id)objects {
   //
   // PREPARE DATASOURCE
   //
-  NSArray *places = [response objectForKey:@"places"];
+  
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
-//  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
+  //  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
   BOOL tableViewCellShouldAnimate = YES;
   UITableViewRowAnimation rowAnimation = isReload ? UITableViewRowAnimationNone : UITableViewRowAnimationFade;
   
@@ -480,7 +483,7 @@
     // Check to see if the first section is empty
     if ([[self.items objectAtIndex:0] count] == 0) {
       // empty section, insert
-      [[self.items objectAtIndex:0] addObjectsFromArray:places];
+      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
       for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
         [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
       }
@@ -491,7 +494,7 @@
       }
       [[self.items objectAtIndex:0] removeAllObjects];
       // reinsert
-      [[self.items objectAtIndex:0] addObjectsFromArray:places];
+      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
       for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
         [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
       }
@@ -500,7 +503,7 @@
     // This is a load more
     
     rowStart = [[self.items objectAtIndex:0] count]; // row starting offset for inserting
-    [[self.items objectAtIndex:0] addObjectsFromArray:places];
+    [[self.items objectAtIndex:0] addObjectsFromArray:objects];
     for (int row = rowStart; row < [[self.items objectAtIndex:0] count]; row++) {
       [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
     }
@@ -536,6 +539,32 @@
   }
   
   [self dataSourceDidLoad];
+}
+
+#pragma mark - PSDataCenterDelegate
+- (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
+  // Check hasMore
+  NSDictionary *paging = [response objectForKey:@"paging"];
+  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
+  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
+  if (currentPage == numPages) {
+    _hasMore = NO;
+  } else {
+    _hasMore = YES;
+  }
+  
+  // Num results
+  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
+  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+  if (_numResults > 0) {
+    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
+  } else {
+    _headerLabel.text = [NSString stringWithFormat:@"Found %d places within %.1f mi of %@", _numResults, _distance, where];
+  }
+  
+  NSArray *places = [response objectForKey:@"places"];
+  
+  [self dataSourceShouldLoadObjects:places];
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {

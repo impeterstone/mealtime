@@ -81,6 +81,10 @@
   [super dataSourceDidLoad];
 }
 
+- (BOOL)dataIsAvailable {
+  return YES;
+}
+
 - (BOOL)shouldLoadMore {
   return NO;
 }

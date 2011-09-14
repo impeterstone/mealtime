@@ -220,9 +220,11 @@
 //  [UIView setAnimationCurve:animationCurve];
   
   if (up) {
-    self.view.height = self.view.height - keyboardFrame.size.height;
+    self.tableView.height = self.tableView.height - keyboardFrame.size.height;
+//    self.view.height = self.view.height - keyboardFrame.size.height;
   } else {
-    self.view.height = self.view.height + keyboardFrame.size.height;
+    self.tableView.height = self.tableView.height + keyboardFrame.size.height;
+//    self.view.height = self.view.height + keyboardFrame.size.height;
   }
   
 //  [UIView commitAnimations];

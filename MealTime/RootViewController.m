@@ -15,6 +15,7 @@
 #import "PSSearchCenter.h"
 #import "ActionSheetPicker.h"
 #import "SavedViewController.h"
+#import "PSSearchField.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -184,53 +185,71 @@
   bg.frame = _headerView.bounds;
   [_headerView addSubview:bg];
   
+  // Input Toolbar
+  UIToolbar *tb = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44)] autorelease];
+  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeRed]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  // Status Label
+  _distanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tb.width - 80, tb.height)];
+  _distanceLabel.backgroundColor = [UIColor clearColor];
+  _distanceLabel.textAlignment = UITextAlignmentCenter;
+  _distanceLabel.font = [PSStyleSheet fontForStyle:@"distanceLabel"];
+  _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"distanceLabel"];
+  _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"distanceLabel"];
+  _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"distanceLabel"];
+  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:_distanceLabel] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeBlue]];
+  [tb setItems:toolbarItems];
+  
   // Search Bar
   CGFloat searchWidth = _headerView.width - 20;
   
-  _whatField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
-  _whatField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
-  _whatField.font = NORMAL_FONT;
+  _whatField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
+//  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.delegate = self;
-  _whatField.returnKeyType = UIReturnKeySearch;
-  _whatField.leftViewMode = UITextFieldViewModeAlways;
-  _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_searchfield.png"]] autorelease];
-  _whatField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  
-  UIButton *starButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
-  starButton.frame = CGRectMake(0, 0, 15, 15);
-  [starButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
-  
-  _whatField.rightView = starButton;
-  _whatField.borderStyle = UITextBorderStyleRoundedRect;
   _whatField.placeholder = @"What? (e.g. Pizza, Subway)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whereField = [[UITextField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
-  _whereField.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-  _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
-  _whereField.font = NORMAL_FONT;
+  _whatField.inputAccessoryView = tb;
+  
+    // Left/Right View
+  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _whatField.leftViewMode = UITextFieldViewModeAlways;
+  _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+  
+  _whatField.rightViewMode = UITextFieldViewModeUnlessEditing;
+  UIButton *starButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
+  starButton.frame = CGRectMake(0, 0, 20, 20);
+  [starButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
+  _whatField.rightView = starButton;
+  
+  _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
-  _whereField.returnKeyType = UIReturnKeySearch;
-  _whereField.leftViewMode = UITextFieldViewModeAlways;
-  _whereField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_place.png"]] autorelease];
-  
-  UIButton *distanceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-  distanceButton.frame = CGRectMake(0, 0, 40, 15);
-  [distanceButton setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
-  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-  [distanceButton.titleLabel setFont:[PSStyleSheet fontForStyle:@"whereRightView"]];
-  [distanceButton setTitleColor:[PSStyleSheet textColorForStyle:@"whereRightView"] forState:UIControlStateNormal];
-  [distanceButton.titleLabel setShadowColor:[PSStyleSheet shadowColorForStyle:@"whereRightView"]];
-  [distanceButton.titleLabel setShadowOffset:[PSStyleSheet shadowOffsetForStyle:@"whereRightView"]];
-  [distanceButton addTarget:self action:@selector(distance) forControlEvents:UIControlEventTouchUpInside];
-  
-  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  _whereField.rightView = distanceButton;
-  _whereField.borderStyle = UITextBorderStyleRoundedRect;
   _whereField.placeholder = @"Where? (Current Location)";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  
+  _whereField.inputAccessoryView = tb;
+  
+  // Left/Right View
+  _whereField.leftViewMode = UITextFieldViewModeAlways;
+  _whereField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_where.png"]] autorelease];
+  
+//  UIButton *distanceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//  distanceButton.frame = CGRectMake(0, 0, 40, 16);
+//  [distanceButton setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
+//  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+//  [distanceButton.titleLabel setFont:[PSStyleSheet fontForStyle:@"whereRightView"]];
+//  [distanceButton setTitleColor:[PSStyleSheet textColorForStyle:@"whereRightView"] forState:UIControlStateNormal];
+//  [distanceButton.titleLabel setShadowColor:[PSStyleSheet shadowColorForStyle:@"whereRightView"]];
+//  [distanceButton.titleLabel setShadowOffset:[PSStyleSheet shadowOffsetForStyle:@"whereRightView"]];
+//  [distanceButton addTarget:self action:@selector(distance) forControlEvents:UIControlEventTouchUpInside];
+//  _whereField.rightView = distanceButton;
+  
+  _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   
   [_headerView addSubview:_whereField];
   [_headerView addSubview:_whatField];
@@ -339,7 +358,7 @@
   }
   
   // Update Distance Label
-  [(UIButton *)[_whereField rightView] setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
+  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
 }
 
 - (void)updateNumResults {

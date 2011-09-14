@@ -12,14 +12,16 @@
 #import "SearchTermDelegate.h"
 
 @class SearchTermController;
+@class PSSearchField;
 
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate> {
   UIView *_headerView;
   UIToolbar *_toolbar;
-  UITextField *_whatField;
+  PSSearchField *_whatField;
   UITextField *_whereField;
   UILabel *_statusLabel;
-
+  UILabel *_distanceLabel;
+  
   NSArray *_currentAddress;
   
   SearchTermController *_whatTermController;

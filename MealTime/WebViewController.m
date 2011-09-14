@@ -67,7 +67,14 @@
     [request setValue:USER_AGENT forHTTPHeaderField:@"User-Agent"];
   }
   
-  return YES; 
+  if (navigationType == UIWebViewNavigationTypeLinkClicked || navigationType == UIWebViewNavigationTypeFormSubmitted || navigationType == UIWebViewNavigationTypeFormResubmitted) {
+    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[req.URL absoluteString]];
+    [self.navigationController pushViewController:wvc animated:YES];
+    [wvc release];
+    return NO;
+  } else {
+    return YES;
+  }
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView{

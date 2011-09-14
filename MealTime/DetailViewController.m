@@ -151,8 +151,13 @@
   // Toolbar
   [self setupToolbar];
   
-  // Populate datasource
-  [self loadDataSource];
+  // DataSource
+  if (_viewHasLoadedOnce) {
+    // If this view has already been loaded once, don't reload the datasource
+    [self restoreDataSource];
+  } else {
+    [self loadDataSource];
+  }
 }
 
 - (void)setupMap {  
@@ -362,6 +367,16 @@
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
   return NO;
+}
+
+- (void)restoreDataSource {
+  [super restoreDataSource];
+  
+  [self loadDetails];
+  [self loadMap];
+  
+  _starButton.enabled = YES;
+  _tableView.tableHeaderView.alpha = 1.0; // Show header now
 }
 
 - (void)loadDataSource {

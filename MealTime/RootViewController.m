@@ -21,6 +21,8 @@
 - (void)setupHeader;
 - (void)setupToolbar;
 
+- (void)updateNumResults;
+
 - (void)editingDidBegin:(UITextField *)textField;
 - (void)editingDidEnd:(UITextField *)textField;
 
@@ -162,8 +164,17 @@
   // Search Term Controller
   [self setupSearchTermController];
   
-  // Get initial location
-  [self loadDataSource];
+  // DataSource
+  if (_viewHasLoadedOnce) {
+    // If this view has already been loaded once, don't reload the datasource
+    [self restoreDataSource];
+  } else {
+    [self loadDataSource];
+  }
+}
+
+- (void)viewDidLoad {
+  [super viewDidLoad];
 }
 
 - (void)setupHeader {
@@ -331,6 +342,15 @@
   [(UIButton *)[_whereField rightView] setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
 }
 
+- (void)updateNumResults {
+  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+  if (_numResults > 0) {
+    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, _distance];
+  } else {
+    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, _distance];
+  }
+}
+
 #pragma mark - Sort
 - (void)sortResults {
   NSArray *results = [self.items objectAtIndex:0];
@@ -344,7 +364,7 @@
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
     NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-    _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles\n%@", _distance, where];
+    _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles", _distance];
   }
   
 #if USE_FIXTURES
@@ -369,6 +389,14 @@
   } else {
     [self findMyLocation];
   }
+}
+
+- (void)restoreDataSource {
+  [super restoreDataSource];
+  
+  [self updateNumResults];
+  _whereField.text = _whereQuery;
+  _whatField.text = _whatQuery;
 }
 
 - (void)loadDataSource {
@@ -506,12 +534,7 @@
   
   // Num results
   _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
-  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-  if (_numResults > 0) {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles\n%@", _numResults, _distance, where];
-  } else {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles\n%@", _numResults, _distance, where];
-  }
+  [self updateNumResults];
   
   NSArray *places = [response objectForKey:@"places"];
   

@@ -14,8 +14,7 @@
 #import "PSLocationCenter.h"
 #import "PSSearchCenter.h"
 #import "ActionSheetPicker.h"
-
-#import "PSDatabaseCenter.h"
+#import "SavedViewController.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -52,7 +51,6 @@
     
     _isSearchActive = NO;
     
-    _cellCache = [[NSMutableArray alloc] init];
     _scrollCount = 0;
   }
   return self;
@@ -89,7 +87,6 @@
   RELEASE_SAFELY(_whatTermController);
   RELEASE_SAFELY(_whereTermController);
   
-  RELEASE_SAFELY(_cellCache);
   RELEASE_SAFELY(_whatQuery);
   RELEASE_SAFELY(_whereQuery);
   RELEASE_SAFELY(_sortBy);
@@ -125,15 +122,6 @@
   [self.navigationController setNavigationBarHidden:YES animated:animated];
   
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
-  
-  [UIView animateWithDuration:0.4
-                        delay:0.0
-   
-                      options:UIViewAnimationCurveEaseOut
-                   animations:^{
-                   }
-                   completion:^(BOOL finished) {
-                   }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -143,22 +131,13 @@
   
   [_whatField resignFirstResponder];
   [_whereField resignFirstResponder];
-  
-  [UIView animateWithDuration:0.4
-                        delay:0.0
-   
-                      options:UIViewAnimationCurveEaseOut
-                   animations:^{
-                   }
-                   completion:^(BOOL finished) {
-                   }];
+
 }
 
 - (void)loadView {
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-//  _navTitleLabel.text = @"MealTime";
   
   [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Oh Noes" emptySubtitle:@"No Restaurants Found" image:[UIImage imageNamed:@"nullview_photos.png"]];
   
@@ -210,6 +189,7 @@
   UIButton *starButton = [UIButton buttonWithType:UIButtonTypeCustom];
   [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
   starButton.frame = CGRectMake(0, 0, 15, 15);
+  [starButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
   
   _whatField.rightView = starButton;
   _whatField.borderStyle = UITextBorderStyleRoundedRect;
@@ -306,33 +286,12 @@
 }
 
 - (void)saved {
-  [super loadDataSource];
-  
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1"];
-  
-  NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
-  for (EGODatabaseRow *row in res) {
-    NSData *placeData = [row dataForColumn:@"data"];
-    [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
-  }
-  
-  _pagingStart = 0; // reset paging
-  _hasMore = NO;
-  _numResults = [res count];
-  if (_numResults > 0) {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d saved places", _numResults];
-  } else {
-    _statusLabel.text = [NSString stringWithFormat:@"You have no saved places"];
-  }
-  
-  [self dataSourceShouldLoadObjects:savedPlaces];
-  
-//  [[[[UIAlertView alloc] initWithTitle:@"Oh Noes!" message:@"Broken for now..." delegate:nil cancelButtonTitle:@"Aww" otherButtonTitles:nil] autorelease] show];
-  
-//  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Results" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Popularity", @"Distance", nil] autorelease];
-//  as.tag = kSortActionSheet;
-//  as.actionSheetStyle = UIActionSheetStyleBlackTranslucent;
-//  [as showFromToolbar:_toolbar];
+  SavedViewController *svc = [[SavedViewController alloc] initWithNibName:nil bundle:nil];
+  UINavigationController *snc = [[UINavigationController alloc] initWithRootViewController:svc];
+  snc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  [self presentModalViewController:snc animated:YES];
+  [svc release];
+  [snc release];
 }
 
 - (void)distance {

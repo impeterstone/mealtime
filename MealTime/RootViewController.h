@@ -27,7 +27,6 @@
   
   // This is used to reference cells
   // So that we can tell them to pause/resume animations
-  NSMutableArray *_cellCache;
   NSInteger _scrollCount;
   
   MKReverseGeocoder *_reverseGeocoder;

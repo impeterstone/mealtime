@@ -83,6 +83,11 @@
 		2814E3C813F1F01400D7A85A /* PSWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38813F1F01400D7A85A /* PSWelcomeView.m */; };
 		2814E3C913F1F01400D7A85A /* PSZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38A13F1F01400D7A85A /* PSZoomView.m */; };
 		28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 28173C4F1407255200EF628E /* UINavigationBar+Custom.m */; };
+		282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 282CC6881420532E007F0AF8 /* SavedViewController.m */; };
+		282CC6921420580E007F0AF8 /* navbar_green_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC68E1420580E007F0AF8 /* navbar_green_button.png */; };
+		282CC6931420580E007F0AF8 /* navbar_green_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC68F1420580E007F0AF8 /* navbar_green_button@2x.png */; };
+		282CC6941420580E007F0AF8 /* navbar_green_highlighted_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC6901420580E007F0AF8 /* navbar_green_highlighted_button.png */; };
+		282CC6951420580E007F0AF8 /* navbar_green_highlighted_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC6911420580E007F0AF8 /* navbar_green_highlighted_button@2x.png */; };
 		282F920C140B0F75006F5132 /* nullview_photos.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F9208140B0F75006F5132 /* nullview_photos.png */; };
 		282F920D140B0F75006F5132 /* nullview_photos@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F9209140B0F75006F5132 /* nullview_photos@2x.png */; };
 		282F920E140B0F75006F5132 /* nullview_search.png in Resources */ = {isa = PBXBuildFile; fileRef = 282F920A140B0F75006F5132 /* nullview_search.png */; };
@@ -158,7 +163,6 @@
 		28417EC7140609970050C04D /* icon_compass.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC5140609970050C04D /* icon_compass.png */; };
 		28417EC8140609970050C04D /* icon_compass@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28417EC6140609970050C04D /* icon_compass@2x.png */; };
 		28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28417ECE14060A4A0050C04D /* PSLocationCenter.m */; };
-		284885481408641B00F68014 /* InfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 284885471408641B00F68014 /* InfoViewController.m */; };
 		285570B1140C6DA5004D34EF /* SearchTermController.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570AF140C6DA4004D34EF /* SearchTermController.m */; };
 		285570BE140C7827004D34EF /* Facebook.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570B4140C7827004D34EF /* Facebook.m */; };
 		285570BF140C7827004D34EF /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 285570B7140C7827004D34EF /* FBDialog.bundle */; };
@@ -401,6 +405,12 @@
 		2814E38A13F1F01400D7A85A /* PSZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSZoomView.m; sourceTree = "<group>"; };
 		28173C4E1407255200EF628E /* UINavigationBar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationBar+Custom.h"; sourceTree = "<group>"; };
 		28173C4F1407255200EF628E /* UINavigationBar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationBar+Custom.m"; sourceTree = "<group>"; };
+		282CC6871420532E007F0AF8 /* SavedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedViewController.h; sourceTree = "<group>"; };
+		282CC6881420532E007F0AF8 /* SavedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SavedViewController.m; sourceTree = "<group>"; };
+		282CC68E1420580E007F0AF8 /* navbar_green_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navbar_green_button.png; sourceTree = "<group>"; };
+		282CC68F1420580E007F0AF8 /* navbar_green_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navbar_green_button@2x.png"; sourceTree = "<group>"; };
+		282CC6901420580E007F0AF8 /* navbar_green_highlighted_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navbar_green_highlighted_button.png; sourceTree = "<group>"; };
+		282CC6911420580E007F0AF8 /* navbar_green_highlighted_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "navbar_green_highlighted_button@2x.png"; sourceTree = "<group>"; };
 		282F9208140B0F75006F5132 /* nullview_photos.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_photos.png; sourceTree = "<group>"; };
 		282F9209140B0F75006F5132 /* nullview_photos@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nullview_photos@2x.png"; sourceTree = "<group>"; };
 		282F920A140B0F75006F5132 /* nullview_search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_search.png; sourceTree = "<group>"; };
@@ -483,8 +493,6 @@
 		28417EC6140609970050C04D /* icon_compass@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_compass@2x.png"; sourceTree = "<group>"; };
 		28417ECD14060A490050C04D /* PSLocationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSLocationCenter.h; sourceTree = "<group>"; };
 		28417ECE14060A4A0050C04D /* PSLocationCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSLocationCenter.m; sourceTree = "<group>"; };
-		284885461408641B00F68014 /* InfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoViewController.h; sourceTree = "<group>"; };
-		284885471408641B00F68014 /* InfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoViewController.m; sourceTree = "<group>"; };
 		285570AE140C6DA4004D34EF /* SearchTermController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTermController.h; sourceTree = "<group>"; };
 		285570AF140C6DA4004D34EF /* SearchTermController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchTermController.m; sourceTree = "<group>"; };
 		285570B0140C6DA4004D34EF /* SearchTermDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchTermDelegate.h; sourceTree = "<group>"; };
@@ -810,6 +818,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		282CC68614205312007F0AF8 /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+				282CC6871420532E007F0AF8 /* SavedViewController.h */,
+				282CC6881420532E007F0AF8 /* SavedViewController.m */,
+			);
+			name = Modals;
+			sourceTree = "<group>";
+		};
 		282F9207140B0F75006F5132 /* nullview */ = {
 			isa = PBXGroup;
 			children = (
@@ -890,6 +907,10 @@
 				28417E951406043C0050C04D /* navbar_blue_button@2x.png */,
 				28417E961406043C0050C04D /* navbar_blue_highlighted_button.png */,
 				28417E971406043C0050C04D /* navbar_blue_highlighted_button@2x.png */,
+				282CC68E1420580E007F0AF8 /* navbar_green_button.png */,
+				282CC68F1420580E007F0AF8 /* navbar_green_button@2x.png */,
+				282CC6901420580E007F0AF8 /* navbar_green_highlighted_button.png */,
+				282CC6911420580E007F0AF8 /* navbar_green_highlighted_button@2x.png */,
 				28417E981406043C0050C04D /* navbar_focus_button.png */,
 				28417E991406043C0050C04D /* navbar_focus_button@2x.png */,
 				28417E9A1406043C0050C04D /* navbar_focus_highlighted_button.png */,
@@ -1045,12 +1066,11 @@
 		28A1B29413F1D0B700EB971E /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				282CC68614205312007F0AF8 /* Modals */,
 				28F7491813F207220056D111 /* RootViewController.h */,
 				28F7491913F207220056D111 /* RootViewController.m */,
 				28A9FB2913F3309600EFB191 /* DetailViewController.h */,
 				28A9FB2A13F3309600EFB191 /* DetailViewController.m */,
-				284885461408641B00F68014 /* InfoViewController.h */,
-				284885471408641B00F68014 /* InfoViewController.m */,
 				28B589EC140871D600F0EDB6 /* MapViewController.h */,
 				28B589ED140871D600F0EDB6 /* MapViewController.m */,
 				28E9BD001405F49100A0F3BA /* ZoomViewController.h */,
@@ -1504,6 +1524,10 @@
 				28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */,
 				288A1E5614203F3E00ABC840 /* bg_navbar_pad.png in Resources */,
 				288A1E5814203F7A00ABC840 /* bg_toolbar_pad.png in Resources */,
+				282CC6921420580E007F0AF8 /* navbar_green_button.png in Resources */,
+				282CC6931420580E007F0AF8 /* navbar_green_button@2x.png in Resources */,
+				282CC6941420580E007F0AF8 /* navbar_green_highlighted_button.png in Resources */,
+				282CC6951420580E007F0AF8 /* navbar_green_highlighted_button@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1602,7 +1626,6 @@
 				28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */,
 				2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */,
 				28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */,
-				284885481408641B00F68014 /* InfoViewController.m in Sources */,
 				28B589EE140871D600F0EDB6 /* MapViewController.m in Sources */,
 				28B58A4A140881AD00F0EDB6 /* WebViewController.m in Sources */,
 				28B58A4E140889A700F0EDB6 /* RegexKitLite.m in Sources */,
@@ -1623,6 +1646,7 @@
 				285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */,
 				286A57851410B614001D9490 /* JSONKit.m in Sources */,
 				28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */,
+				282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

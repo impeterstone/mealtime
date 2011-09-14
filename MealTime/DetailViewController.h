@@ -11,8 +11,6 @@
 #import "PSTableViewController.h"
 #import "ProductCell.h"
 
-@class InfoViewController;
-
 @interface DetailViewController : PSTableViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, ProductCellDelegate> {
   UIToolbar *_toolbar;
   NSMutableDictionary *_place;
@@ -21,7 +19,6 @@
   
   // Views
   MKMapView *_mapView;
-  InfoViewController *_ivc;
   UIBarButtonItem *_starButton;
   UIView *_addressView;
   UILabel *_addressLabel;

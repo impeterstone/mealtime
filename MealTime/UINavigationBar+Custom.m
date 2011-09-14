@@ -12,8 +12,8 @@
 @implementation UINavigationBar (Custom)
 
 - (void)drawRect:(CGRect)rect {
-  UIImage *image = [[UIImage imageNamed:@"bg_navigationbar.png"] retain];
-  [image drawInRect:CGRectMake(0, 0, rect.size.width, rect.size.height + 7)];
+  UIImage *image = [[UIImage imageNamed:@"bg_navbar.png"] retain];
+  [image drawInRect:CGRectMake(0, 0, rect.size.width, rect.size.height)];
   [image release];
 }
 

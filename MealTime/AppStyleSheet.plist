@@ -67,12 +67,12 @@
 		<key>shadowOffset</key>
 		<string>{0,1}</string>
 	</dict>
-	<key>headerLabel</key>
+	<key>statusLabel</key>
 	<dict>
 		<key>fontName</key>
 		<string>HelveticaNeue-Bold</string>
 		<key>fontSize</key>
-		<integer>10</integer>
+		<integer>12</integer>
 		<key>textColor</key>
 		<string>0xcdcdcd</string>
 		<key>shadowColor</key>

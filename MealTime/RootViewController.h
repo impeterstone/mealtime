@@ -18,9 +18,7 @@
   UIToolbar *_toolbar;
   UITextField *_whatField;
   UITextField *_whereField;
-  UILabel *_headerLabel;
-  UIButton *_headerTopButton;
-  UIButton *_headerDistanceButton;
+  UILabel *_statusLabel;
 
   NSArray *_currentAddress;
   
@@ -41,9 +39,6 @@
   NSInteger _numResults;
   
   BOOL _isSearchActive;
-  
-  // Autoreleased
-  UIBarButtonItem *_filterButton;
 }
 
 @property (nonatomic, retain) NSString *whatQuery;

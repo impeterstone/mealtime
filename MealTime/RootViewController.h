@@ -20,7 +20,7 @@
   PSSearchField *_whatField;
   UITextField *_whereField;
   UILabel *_statusLabel;
-  UILabel *_distanceLabel;
+//  UILabel *_distanceLabel;
   
   NSArray *_currentAddress;
   

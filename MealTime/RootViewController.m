@@ -146,7 +146,7 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"Oh Noes" emptySubtitle:@"No Restaurants Found" image:[UIImage imageNamed:@"nullview_photos.png"]];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Places Found" emptySubtitle:@"Try increasing the search range" image:[UIImage imageNamed:@"nullview_photos.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -190,23 +190,23 @@
   [_headerView addSubview:bg];
   
   // Input Toolbar
-  UIToolbar *tb = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44)] autorelease];
-  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeNormal]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  // Status Label
-  _distanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tb.width - 80, tb.height)];
-  _distanceLabel.backgroundColor = [UIColor clearColor];
-  _distanceLabel.textAlignment = UITextAlignmentCenter;
-  _distanceLabel.font = [PSStyleSheet fontForStyle:@"distanceLabel"];
-  _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"distanceLabel"];
-  _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"distanceLabel"];
-  _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"distanceLabel"];
-  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:_distanceLabel] autorelease]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeSilver]];
-  [tb setItems:toolbarItems];
+//  UIToolbar *tb = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44)] autorelease];
+//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeNormal]];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  // Status Label
+//  _distanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tb.width - 80, tb.height)];
+//  _distanceLabel.backgroundColor = [UIColor clearColor];
+//  _distanceLabel.textAlignment = UITextAlignmentCenter;
+//  _distanceLabel.font = [PSStyleSheet fontForStyle:@"distanceLabel"];
+//  _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"distanceLabel"];
+//  _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"distanceLabel"];
+//  _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"distanceLabel"];
+//  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:_distanceLabel] autorelease]];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeBlue]];
+//  [tb setItems:toolbarItems];
   
   // Search Bar
   CGFloat searchWidth = _headerView.width - 20;
@@ -217,18 +217,18 @@
   _whatField.placeholder = @"What? (e.g. Pizza, Subway)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whatField.inputAccessoryView = tb;
+//  _whatField.inputAccessoryView = tb;
   
     // Left/Right View
   _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.leftViewMode = UITextFieldViewModeAlways;
-  _whatField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+  UIImageView *mag = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+  mag.contentMode = UIViewContentModeCenter;
+  _whatField.leftView = mag;
   
   _whatField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  UIButton *starButton = [UIButton buttonWithType:UIButtonTypeCustom];
+  UIButton *starButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 20, 20) andStyle:nil target:self action:@selector(saved)];
   [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
-  starButton.frame = CGRectMake(0, 0, 20, 20);
-  [starButton addTarget:self action:@selector(saved) forControlEvents:UIControlEventTouchUpInside];
   _whatField.rightView = starButton;
   
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
@@ -236,22 +236,19 @@
   _whereField.placeholder = @"Where? (Current Location)";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
-  _whereField.inputAccessoryView = tb;
+//  _whereField.inputAccessoryView = tb;
   
   // Left/Right View
   _whereField.leftViewMode = UITextFieldViewModeAlways;
-  _whereField.leftView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_where.png"]] autorelease];
+  UIImageView *where = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_where.png"]] autorelease];
+  where.contentMode = UIViewContentModeCenter;
+  _whereField.leftView = where;
   
-//  UIButton *distanceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//  distanceButton.frame = CGRectMake(0, 0, 40, 16);
-//  [distanceButton setTitle:[NSString stringWithFormat:@"%.1f mi", _distance] forState:UIControlStateNormal];
-//  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-//  [distanceButton.titleLabel setFont:[PSStyleSheet fontForStyle:@"whereRightView"]];
-//  [distanceButton setTitleColor:[PSStyleSheet textColorForStyle:@"whereRightView"] forState:UIControlStateNormal];
-//  [distanceButton.titleLabel setShadowColor:[PSStyleSheet shadowColorForStyle:@"whereRightView"]];
-//  [distanceButton.titleLabel setShadowOffset:[PSStyleSheet shadowOffsetForStyle:@"whereRightView"]];
-//  [distanceButton addTarget:self action:@selector(distance) forControlEvents:UIControlEventTouchUpInside];
-//  _whereField.rightView = distanceButton;
+  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
+  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:self action:@selector(distance)];
+  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
+  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+  _whereField.rightView = distanceButton;
   
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   
@@ -362,7 +359,8 @@
   }
   
   // Update Distance Label
-  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
+//  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
+  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
 }
 
 - (void)showInfo {
@@ -383,7 +381,7 @@
 }
 
 - (void)updateNumResults {
-  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+//  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   if (_numResults > 0) {
     _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, _distance];
   } else {
@@ -403,7 +401,7 @@
 - (void)fetchDataSource {
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
-    NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+//    NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
     _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles", _distance];
   }
   
@@ -642,6 +640,9 @@
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
+  
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"GPS" message:@"We're having trouble finding your location" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+  [av show];
   
   _reverseGeocoder = nil;
   [geocoder release];

@@ -27,7 +27,6 @@
     // Photo
     _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = NO;
-    _photoView.delegate = self;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     _photoView.placeholderImage = [UIImage imageNamed:@"place_placeholder.png"];
     

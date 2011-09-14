@@ -99,8 +99,10 @@
 
 #pragma mark - Setup
 - (void)setupTableFooter {
-  UIView *footerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 1, 1)] autorelease];
-  _tableView.tableFooterView = footerView;
+  UIButton *cancelButton = [UIButton buttonWithFrame:CGRectMake(0, 0, self.tableView.width, 37) andStyle:@"cancelSearchButton" target:self action:@selector(cancelSearch)];
+  [cancelButton setTitle:@"Cancel Search" forState:UIControlStateNormal];
+  [cancelButton setBackgroundImage:[[UIImage imageNamed:@"bg_caption.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:0] forState:UIControlStateNormal];
+  _tableView.tableFooterView = cancelButton;
 }
 
 - (void)cancelSearch {

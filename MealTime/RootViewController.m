@@ -15,6 +15,7 @@
 #import "PSSearchCenter.h"
 #import "ActionSheetPicker.h"
 #import "SavedViewController.h"
+#import "InfoViewController.h"
 #import "PSSearchField.h"
 
 @interface RootViewController (Private)
@@ -28,6 +29,9 @@
 - (void)editingDidEnd:(UITextField *)textField;
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
+
+- (void)showInfo;
+- (void)searchNearby;
 
 @end
 
@@ -188,7 +192,7 @@
   // Input Toolbar
   UIToolbar *tb = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44)] autorelease];
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeRed]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeNormal]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   // Status Label
   _distanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tb.width - 80, tb.height)];
@@ -201,7 +205,7 @@
   _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:_distanceLabel] autorelease]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeBlue]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeSilver]];
   [tb setItems:toolbarItems];
   
   // Search Bar
@@ -263,7 +267,7 @@
   // Toolbar Items
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_compass.png"] style:UIBarButtonItemStylePlain target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_compass.png"] style:UIBarButtonItemStylePlain target:self action:@selector(searchNearby)] autorelease]];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
@@ -284,7 +288,7 @@
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_info.png"] style:UIBarButtonItemStylePlain target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_info.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
@@ -361,6 +365,23 @@
   _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
 }
 
+- (void)showInfo {
+  InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
+  UINavigationController *inc = [[UINavigationController alloc] initWithRootViewController:ivc];
+  inc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  inc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+  [self presentModalViewController:inc animated:YES];
+  [ivc release];
+  [inc release];
+}
+
+- (void)searchNearby {
+  _whereField.text = nil;
+  self.whereQuery = nil;
+  _pagingStart = 0;
+  [self loadDataSource];
+}
+
 - (void)updateNumResults {
   NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   if (_numResults > 0) {
@@ -419,6 +440,13 @@
 }
 
 - (void)loadDataSource {
+  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  if (isReload) {
+    _hasMore = NO;
+    [self.items removeAllObjects];
+    [self.tableView reloadData];
+  }
+  
   [super loadDataSource];
   if (_whereQuery) {
     [self fetchDataSource];

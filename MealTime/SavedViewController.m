@@ -80,8 +80,7 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
-  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
-  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Help" withTarget:self action:@selector(help) width:60.0 height:30.0 buttonType:BarButtonTypeGreen];
+  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   _navTitleLabel.text = @"Saved Places";
   
   

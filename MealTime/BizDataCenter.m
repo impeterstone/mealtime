@@ -84,6 +84,7 @@ static NSLock *_placeLock = nil;
     rpp = @"-1";
   }
   
+  
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
     NSOperationQueue *detailsQueue = [[NSOperationQueue alloc] init];
     detailsQueue.maxConcurrentOperationCount = 2;
@@ -99,16 +100,27 @@ static NSLock *_placeLock = nil;
     [detailsQueue waitUntilAllOperationsAreFinished];
     [detailsQueue release];
     
+    // Check to see if we actually got photos and bizDetails
+    BOOL success = ([place objectForKey:@"photos"] && [place objectForKey:@"bizDetails"]) ? YES : NO;
+    
     // Write this place to the local DB
-    NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-    NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
-    //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
-    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (biz, data, timestamp) VALUES (?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"biz"], placeData, timestamp, nil]];
-    //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
+    if (success) {
+      NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+      NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
+      //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (biz, data, timestamp) VALUES (?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"biz"], placeData, timestamp, nil]];
+      //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
+    }
     
     dispatch_async(dispatch_get_main_queue(), ^{      
-      if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
-        [self.delegate dataCenterDidFinishWithResponse:nil andUserInfo:[NSDictionary dictionaryWithObject:place forKey:@"place"]];
+      if (success) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+          [self.delegate dataCenterDidFinishWithResponse:nil andUserInfo:[NSDictionary dictionaryWithObject:place forKey:@"place"]];
+        }
+      } else {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
+          [self.delegate dataCenterDidFailWithError:nil andUserInfo:[NSDictionary dictionaryWithObject:place forKey:@"place"]];
+        }
       }
     });
   });
@@ -214,6 +226,10 @@ static NSLock *_placeLock = nil;
       // Snippets
       if ([response objectForKey:@"snippets"]) {
         [place setObject:[response objectForKey:@"snippets"] forKey:@"snippets"];
+      }
+      // Biz Details (tracking use only)
+      if ([response objectForKey:@"bizDetails"]) {
+        [place setObject:[response objectForKey:@"bizDetails"] forKey:@"bizDetails"];
       }
     }
     @finally {

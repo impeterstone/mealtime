@@ -508,9 +508,9 @@
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
-  if ([[userInfo objectForKey:@"requestType"] isEqualToString:@"photos"]) {
-    [super dataSourceDidLoad];
-  }
+#warning need to build full screen error
+  // Show a full screen error here
+  [super dataSourceDidLoad];
 }
 
 #pragma mark - TableView

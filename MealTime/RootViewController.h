@@ -34,7 +34,6 @@
   MKReverseGeocoder *_reverseGeocoder;
   
   NSString *_sortBy;
-  CGFloat _distance;
   NSString *_whatQuery;
   NSString *_whereQuery;
   NSInteger _numResults;

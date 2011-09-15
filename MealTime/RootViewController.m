@@ -48,7 +48,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired) name:kLocationAcquired object:nil];
     
     _sortBy = [@"popularity" retain];
-    _distance = 0.5;
     _pagingStart = 0;
     _pagingCount = 10;
     _pagingTotal = 10;
@@ -246,7 +245,7 @@
   
   _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
   UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:self action:@selector(distance)];
-  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
+  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
   _whereField.rightView = distanceButton;
   
@@ -326,41 +325,62 @@
 }
 
 - (void)distance {
+  CGFloat distance = [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"];
+  NSInteger ind = 0;
+  if (distance == 0.2) {
+    ind = 0;
+  } else if (distance == 0.5) {
+    ind = 1;
+  } else if (distance == 1.0) {
+    ind = 2;
+  } else if (distance == 3.0) {
+    ind = 3;
+  } else if (distance == 5.0) {
+    ind = 4;
+  } else if (distance == 10.0) {
+    ind = 5;
+  } else if (distance == 20.0) {
+    ind = 6;
+  }
+  
   NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil];
-  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:1 target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
+  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
 }
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view {
+  CGFloat distance = 0.0;
   switch ([selectedIndex integerValue]) {
     case 0:
-      _distance = 0.2;
+      distance = 0.2;
       break;
     case 1:
-      _distance = 0.5;
+      distance = 0.5;
       break;
     case 2:
-      _distance = 1.0;
+      distance = 1.0;
       break;
     case 3:
-      _distance = 3.0;
+      distance = 3.0;
       break;
     case 4:
-      _distance = 5.0;
+      distance = 5.0;
       break;
     case 5:
-      _distance = 10.0;
+      distance = 10.0;
       break;
     case 6:
-      _distance = 20.0;
+      distance = 20.0;
       break;
     default:
-      _distance = 0.5;
+      distance = 0.5;
       break;
   }
   
+  [[NSUserDefaults standardUserDefaults] setFloat:distance forKey:@"distanceRadius"];
+  
   // Update Distance Label
 //  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
-  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
+  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
 }
 
 - (void)showInfo {
@@ -383,9 +403,9 @@
 - (void)updateNumResults {
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   if (_numResults > 0) {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, _distance];
+    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   } else {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, _distance];
+    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   }
 }
 
@@ -402,13 +422,13 @@
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
 //    NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-    _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles", _distance];
+    _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   }
   
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:_distance start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:[[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"] start:_pagingStart rpp:_pagingCount];
 #endif
 }
 

@@ -91,7 +91,7 @@
   
   // PSLocationCenter set default behavior
   [[PSLocationCenter defaultCenter] setShouldMonitorSignificantChange:NO];
-  [[PSLocationCenter defaultCenter] setShouldDisableAfterLocationFix:YES];
+  [[PSLocationCenter defaultCenter] setShouldDisableAfterLocationFix:NO];
   
   // Call home
   _requestQueue = [[PSNetworkQueue alloc] init];

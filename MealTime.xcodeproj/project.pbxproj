@@ -260,6 +260,8 @@
 		28E4233C1423816A00F593CE /* nullview_empty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423381423816A00F593CE /* nullview_empty@2x.png */; };
 		28E4233D1423816A00F593CE /* nullview_error.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423391423816A00F593CE /* nullview_error.png */; };
 		28E4233E1423816A00F593CE /* nullview_error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E4233A1423816A00F593CE /* nullview_error@2x.png */; };
+		28E42341142396DF00F593CE /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E42340142396DF00F593CE /* InfoCell.m */; };
+		28E4234714239DBB00F593CE /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28E4234614239DBB00F593CE /* MessageUI.framework */; };
 		28E9BCD51405D2B700A0F3BA /* PSScrapeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */; };
 		28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BD011405F49100A0F3BA /* ZoomViewController.m */; };
 		28E9BD051405F6A300A0F3BA /* place_placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E9BD031405F6A200A0F3BA /* place_placeholder.png */; };
@@ -644,6 +646,9 @@
 		28E423381423816A00F593CE /* nullview_empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nullview_empty@2x.png"; sourceTree = "<group>"; };
 		28E423391423816A00F593CE /* nullview_error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_error.png; sourceTree = "<group>"; };
 		28E4233A1423816A00F593CE /* nullview_error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nullview_error@2x.png"; sourceTree = "<group>"; };
+		28E4233F142396DF00F593CE /* InfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoCell.h; sourceTree = "<group>"; };
+		28E42340142396DF00F593CE /* InfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoCell.m; sourceTree = "<group>"; };
+		28E4234614239DBB00F593CE /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		28E9BCD31405D2B600A0F3BA /* PSScrapeCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSScrapeCenter.h; sourceTree = "<group>"; };
 		28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSScrapeCenter.m; sourceTree = "<group>"; };
 		28E9BD001405F49100A0F3BA /* ZoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomViewController.h; sourceTree = "<group>"; };
@@ -691,6 +696,7 @@
 				28A1B27813F1CFB000EB971E /* Foundation.framework in Frameworks */,
 				28A1B27A13F1CFB000EB971E /* CoreGraphics.framework in Frameworks */,
 				28B58A5014088C4200F0EDB6 /* libicucore.A.dylib in Frameworks */,
+				28E4234714239DBB00F593CE /* MessageUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -857,6 +863,8 @@
 			children = (
 				282CC6871420532E007F0AF8 /* SavedViewController.h */,
 				282CC6881420532E007F0AF8 /* SavedViewController.m */,
+				2830D0691420D3020003DD3F /* InfoViewController.h */,
+				2830D06A1420D3020003DD3F /* InfoViewController.m */,
 			);
 			name = Modals;
 			sourceTree = "<group>";
@@ -1060,6 +1068,7 @@
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
 				28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */,
+				28E4234614239DBB00F593CE /* MessageUI.framework */,
 				28DD65BE140599B800B42F20 /* CoreLocation.framework */,
 				28DD65BB140597D600B42F20 /* MapKit.framework */,
 				28B0EF8A13F1DF73004813B2 /* MobileCoreServices.framework */,
@@ -1121,8 +1130,6 @@
 				28E9BD011405F49100A0F3BA /* ZoomViewController.m */,
 				28B58A48140881AD00F0EDB6 /* WebViewController.h */,
 				28B58A49140881AD00F0EDB6 /* WebViewController.m */,
-				2830D0691420D3020003DD3F /* InfoViewController.h */,
-				2830D06A1420D3020003DD3F /* InfoViewController.m */,
 				285570AE140C6DA4004D34EF /* SearchTermController.h */,
 				285570AF140C6DA4004D34EF /* SearchTermController.m */,
 				285570B0140C6DA4004D34EF /* SearchTermDelegate.h */,
@@ -1139,6 +1146,8 @@
 				28A9FB6013F3343500EFB191 /* ProductCell.m */,
 				28B58A5F14099CF200F0EDB6 /* MetaCell.h */,
 				28B58A6014099CF200F0EDB6 /* MetaCell.m */,
+				28E4233F142396DF00F593CE /* InfoCell.h */,
+				28E42340142396DF00F593CE /* InfoCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -1715,6 +1724,7 @@
 				282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */,
 				2896F3091420B9F10075EF21 /* PSSearchField.m in Sources */,
 				2830D06B1420D3020003DD3F /* InfoViewController.m in Sources */,
+				28E42341142396DF00F593CE /* InfoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

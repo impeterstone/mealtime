@@ -56,16 +56,16 @@
   UIImageView *backgroundView = nil;
   if (numrows == 1 && row == 0) {
     // single row
-    bgName = selected ? @"bg_grouped_full_cell_highlighted.png" : @"bg_grouped_full_cell.png";
+    bgName = selected ? @"grouped_full_cell_highlighted.png" : @"grouped_full_cell.png";
   } else if (numrows > 1 && row == 0) {
     // first row
-    bgName = selected ? @"bg_grouped_top_cell_highlighted.png" : @"bg_grouped_top_cell.png";
+    bgName = selected ? @"grouped_top_cell_highlighted.png" : @"grouped_top_cell.png";
   } else if (numrows > 1 && row == (numrows - 1)) {
     // last row
-    bgName = selected ? @"bg_grouped_bottom_cell_highlighted.png" : @"bg_grouped_bottom_cell.png";
+    bgName = selected ? @"grouped_bottom_cell_highlighted.png" : @"grouped_bottom_cell.png";
   } else {
     // middle row
-    bgName = selected ? @"bg_grouped_middle_cell_highlighted.png" : @"bg_grouped_middle_cell.png";
+    bgName = selected ? @"grouped_middle_cell_highlighted.png" : @"grouped_middle_cell.png";
   }
   backgroundView = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:bgName] stretchableImageWithLeftCapWidth:6 topCapHeight:6]] autorelease];
   backgroundView.autoresizingMask = ~UIViewAutoresizingNone;

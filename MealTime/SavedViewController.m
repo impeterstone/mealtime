@@ -83,8 +83,15 @@
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   _navTitleLabel.text = @"Saved Places";
   
-  
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Saved Places" emptySubtitle:@"You haven't saved any places yet" image:[UIImage imageNamed:@"brokenplate.png"]];
+  // Nullview
+  [_nullView setLoadingTitle:@"Loading..."];
+  [_nullView setLoadingSubtitle:@"Finding Saved Places"];
+  [_nullView setEmptyTitle:@"No Saved Places"];
+  [_nullView setEmptySubtitle:@"You haven't saved any places yet. To save a place tap on the star while viewing a place."];
+  [_nullView setErrorTitle:@"Something Bad Happened"];
+  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -110,7 +117,7 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1"];
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1 ORDER BY timestamp DESC"];
   
   NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
   for (EGODatabaseRow *row in res) {
@@ -118,8 +125,6 @@
     [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
   }
   
-  _pagingStart = 0; // reset paging
-  _hasMore = NO;
 //  _numResults = [res count];
 //  if (_numResults > 0) {
 //    _statusLabel.text = [NSString stringWithFormat:@"Found %d saved places", _numResults];
@@ -131,13 +136,7 @@
 }
 
 - (void)dataSourceDidLoad {
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
-  
-  if (isReload) {
-    [super dataSourceDidLoad];
-  } else {
-    [super dataSourceDidLoadMore];
-  }
+  [super dataSourceDidLoad];
 }
 
 - (void)dataSourceShouldLoadObjects:(id)objects {

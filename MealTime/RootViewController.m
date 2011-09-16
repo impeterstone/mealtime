@@ -148,7 +148,15 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Places Found" emptySubtitle:@"Try increasing the search range" image:[UIImage imageNamed:@"brokenplate.png"]];
+  // Nullview
+  [_nullView setLoadingTitle:@"Loading..."];
+  [_nullView setLoadingSubtitle:@"Finding places for you"];
+  [_nullView setEmptyTitle:@"No Places Found"];
+  [_nullView setEmptySubtitle:@"Try increasing the search range by tapping on the distance (e.g. 1.0mi) inside the search field."];
+  [_nullView setErrorTitle:@"Something Bad Happened"];
+  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -621,7 +629,8 @@
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
-  [super dataSourceDidLoad];
+  [self dataSourceDidError];
+  _statusLabel.text = @"Error loading places";
 }
 
 #pragma mark - Actions
@@ -675,11 +684,13 @@
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
   DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
   
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"GPS" message:@"We're having trouble finding your location" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
-  [av show];
-  
+//  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"GPS" message:@"Error finding your location" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Try Again", nil] autorelease];
+//  av.tag = kAlertGPSError;
+//  [av show];
   _reverseGeocoder = nil;
   [geocoder release];
+  
+  [self dataCenterDidFailWithError:nil andUserInfo:nil];
 }
 
 - (void)updateCurrentLocation {
@@ -903,5 +914,15 @@
 //    [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
 //  }
 //}
+
+#pragma mark - UIAlertView
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  if (alertView.tag == kAlertGPSError) {
+    [self loadDataSource];
+  }
+  
+}
 
 @end

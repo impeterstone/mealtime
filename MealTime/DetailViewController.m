@@ -135,7 +135,15 @@
   self.navigationItem.rightBarButtonItem = _starButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Photos of Food" emptyTitle:@"No Photos" emptySubtitle:@"This Place Has No Photos" image:[UIImage imageNamed:@"brokenplate.png"]];
+  // Nullview
+  [_nullView setLoadingTitle:@"Loading..."];
+  [_nullView setLoadingSubtitle:@"Finding yummy food for you"];
+  [_nullView setEmptyTitle:@"No Photos Found"];
+  [_nullView setEmptySubtitle:@"This place has no photos."];
+  [_nullView setErrorTitle:@"Something Bad Happened"];
+  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -517,9 +525,7 @@
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
-#warning need to build full screen error
-  // Show a full screen error here
-  [super dataSourceDidLoad];
+  [self dataSourceDidError];
 }
 
 #pragma mark - TableView

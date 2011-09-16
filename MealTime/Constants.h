@@ -14,6 +14,7 @@
 #import "UIToolbar+Custom.h"
 
 //#define USE_FIXTURES 1
+//#define SHOULD_RESET_SQLITE
 
 // Core Data (From PSConstants.h)
 #define CORE_DATA_SQL_FILE @"spotlight.sqlite"
@@ -34,6 +35,7 @@
 #define kAlertReviews 8011
 #define kAlertShare 8012
 #define kAlertDirections 8013
+#define kAlertGPSError 8014
 
 // Notifications
 #define kLocationAcquired @"LocationAcquired"

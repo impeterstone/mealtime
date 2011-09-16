@@ -270,7 +270,7 @@
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
   NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
   
-  dispatch_async([PSScrapeCenter sharedQueue], ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
     NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
     [responseString release];
     
@@ -318,7 +318,7 @@
   [request setCompletionBlock:^{
     // GCD
     NSString *responseString = [request.responseString copy];
-    dispatch_async([PSScrapeCenter sharedQueue], ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
       [responseString release];
       
@@ -375,7 +375,7 @@
 //  [request setCompletionBlock:^{
 //    // GCD
 //    NSString *responseString = [request.responseString copy];
-//    dispatch_async([PSScrapeCenter sharedQueue], ^{
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 //      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString] retain];
 //      [responseString release];
 //      

@@ -32,7 +32,7 @@ static NSLock *_placesToRemoveLock = nil;
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
   NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
   
-  dispatch_async([PSScrapeCenter sharedQueue], ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
     [responseString release];
     
@@ -67,7 +67,7 @@ static NSLock *_placesToRemoveLock = nil;
     // GCD
     [request retain];
     NSString *responseString = [request.responseString copy];
-    dispatch_async([PSScrapeCenter sharedQueue], ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
       [responseString release];
       

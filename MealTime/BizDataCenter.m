@@ -32,7 +32,7 @@ static NSLock *_placeLock = nil;
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
   NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
   
-  dispatch_async([PSScrapeCenter sharedQueue], ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
     [responseString release];
     
@@ -54,7 +54,7 @@ static NSLock *_placeLock = nil;
   NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
   NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
   
-  dispatch_async([PSScrapeCenter sharedQueue], ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString] retain];
     [responseString release];
     
@@ -85,7 +85,7 @@ static NSLock *_placeLock = nil;
   }
   
   
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSOperationQueue *detailsQueue = [[NSOperationQueue alloc] init];
     detailsQueue.maxConcurrentOperationCount = 2;
     
@@ -309,7 +309,7 @@ static NSLock *_placeLock = nil;
     // GCD
     [request retain];
     NSString *responseString = [request.responseString copy];
-    dispatch_async([PSScrapeCenter sharedQueue], ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeReviewsWithHTMLString:responseString] retain];
       [responseString release];
       
@@ -359,7 +359,7 @@ static NSLock *_placeLock = nil;
     // GCD
     [request retain];
     NSString *responseString = [request.responseString copy];
-    dispatch_async([PSScrapeCenter sharedQueue], ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeMapWithHTMLString:responseString] retain];
       [responseString release];
       

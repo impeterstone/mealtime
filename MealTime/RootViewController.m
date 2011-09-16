@@ -145,7 +145,7 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Places Found" emptySubtitle:@"Try increasing the search range" image:[UIImage imageNamed:@"nullview_photos.png"]];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Places Found" emptySubtitle:@"Try increasing the search range" image:[UIImage imageNamed:@"brokenplate.png"]];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];

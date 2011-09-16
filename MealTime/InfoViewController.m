@@ -38,7 +38,7 @@
 
 #pragma mark - View Config
 - (UIView *)backgroundView {
-  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_darkwood.jpg"]] autorelease];
+  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Default.png"]] autorelease];
   bg.frame = self.view.bounds;
   bg.autoresizingMask = ~UIViewAutoresizingNone;
   return bg;
@@ -52,10 +52,10 @@
   _navTitleLabel.text = @"MealTime";
   
   
-  UIImageView *logo = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"7ml_logo.png"]] autorelease];
-  logo.autoresizingMask = ~UIViewAutoresizingNone;
-  logo.center = self.view.center;
-  [self.view addSubview:logo];
+//  UIImageView *logo = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"7ml_logo.png"]] autorelease];
+//  logo.autoresizingMask = ~UIViewAutoresizingNone;
+//  logo.center = self.view.center;
+//  [self.view addSubview:logo];
 }
 
 - (void)dismiss {

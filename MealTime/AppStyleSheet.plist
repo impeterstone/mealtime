@@ -202,7 +202,7 @@
 		<key>fontName</key>
 		<string>Marker Felt</string>
 		<key>fontSize</key>
-		<integer>16</integer>
+		<integer>18</integer>
 		<key>textColor</key>
 		<string>0xefefef</string>
 		<key>shadowColor</key>

@@ -247,6 +247,9 @@
 		28B58A6114099CF200F0EDB6 /* MetaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28B58A6014099CF200F0EDB6 /* MetaCell.m */; };
 		28B58A681409A9AD00F0EDB6 /* icon_info.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B58A661409A9AC00F0EDB6 /* icon_info.png */; };
 		28B58A691409A9AD00F0EDB6 /* icon_info@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28B58A671409A9AD00F0EDB6 /* icon_info@2x.png */; };
+		28CEDB591422C5660020E4B7 /* 7ml_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDB581422C5660020E4B7 /* 7ml_logo@2x.png */; };
+		28CEDB5C1422D97E0020E4B7 /* brokenplate.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDB5A1422D97E0020E4B7 /* brokenplate.png */; };
+		28CEDB5D1422D97E0020E4B7 /* brokenplate@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDB5B1422D97E0020E4B7 /* brokenplate@2x.png */; };
 		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
@@ -624,6 +627,9 @@
 		28B58A6014099CF200F0EDB6 /* MetaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MetaCell.m; sourceTree = "<group>"; };
 		28B58A661409A9AC00F0EDB6 /* icon_info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_info.png; sourceTree = "<group>"; };
 		28B58A671409A9AD00F0EDB6 /* icon_info@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_info@2x.png"; sourceTree = "<group>"; };
+		28CEDB581422C5660020E4B7 /* 7ml_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "7ml_logo@2x.png"; sourceTree = "<group>"; };
+		28CEDB5A1422D97E0020E4B7 /* brokenplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = brokenplate.png; sourceTree = "<group>"; };
+		28CEDB5B1422D97E0020E4B7 /* brokenplate@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "brokenplate@2x.png"; sourceTree = "<group>"; };
 		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
@@ -1321,7 +1327,10 @@
 		28F7492213F209840056D111 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				28CEDB5A1422D97E0020E4B7 /* brokenplate.png */,
+				28CEDB5B1422D97E0020E4B7 /* brokenplate@2x.png */,
 				2830D06C1420D56F0003DD3F /* 7ml_logo.png */,
+				28CEDB581422C5660020E4B7 /* 7ml_logo@2x.png */,
 				282F9207140B0F75006F5132 /* nullview */,
 				28417EC4140609970050C04D /* icons */,
 				28417E8F1406043C0050C04D /* navigationbar */,
@@ -1566,6 +1575,9 @@
 				2896F3181420C5B00075EF21 /* bg_searchfield.png in Resources */,
 				2896F3191420C5B00075EF21 /* bg_searchfield@2x.png in Resources */,
 				2830D06D1420D56F0003DD3F /* 7ml_logo.png in Resources */,
+				28CEDB591422C5660020E4B7 /* 7ml_logo@2x.png in Resources */,
+				28CEDB5C1422D97E0020E4B7 /* brokenplate.png in Resources */,
+				28CEDB5D1422D97E0020E4B7 /* brokenplate@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

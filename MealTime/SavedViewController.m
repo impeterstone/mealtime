@@ -84,7 +84,7 @@
   _navTitleLabel.text = @"Saved Places";
   
   
-  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Saved Places" emptySubtitle:@"You haven't saved any places yet" image:[UIImage imageNamed:@"nullview_photos.png"]];
+  [_nullView setLoadingTitle:@"Loading..." loadingSubtitle:@"Finding Restaurants" emptyTitle:@"No Saved Places" emptySubtitle:@"You haven't saved any places yet" image:[UIImage imageNamed:@"brokenplate.png"]];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];

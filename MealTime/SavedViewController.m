@@ -67,6 +67,8 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
+  [self loadDataSource];
+  
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
 }
 
@@ -101,8 +103,6 @@
   } else {
     _tableView.rowHeight = 160.0;
   }
-  
-  [self loadDataSource];
 }
 
 - (void)help {

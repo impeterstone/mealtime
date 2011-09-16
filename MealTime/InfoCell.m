@@ -16,11 +16,13 @@
 //    self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
+    self.textLabel.backgroundColor = [UIColor clearColor];
     self.textLabel.font = [PSStyleSheet fontForStyle:@"infoCellTitle"];
     self.textLabel.textColor = [PSStyleSheet textColorForStyle:@"infoCellTitle"];
     self.textLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"infoCellTitle"];
     self.textLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"infoCellTitle"];
     
+    self.detailTextLabel.backgroundColor = [UIColor clearColor];
     self.detailTextLabel.font = [PSStyleSheet fontForStyle:@"infoCellSubtitle"];
     self.detailTextLabel.textColor = [PSStyleSheet textColorForStyle:@"infoCellSubtitle"];
     self.detailTextLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"infoCellSubtitle"];

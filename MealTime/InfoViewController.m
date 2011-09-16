@@ -46,19 +46,31 @@
   return bg;
 }
 
-//- (UIView *)rowBackgroundView {
-//  UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
-//  backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-//  backgroundView.backgroundColor = CELL_BACKGROUND_COLOR;
-//  return backgroundView;
-//}
-//
-//- (UIView *)rowSelectedBackgroundView {
-//  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
-//  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-//  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
-//  return selectedBackgroundView;
-//}
+- (UIView *)tableView:(UITableView *)tableView rowBackgroundViewForIndexPath:(NSIndexPath *)indexPath selected:(BOOL)selected {
+  NSInteger section = indexPath.section;
+  NSInteger row = indexPath.row;
+//  NSInteger numsections = [tableView numberOfSections];
+  NSInteger numrows = [tableView numberOfRowsInSection:section];
+
+  NSString *bgName = nil;
+  UIImageView *backgroundView = nil;
+  if (numrows == 1 && row == 0) {
+    // single row
+    bgName = selected ? @"bg_grouped_full_cell_highlighted.png" : @"bg_grouped_full_cell.png";
+  } else if (numrows > 1 && row == 0) {
+    // first row
+    bgName = selected ? @"bg_grouped_top_cell_highlighted.png" : @"bg_grouped_top_cell.png";
+  } else if (numrows > 1 && row == (numrows - 1)) {
+    // last row
+    bgName = selected ? @"bg_grouped_bottom_cell_highlighted.png" : @"bg_grouped_bottom_cell.png";
+  } else {
+    // middle row
+    bgName = selected ? @"bg_grouped_middle_cell_highlighted.png" : @"bg_grouped_middle_cell.png";
+  }
+  backgroundView = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:bgName] stretchableImageWithLeftCapWidth:6 topCapHeight:6]] autorelease];
+  backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
+  return backgroundView;
+}
 
 #pragma mark - Setup
 - (void)setupTableFooter {

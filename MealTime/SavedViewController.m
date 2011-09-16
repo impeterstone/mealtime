@@ -49,25 +49,16 @@
   return bg;
 }
 
-- (UIView *)rowBackgroundView {
+- (UIView *)tableView:(UITableView *)tableView rowBackgroundViewForIndexPath:(NSIndexPath *)indexPath selected:(BOOL)selected {
   UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
   backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-  backgroundView.backgroundColor = CELL_BACKGROUND_COLOR;
+  backgroundView.backgroundColor = selected ? CELL_SELECTED_COLOR : CELL_BACKGROUND_COLOR;
   return backgroundView;
-}
-
-- (UIView *)rowSelectedBackgroundView {
-  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
-  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
-  return selectedBackgroundView;
 }
 
 #pragma mark - View
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
-  
-  [self loadDataSource];
   
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
 }
@@ -76,6 +67,12 @@
   [super viewWillDisappear:animated];
   
   [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
+  
+  [self loadDataSource];
 }
 
 - (void)loadView {
@@ -117,13 +114,17 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1 ORDER BY timestamp DESC"];
-  
-  NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
-  for (EGODatabaseRow *row in res) {
-    NSData *placeData = [row dataForColumn:@"data"];
-    [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
-  }
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1 ORDER BY timestamp DESC"];
+    NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
+    for (EGODatabaseRow *row in res) {
+      NSData *placeData = [row dataForColumn:@"data"];
+      [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+      [self dataSourceShouldLoadObjects:savedPlaces];
+    });
+  });
   
 //  _numResults = [res count];
 //  if (_numResults > 0) {
@@ -132,7 +133,6 @@
 //    _statusLabel.text = [NSString stringWithFormat:@"You have no saved places"];
 //  }
   
-  [self dataSourceShouldLoadObjects:savedPlaces];
 }
 
 - (void)dataSourceDidLoad {

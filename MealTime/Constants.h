@@ -13,6 +13,7 @@
 #import "UINavigationBar+Custom.h"
 #import "UIToolbar+Custom.h"
 
+#warning sql reset
 //#define USE_FIXTURES 1
 //#define SHOULD_RESET_SQLITE
 

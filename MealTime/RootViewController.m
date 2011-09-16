@@ -110,18 +110,11 @@
   return bg;
 }
 
-- (UIView *)rowBackgroundView {
+- (UIView *)tableView:(UITableView *)tableView rowBackgroundViewForIndexPath:(NSIndexPath *)indexPath selected:(BOOL)selected {
   UIView *backgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
   backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-  backgroundView.backgroundColor = CELL_BACKGROUND_COLOR;
+  backgroundView.backgroundColor = selected ? CELL_SELECTED_COLOR : CELL_BACKGROUND_COLOR;
   return backgroundView;
-}
-
-- (UIView *)rowSelectedBackgroundView {
-  UIView *selectedBackgroundView = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
-  selectedBackgroundView.autoresizingMask = ~UIViewAutoresizingNone;
-  selectedBackgroundView.backgroundColor = CELL_SELECTED_COLOR;
-  return selectedBackgroundView;
 }
 
 #pragma mark - View

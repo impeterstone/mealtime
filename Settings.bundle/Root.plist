@@ -6,7 +6,7 @@
 	<array>
 		<dict>
 			<key>DefaultValue</key>
-			<string>1.0.355</string>
+			<string>1.0.380</string>
 			<key>Key</key>
 			<string>settingsAppVersion</string>
 			<key>Title</key>

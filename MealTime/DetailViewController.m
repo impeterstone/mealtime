@@ -251,11 +251,11 @@
   _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Reviews" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeSilver]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Reviews" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
@@ -275,21 +275,15 @@
 }
 
 - (void)reviews {
-  if (isYelpInstalled()) {
-  // yelp:///biz/the-sentinel-san-francisco
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
-  } else {
-    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
-    [self.navigationController pushViewController:wvc animated:YES];
-    [wvc release];
-  }
+ UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+ av.tag = kAlertReviews;
+ [av show];
 }
 
 - (void)directions {
-  CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
-  NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
-  NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-  [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Driving Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertDirections;
+  [av show];
 }
 
 #pragma mark - Load Data
@@ -662,5 +656,31 @@
 //  NSDictionary *product = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
 //  [_imageSizeCache setValue:sizeString forKey:[product objectForKey:@"src"]];
 //}
+
+#pragma mark - UIAlertView
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  if (alertView.tag == kAlertCall) {
+    NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
+    NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
+  } else if (alertView.tag == kAlertReviews) {
+    if (isYelpInstalled()) {
+      // yelp:///biz/the-sentinel-san-francisco
+      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
+    } else {
+      WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
+      [self.navigationController pushViewController:wvc animated:YES];
+      [wvc release];
+    }
+    
+  } else if (alertView.tag == kAlertDirections) {
+    CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
+    NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+    NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
+  }
+}
 
 @end

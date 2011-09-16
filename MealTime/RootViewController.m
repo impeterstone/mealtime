@@ -30,8 +30,11 @@
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
 
+- (void)changeDistance;
+- (void)showSaved;
 - (void)showInfo;
 - (void)searchNearby;
+- (void)sortResults;
 
 @end
 
@@ -225,10 +228,10 @@
   mag.contentMode = UIViewContentModeCenter;
   _whatField.leftView = mag;
   
-  _whatField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  UIButton *starButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 20, 20) andStyle:nil target:self action:@selector(saved)];
-  [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
-  _whatField.rightView = starButton;
+//  _whatField.rightViewMode = UITextFieldViewModeUnlessEditing;
+//  UIButton *starButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 20, 20) andStyle:nil target:self action:@selector(saved)];
+//  [starButton setImage:[UIImage imageNamed:@"icon_star_silver.png"] forState:UIControlStateNormal];
+//  _whatField.rightView = starButton;
   
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
@@ -244,7 +247,7 @@
   _whereField.leftView = where;
   
   _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:self action:@selector(distance)];
+  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:self action:@selector(changeDistance)];
   [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
   _whereField.rightView = distanceButton;
@@ -263,7 +266,15 @@
   // Toolbar Items
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_compass.png"] style:UIBarButtonItemStylePlain target:self action:@selector(searchNearby)] autorelease]];
+//  UIImage *refreshImage = [UIImage imageNamed:@"icon_star_silver.png"];
+//  UIButton *refreshButton = [UIButton buttonWithFrame:CGRectMake(0, 0, refreshImage.size.width, refreshImage.size.height) andStyle:nil target:self action:@selector(showSaved)];
+//  [refreshButton setImage:refreshImage forState:UIControlStateNormal];
+//  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:refreshButton] autorelease]];
+  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(searchNearby)] autorelease]];
+   
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showSaved)] autorelease]];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
@@ -281,10 +292,13 @@
   UIBarButtonItem *statusItem = [[[UIBarButtonItem alloc] initWithCustomView:_statusLabel] autorelease];
   [toolbarItems addObject:statusItem];
   
-  
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_info.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
+  UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
+  [infoButton addTarget:self action:@selector(showInfo) forControlEvents:UIControlEventTouchUpInside];
+//  [infoButton setShowsTouchWhenHighlighted:NO];
+  
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:infoButton] autorelease]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
@@ -315,7 +329,7 @@
   [[PSLocationCenter defaultCenter] getMyLocation];
 }
 
-- (void)saved {
+- (void)showSaved {
   SavedViewController *svc = [[SavedViewController alloc] initWithNibName:nil bundle:nil];
   UINavigationController *snc = [[UINavigationController alloc] initWithRootViewController:svc];
   snc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
@@ -324,7 +338,7 @@
   [snc release];
 }
 
-- (void)distance {
+- (void)changeDistance {
   CGFloat distance = [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"];
   NSInteger ind = 0;
   if (distance == 0.2) {

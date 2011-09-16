@@ -101,7 +101,7 @@
 - (void)setupTableFooter {
   UIButton *cancelButton = [UIButton buttonWithFrame:CGRectMake(0, 0, self.tableView.width, 37) andStyle:@"cancelSearchButton" target:self action:@selector(cancelSearch)];
   [cancelButton setTitle:@"Cancel Search" forState:UIControlStateNormal];
-  [cancelButton setBackgroundImage:[[UIImage imageNamed:@"bg_caption.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:0] forState:UIControlStateNormal];
+  [cancelButton setBackgroundImage:[[UIImage imageNamed:@"bg_cancel_search.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:0] forState:UIControlStateNormal];
   _tableView.tableFooterView = cancelButton;
 }
 

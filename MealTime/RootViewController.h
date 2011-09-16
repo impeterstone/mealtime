@@ -48,13 +48,10 @@
 
 // Buttons
 - (void)findMyLocation;
-- (void)saved;
-- (void)distance;
 
 - (void)locationAcquired;
 - (void)updateCurrentLocation;
 - (void)reverseGeocode;
-- (void)sortResults;
 
 - (void)searchTermChanged:(UITextField *)textField;
 - (void)executeSearch;

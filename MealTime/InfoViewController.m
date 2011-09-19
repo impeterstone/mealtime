@@ -77,11 +77,13 @@
 
 #pragma mark - Setup
 - (void)setupTableFooter {
-  UILabel *copyright = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 20)] autorelease];
+  NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleVersionKey];
+  
+  UILabel *copyright = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 40)] autorelease];
   copyright.backgroundColor = [UIColor clearColor];
   copyright.textAlignment = UITextAlignmentCenter;
   copyright.numberOfLines = 0;
-  copyright.text = @"© Copyright 2011 Seven Minute Labs, Inc.";
+  copyright.text = [NSString stringWithFormat:@"© Copyright 2011 Seven Minute Labs, Inc.\nVersion %@", version];
   copyright.font = [PSStyleSheet fontForStyle:@"copyrightLabel"];
   copyright.textColor = [PSStyleSheet textColorForStyle:@"copyrightLabel"];
   copyright.shadowColor = [PSStyleSheet shadowColorForStyle:@"copyrightLabel"];

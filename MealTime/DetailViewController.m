@@ -343,7 +343,8 @@
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateHighlighted];
   
   NSNumber *isSavedPlace = [NSNumber numberWithBool:_isSavedPlace];
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET saved = ? WHERE biz = ?", isSavedPlace, [_place objectForKey:@"biz"], nil];
+  NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET saved = ?, timestamp = ? WHERE biz = ?", isSavedPlace, timestamp, [_place objectForKey:@"biz"], nil];
 }
 
 - (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz {

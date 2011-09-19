@@ -8,10 +8,13 @@
 
 #import "InfoViewController.h"
 #import "InfoCell.h"
+#import "WebViewController.h"
+#import "Appirater.h"
 
 @interface InfoViewController (Private)
 
 - (void)sendMailTo:(NSArray *)recipients withSubject:(NSString *)subject andMessageBody:(NSString *)messageBody;
+- (void)openLink:(NSString *)link;
 - (void)dismiss;
 
 @end
@@ -120,9 +123,9 @@
   
   // Second Section
   NSMutableArray *second = [NSMutableArray array];
-  NSDictionary *aboutsml = [NSDictionary dictionaryWithObjectsAndKeys:@"About Seven Minute Labs", @"title", nil];
-  NSDictionary *terms = [NSDictionary dictionaryWithObjectsAndKeys:@"Terms & Conditions", @"title", nil];
-  NSDictionary *privacy = [NSDictionary dictionaryWithObjectsAndKeys:@"Privacy Policy", @"title", nil];
+  NSDictionary *aboutsml = [NSDictionary dictionaryWithObjectsAndKeys:@"About Seven Minute Labs", @"title", @"http://sevenminutelabs.com/about", @"link", nil];
+  NSDictionary *terms = [NSDictionary dictionaryWithObjectsAndKeys:@"Terms & Conditions", @"title", @"http://sevenminutelabs.com/terms", @"link", nil];
+  NSDictionary *privacy = [NSDictionary dictionaryWithObjectsAndKeys:@"Privacy Policy", @"title", @"http://sevenminutelabs.com/privacy", @"link", nil];
   [second addObject:aboutsml];
   [second addObject:terms];
   [second addObject:privacy];
@@ -162,6 +165,12 @@
 		[alert show];
 		[alert release];
 	}
+}
+
+- (void)openLink:(NSString *)link {
+  WebViewController *wvc = [[WebViewController alloc] initWithURLString:link];
+  [self.navigationController pushViewController:wvc animated:YES];
+  [wvc release];
 }
 
 #pragma mark MFMailCompose
@@ -217,10 +226,18 @@
   NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
   if ([[object objectForKey:@"title"] isEqualToString:@"Tell a Friend"]) {
-    [self sendMailTo:nil withSubject:@"MealTime" andMessageBody:nil];
+    [self sendMailTo:nil withSubject:@"MealTime" andMessageBody:@"You should check out MealTime for the iPhone and iPad. It helps you find ratings and pictures of food at restaurants near you!\n\nhttp://itunes.apple.com/us/app/mealtime/id466579899?ls=1&mt=8"];
+  }
+  if ([[object objectForKey:@"title"] isEqualToString:@"Love the app? Send us love!"]) {
+    [Appirater rateApp];
   }
   if ([[object objectForKey:@"title"] isEqualToString:@"Comments? Suggestions?"]) {
     [self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:nil];
+  }
+  
+  // Links
+  if (indexPath.section == 1) {
+    [self openLink:[object objectForKey:@"link"]];
   }
 }
 

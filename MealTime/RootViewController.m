@@ -145,7 +145,7 @@
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding places for you"];
   [_nullView setEmptyTitle:@"No Places Found"];
-  [_nullView setEmptySubtitle:@"Try increasing the search range by tapping on the distance (e.g. 1.0mi) inside the search field."];
+  [_nullView setEmptySubtitle:@"Try increasing the search distance or input another location to try again."];
   [_nullView setErrorTitle:@"Something Bad Happened"];
   [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
   [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];

@@ -81,6 +81,7 @@ static NSLock *_placesToRemoveLock = nil;
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
+        [request release];
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
           [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
         }

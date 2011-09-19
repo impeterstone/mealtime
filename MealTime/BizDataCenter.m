@@ -309,7 +309,8 @@ static NSLock *_placeLock = nil;
     // GCD
     [request retain];
     NSString *responseString = [request.responseString copy];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
+//    DISPATCH_QUEUE_PRIORITY_BACKGROUND iOS 4.3+ only
       NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeReviewsWithHTMLString:responseString] retain];
       [responseString release];
       
@@ -321,7 +322,7 @@ static NSLock *_placeLock = nil;
       
       dispatch_async(dispatch_get_main_queue(), ^{
         [response release];
-        // This call has no callback
+        [request release];
       });
     });
   }];
@@ -370,6 +371,7 @@ static NSLock *_placeLock = nil;
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
+        [request release];
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
           [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
         }

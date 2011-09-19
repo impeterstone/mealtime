@@ -652,6 +652,8 @@
     CGFloat latitude = [[PSLocationCenter defaultCenter] latitude];
     CGFloat longitude = [[PSLocationCenter defaultCenter] longitude];
     
+    DLog(@"Attempting Reverse Geocode for lat: %f, lng: %f", latitude, longitude);
+    
     _reverseGeocoder = [[MKReverseGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];    
     _reverseGeocoder.delegate = self;
     [_reverseGeocoder start];
@@ -661,7 +663,7 @@
 #pragma mark - MKReverseGeocoderDelegate
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
   NSDictionary *address = placemark.addressDictionary;
-  NSLog(@"add: %@", address);
+  DLog(@"Reverse Geocode got address: %@", address);
   
   // Create some edge cases for weird stuff
   

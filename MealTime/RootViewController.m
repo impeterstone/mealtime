@@ -70,7 +70,7 @@
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_statusLabel);
+  RELEASE_SAFELY(_distanceButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -90,7 +90,7 @@
   
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_statusLabel);
+  RELEASE_SAFELY(_distanceButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -248,7 +248,7 @@
   _whereField.leftView = where;
   
   _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:self action:@selector(changeDistance)];
+  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:nil action:nil];
   [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
   _whereField.rightView = distanceButton;
@@ -279,19 +279,8 @@
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
-  // Status Label
-  _statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, _toolbar.width - 80, _toolbar.height)];
-  _statusLabel.numberOfLines = 2;
-  _statusLabel.backgroundColor = [UIColor clearColor];
-  _statusLabel.textAlignment = UITextAlignmentCenter;
-  _statusLabel.font = [PSStyleSheet fontForStyle:@"statusLabel"];
-  _statusLabel.textColor = [PSStyleSheet textColorForStyle:@"statusLabel"];
-  _statusLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"statusLabel"];
-  _statusLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"statusLabel"];
-  _statusLabel.text = @"Searching for places...";
-  
-  UIBarButtonItem *statusItem = [[[UIBarButtonItem alloc] initWithCustomView:_statusLabel] autorelease];
-  [toolbarItems addObject:statusItem];
+  _distanceButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
+  [toolbarItems addObject:_distanceButton];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
@@ -394,8 +383,11 @@
   [[NSUserDefaults standardUserDefaults] setFloat:distance forKey:@"distanceRadius"];
   
   // Update Distance Label
-//  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
   [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+  
+  // Fire a refetch
+  _pagingStart = 0;
+  [self loadDataSource];
 }
 
 - (void)showInfo {
@@ -417,11 +409,13 @@
 
 - (void)updateNumResults {
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
+  NSString *distanceTitle = nil;
   if (_numResults > 0) {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   } else {
-    _statusLabel.text = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"No places within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   }
+  [(UIButton *)_distanceButton.customView setTitle:distanceTitle forState:UIControlStateNormal];
 }
 
 #pragma mark - Sort
@@ -436,8 +430,8 @@
 - (void)fetchDataSource {
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
-//    NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-    _statusLabel.text = [NSString stringWithFormat:@"Searching for Places within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    // Update distance button label
+    [(UIButton *)_distanceButton.customView setTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   }
   
 #if USE_FIXTURES
@@ -623,7 +617,6 @@
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
   [self dataSourceDidError];
-  _statusLabel.text = @"Error loading places";
 }
 
 #pragma mark - Actions
@@ -795,7 +788,6 @@
   // Animate Search Fields
   [UIView animateWithDuration:0.4
                    animations:^{
-                     _statusLabel.alpha = 1.0;
                      _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _whereTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _headerView.height = 44;
@@ -843,7 +835,6 @@
     // Animate Search Fields
     [UIView animateWithDuration:0.4
                      animations:^{
-                       _statusLabel.alpha = 0.0;
                        _whatTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
                        _whereTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
                        _headerView.height = 80;

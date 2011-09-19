@@ -19,7 +19,8 @@
   UIToolbar *_toolbar;
   PSSearchField *_whatField;
   UITextField *_whereField;
-  UILabel *_statusLabel;
+  UIBarButtonItem *_distanceButton;
+//  UILabel *_statusLabel;
 //  UILabel *_distanceLabel;
   
   NSArray *_currentAddress;

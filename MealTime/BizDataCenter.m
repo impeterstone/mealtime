@@ -152,10 +152,9 @@ static NSLock *_placeLock = nil;
     }
     
     // Save to DB
-    NSString *biz = [place objectForKey:@"biz"];
     NSString *requestType = @"photos";
     NSString *requestData = [response JSONString];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
   }
   
 //  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
@@ -237,10 +236,9 @@ static NSLock *_placeLock = nil;
     }
 
     // Save to DB
-    NSString *biz = [place objectForKey:@"biz"];
     NSString *requestType = @"biz";
     NSString *requestData = [response JSONString];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
   }
   
   
@@ -315,10 +313,9 @@ static NSLock *_placeLock = nil;
       [responseString release];
       
       // Save to DB
-      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"reviews";
       NSString *requestData = [response JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [request.userInfo objectForKey:@"biz"], requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         [response release];
@@ -365,16 +362,15 @@ static NSLock *_placeLock = nil;
       [responseString release];
       
       // Save to DB
-      NSString *biz = [request.userInfo objectForKey:@"biz"];
       NSString *requestType = @"map";
       NSString *requestData = [response JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [request.userInfo objectForKey:@"biz"], requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
-        [request release];
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
           [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
         }
+        [request release];
       });
     });
   }];

@@ -80,13 +80,13 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
-  _navTitleLabel.text = @"Saved Places";
+  _navTitleLabel.text = @"Starred Places";
   
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
-  [_nullView setLoadingSubtitle:@"Finding Saved Places"];
-  [_nullView setEmptyTitle:@"No Saved Places"];
-  [_nullView setEmptySubtitle:@"You haven't saved any places yet. To save a place tap on the star while viewing a place."];
+  [_nullView setLoadingSubtitle:@"Finding Starred Places"];
+  [_nullView setEmptyTitle:@"No Starred Places"];
+  [_nullView setEmptySubtitle:@"You haven't starred any places yet. To star a place tap on the star while viewing a place."];
   [_nullView setErrorTitle:@"Something Bad Happened"];
   [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
   [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];

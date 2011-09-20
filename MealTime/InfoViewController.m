@@ -116,7 +116,7 @@
   // First Section
   NSMutableArray *first = [NSMutableArray array];
   NSDictionary *comments = [NSDictionary dictionaryWithObjectsAndKeys:@"Comments? Suggestions?", @"title", nil];
-  NSDictionary *sendlove = [NSDictionary dictionaryWithObjectsAndKeys:@"Love the app? Send us love!", @"title", nil];
+  NSDictionary *sendlove = [NSDictionary dictionaryWithObjectsAndKeys:@"Send Love", @"title", nil];
   NSDictionary *share = [NSDictionary dictionaryWithObjectsAndKeys:@"Tell a Friend", @"title", nil];
   [first addObject:comments];
   [first addObject:sendlove];
@@ -158,7 +158,7 @@
       [mailVC setToRecipients:recipients];
     }
 		[mailVC setSubject:subject];
-		[mailVC setMessageBody:messageBody isHTML:NO];
+		[mailVC setMessageBody:messageBody isHTML:YES];
 		[self presentModalViewController:mailVC animated:YES];
 		[mailVC release];
 	}
@@ -228,13 +228,15 @@
   NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
   if ([[object objectForKey:@"title"] isEqualToString:@"Tell a Friend"]) {
-    [self sendMailTo:nil withSubject:@"MealTime" andMessageBody:@"You should check out MealTime for the iPhone and iPad. It helps you find ratings and pictures of food at restaurants near you!\n\nhttp://itunes.apple.com/us/app/mealtime/id466579899?ls=1&mt=8"];
+    [self sendMailTo:nil withSubject:@"Check Out MealTime for iPhone and iPad" andMessageBody:@"You should check out MealTime for iPhone and iPad. It helps you find ratings and photos of yummy food around you!<br/><br/><a href=\"http://bit.ly/mealtimeapp\">Click Here to Download</a>"];
   }
-  if ([[object objectForKey:@"title"] isEqualToString:@"Love the app? Send us love!"]) {
-    [Appirater rateApp];
+  if ([[object objectForKey:@"title"] isEqualToString:@"Send Love"]) {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Write a Review" message:@"Your love makes us work harder. Review this app." delegate:self cancelButtonTitle:@"Not Now" otherButtonTitles:@"Review", nil] autorelease];
+    av.tag = kAlertSendLove;
+    [av show];
   }
   if ([[object objectForKey:@"title"] isEqualToString:@"Comments? Suggestions?"]) {
-    [self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:nil];
+    [self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion]]];
   }
   
   // Links
@@ -246,6 +248,15 @@
 - (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
 #warning fix this later
   return [InfoCell class];
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  if (alertView.tag == kAlertSendLove) {
+    [Appirater rateApp];
+  }
 }
 
 @end

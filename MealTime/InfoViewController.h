@@ -10,6 +10,6 @@
 #import <MessageUI/MFMailComposeViewController.h>
 #import "PSTableViewController.h"
 
-@interface InfoViewController : PSTableViewController <MFMailComposeViewControllerDelegate>
+@interface InfoViewController : PSTableViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 @end

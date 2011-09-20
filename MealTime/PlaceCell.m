@@ -229,9 +229,21 @@
   }
   
   _nameLabel.text = [place objectForKey:@"name"];
-  _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
+  if ([place objectForKey:@"cdistance"]) {
+    _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", [[place objectForKey:@"cdistance"] doubleValue]];
+  } else {
+    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
+  }
   _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
+  
+//  CGFloat lat = DEG2RAD([[place objectForKey:@"latitude"] floatValue]);
+//  CGFloat lng = DEG2RAD([[place objectForKey:@"longitude"] floatValue]);
+//  CGFloat curLat = DEG2RAD([[PSLocationCenter defaultCenter] latitude]);
+//  CGFloat curLng = DEG2RAD([[PSLocationCenter defaultCenter] longitude]);
+//  CGFloat distance = acos(sin(lat) * sin(curLat) + cos(lat) * cos(curLat) * cos(curLng - lng)) * 6378.1;
+//  
+//  _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", distance];
   
   // Score
   NSString *score = nil;

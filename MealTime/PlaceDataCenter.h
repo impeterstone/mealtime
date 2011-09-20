@@ -18,6 +18,4 @@
 - (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places;
 - (void)fetchCoverPhotosForPlace:(NSMutableDictionary *)place placesToRemove:(NSMutableArray *)placesToRemove;
 
-- (void)insertPlaceInDatabase:(NSDictionary *)place;
-
 @end

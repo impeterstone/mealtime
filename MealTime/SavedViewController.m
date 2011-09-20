@@ -8,6 +8,7 @@
 
 #import "SavedViewController.h"
 #import "PSDatabaseCenter.h"
+#import "PSLocationCenter.h"
 #import "PlaceCell.h"
 #import "DetailViewController.h"
 
@@ -114,12 +115,17 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
+  
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"SELECT * FROM places WHERE saved = 1 ORDER BY timestamp DESC"];
+    NSNumber *lat = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] latitude]];
+    NSNumber *lng = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] longitude]];
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT *, distance(latitude, longitude, ?, ?) as cdistance FROM places WHERE saved = 1 ORDER BY cdistance ASC", lat, lng, nil];
     NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
     for (EGODatabaseRow *row in res) {
       NSData *placeData = [row dataForColumn:@"data"];
-      [savedPlaces addObject:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
+      NSMutableDictionary *placeDict = [NSMutableDictionary dictionaryWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
+      [placeDict setObject:[NSNumber numberWithDouble:[row doubleForColumn:@"cdistance"]] forKey:@"cdistance"];
+      [savedPlaces addObject:placeDict];
     }
     dispatch_async(dispatch_get_main_queue(), ^{
       [self dataSourceShouldLoadObjects:savedPlaces];

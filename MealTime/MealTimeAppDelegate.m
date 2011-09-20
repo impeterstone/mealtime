@@ -59,7 +59,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
         
         // Reset the SQLite DB
-#if SHOULD_RESET_SQLITE
+#ifdef SHOULD_RESET_SQLITE
         NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
         NSError *error = nil;
         [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];

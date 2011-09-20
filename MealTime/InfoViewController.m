@@ -10,6 +10,7 @@
 #import "InfoCell.h"
 #import "WebViewController.h"
 #import "Appirater.h"
+#import "PSMailCenter.h"
 
 @interface InfoViewController (Private)
 
@@ -148,27 +149,6 @@
   [self dismissModalViewControllerAnimated:YES];
 }
 
-- (void)sendMailTo:(NSArray *)recipients withSubject:(NSString *)subject andMessageBody:(NSString *)messageBody {
-  if([MFMailComposeViewController canSendMail]) {
-		MFMailComposeViewController *mailVC = [[MFMailComposeViewController alloc] init];
-    mailVC.mailComposeDelegate = self;
-		mailVC.navigationBar.barStyle = UIBarStyleBlackOpaque;
-    
-    if (recipients) {
-      [mailVC setToRecipients:recipients];
-    }
-		[mailVC setSubject:subject];
-		[mailVC setMessageBody:messageBody isHTML:YES];
-		[self presentModalViewController:mailVC animated:YES];
-		[mailVC release];
-	}
-	else {
-		UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"No Mail Accounts Found", @"No Mail Accounts Found") message:NSLocalizedString(@"You must setup a Mail account before using this feature", @"You must setup a Mail account before using this feature") delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
-		[alert show];
-		[alert release];
-	}
-}
-
 - (void)openLink:(NSString *)link {
   WebViewController *wvc = [[WebViewController alloc] initWithURLString:link];
   [self.navigationController pushViewController:wvc animated:YES];
@@ -228,15 +208,14 @@
   NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
   if ([[object objectForKey:@"title"] isEqualToString:@"Tell a Friend"]) {
-    [self sendMailTo:nil withSubject:@"Check Out MealTime for iPhone and iPad" andMessageBody:@"You should check out MealTime for iPhone and iPad. It helps you find ratings and photos of yummy food around you!<br/><br/><a href=\"http://bit.ly/mealtimeapp\">Click Here to Download</a>"];
-  }
+    [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:@"Check Out MealTime for iPhone and iPad" andMessageBody:@"You should check out MealTime for iPhone and iPad. It helps you find ratings and photos of yummy food around you!<br/><br/><a href=\"http://bit.ly/mealtimeapp\">Click Here to Download</a>"];  }
   if ([[object objectForKey:@"title"] isEqualToString:@"Send Love"]) {
     UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Write a Review" message:@"Your love makes us work harder. Review this app." delegate:self cancelButtonTitle:@"Not Now" otherButtonTitles:@"Review", nil] autorelease];
     av.tag = kAlertSendLove;
     [av show];
   }
   if ([[object objectForKey:@"title"] isEqualToString:@"Comments? Suggestions?"]) {
-    [self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion]]];
+    [[PSMailCenter defaultCenter] controller:self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion]]];
   }
   
   // Links

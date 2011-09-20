@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <MessageUI/MFMailComposeViewController.h>
 #import "PSTableViewController.h"
 
-@interface InfoViewController : PSTableViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
+@interface InfoViewController : PSTableViewController <UIAlertViewDelegate>
 
 @end

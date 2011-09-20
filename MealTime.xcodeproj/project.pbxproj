@@ -81,6 +81,7 @@
 		2814E3C813F1F01400D7A85A /* PSWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38813F1F01400D7A85A /* PSWelcomeView.m */; };
 		2814E3C913F1F01400D7A85A /* PSZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38A13F1F01400D7A85A /* PSZoomView.m */; };
 		28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 28173C4F1407255200EF628E /* UINavigationBar+Custom.m */; };
+		2819F8F31428A07C008382DD /* PSMailCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2819F8F21428A07B008382DD /* PSMailCenter.m */; };
 		282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 282CC6881420532E007F0AF8 /* SavedViewController.m */; };
 		282CC6921420580E007F0AF8 /* navbar_green_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC68E1420580E007F0AF8 /* navbar_green_button.png */; };
 		282CC6931420580E007F0AF8 /* navbar_green_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC68F1420580E007F0AF8 /* navbar_green_button@2x.png */; };
@@ -445,6 +446,8 @@
 		2814E38A13F1F01400D7A85A /* PSZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSZoomView.m; sourceTree = "<group>"; };
 		28173C4E1407255200EF628E /* UINavigationBar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationBar+Custom.h"; sourceTree = "<group>"; };
 		28173C4F1407255200EF628E /* UINavigationBar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationBar+Custom.m"; sourceTree = "<group>"; };
+		2819F8F11428A07B008382DD /* PSMailCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSMailCenter.h; sourceTree = "<group>"; };
+		2819F8F21428A07B008382DD /* PSMailCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSMailCenter.m; sourceTree = "<group>"; };
 		282CC6871420532E007F0AF8 /* SavedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedViewController.h; sourceTree = "<group>"; };
 		282CC6881420532E007F0AF8 /* SavedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SavedViewController.m; sourceTree = "<group>"; };
 		282CC68E1420580E007F0AF8 /* navbar_green_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = navbar_green_button.png; sourceTree = "<group>"; };
@@ -1294,6 +1297,8 @@
 				282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */,
 				285570C3140C7949004D34EF /* PSFacebookCenter.h */,
 				285570C4140C7949004D34EF /* PSFacebookCenter.m */,
+				2819F8F11428A07B008382DD /* PSMailCenter.h */,
+				2819F8F21428A07B008382DD /* PSMailCenter.m */,
 				2814E34013F1F01400D7A85A /* Vendor */,
 				2814E37413F1F01400D7A85A /* Views */,
 			);
@@ -1849,6 +1854,7 @@
 				28E42341142396DF00F593CE /* InfoCell.m in Sources */,
 				2831CD1C1427F12800FBAA0F /* Appirater.m in Sources */,
 				28BCC977142808D800C70AEF /* PSOverlayImageView.m in Sources */,
+				2819F8F31428A07C008382DD /* PSMailCenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,7 @@
 #import "PSTableViewController.h"
 
 @interface SavedViewController : PSTableViewController {
-  
+  UIToolbar *_toolbar;
 }
 
 @end

@@ -14,7 +14,7 @@
 #import "UIToolbar+Custom.h"
 
 //#define USE_FIXTURES 1
-//#define SHOULD_RESET_SQLITE
+#define SHOULD_RESET_SQLITE
 
 // Core Data (From PSConstants.h)
 #define CORE_DATA_SQL_FILE @"spotlight.sqlite"

@@ -11,9 +11,12 @@
 #import "PSLocationCenter.h"
 #import "PlaceCell.h"
 #import "DetailViewController.h"
+#import "PSMailCenter.h"
 
 @interface SavedViewController (Private)
 
+- (void)setupToolbar;
+- (void)share;
 - (void)dismiss;
 
 @end
@@ -30,7 +33,7 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
-
+  RELEASE_SAFELY(_toolbar);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,6 +42,7 @@
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_toolbar);
   [super dealloc];
 }
 
@@ -101,10 +105,70 @@
   } else {
     _tableView.rowHeight = 160.0;
   }
+  
+  // Toolbar
+  [self setupToolbar];
 }
 
-- (void)help {
+- (void)setupToolbar {
+  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Export via Email" withTarget:self action:@selector(share) width:300 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  
+  [_toolbar setItems:toolbarItems];
+  [self setupFooterWithView:_toolbar];
+}
+
+- (void)share {
+  // Construct Body
+//  The Codmother Fish and Chips
+//  4.5 star rating (70 reviews)
+//  Category: Fish & Chips
+//  Fisherman's Wharf
+//  2824 Jones St (Map)
+//  (b/t Beach St & Jefferson St)
+//  San Francisco, CA
+//  (415) 606-9349
+//  2.25 miles
+//  Price: $
+  NSMutableString *body = [NSMutableString string];
+  for (NSDictionary *place in [self.items objectAtIndex:0]) {
+    // Score
+    NSString *score = nil;
+    NSInteger metaScore = [[place objectForKey:@"score"] integerValue];
+    if (metaScore > 90) {
+      score = @"A+";
+    } else if (metaScore > 80) {
+      score = @"A";
+    } else if (metaScore > 70) {
+      score = @"A-";
+    } else if (metaScore > 60) {
+      score = @"B+";
+    } else if (metaScore > 50) {
+      score = @"B";
+    } else if (metaScore > 40) {
+      score = @"B-";
+    } else if (metaScore > 30) {
+      score = @"C+";
+    } else if (metaScore > 20) {
+      score = @"C";
+    } else if (metaScore >= 10) {
+      score = @"C-";
+    } else {
+      score = @"F";
+    }
+
+    [body appendString:@"<br/>"];
+    [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [place objectForKey:@"biz"], [place objectForKey:@"name"]];
+    [body appendFormat:@"%@<br/>", [[place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
+    if ([[place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [place objectForKey:@"phone"]];
+    [body appendFormat:@"Price: %@, Score: %@<br/>", [place objectForKey:@"price"], score];
+//    [body appendString:@"<br/>"];
+  }
+  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:@"MealTime: My Starred Places" andMessageBody:body];
 }
                                            
 - (void)dismiss {

@@ -13,8 +13,8 @@
 #import "WebViewController.h"
 #import "PSLocationCenter.h"
 #import "PlaceAnnotation.h"
-
 #import "PSDatabaseCenter.h"
+#import "PSOverlayImageView.h"
 
 @interface DetailViewController (Private)
 
@@ -104,6 +104,21 @@
   [super viewWillAppear:animated];
   
   [self.navigationController setNavigationBarHidden:NO animated:animated];
+  
+  // NUX
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:@"nux_overlay_detail.png"]] autorelease];
+    nuxView.alpha = 0.0;
+    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+    [UIView animateWithDuration:0.4 animations:^{
+      nuxView.alpha = 1.0;
+    }];
+  }
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+  [super viewDidAppear:animated];
 }
 
 - (void)loadView

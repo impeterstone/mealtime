@@ -17,6 +17,7 @@
 #import "SavedViewController.h"
 #import "InfoViewController.h"
 #import "PSSearchField.h"
+#import "PSOverlayImageView.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -122,6 +123,17 @@
   [super viewWillAppear:animated];
   
   [self.navigationController setNavigationBarHidden:YES animated:animated];
+  
+  // NUX
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:@"nux_overlay_root.png"]] autorelease];
+    nuxView.alpha = 0.0;
+    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+    [UIView animateWithDuration:0.4 animations:^{
+      nuxView.alpha = 1.0;
+    }];
+  }
   
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
 }

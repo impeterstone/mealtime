@@ -144,9 +144,8 @@
   // PREPARE DATASOURCE
   //
   
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
-  //  BOOL tableViewCellShouldAnimate = isReload ? NO : YES;
-  BOOL tableViewCellShouldAnimate = YES;
+  BOOL isReload = YES;
+  BOOL tableViewCellShouldAnimate = NO;
   UITableViewRowAnimation rowAnimation = isReload ? UITableViewRowAnimationNone : UITableViewRowAnimationFade;
   
   /**

@@ -78,6 +78,11 @@
   return _imageView;
 }
 
+//- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(UIView *)view atScale:(float)scale {
+//  CGFloat scaleFactor = [[UIScreen mainScreen] scale] * scale;
+//  [_imageView setShouldScale:scaleFactor];
+//}
+
 - (void)dismiss {
   [self dismissModalViewControllerAnimated:YES];
 }

@@ -35,7 +35,7 @@
 - (void)fillCellWithObject:(id)object
 {
   NSDictionary *info = (NSDictionary *)object;
-  
+//  self.imageView.image = [UIImage imageNamed:@"icon_heart.png"];
   self.textLabel.text = [info objectForKey:@"title"];
   self.detailTextLabel.text = [info objectForKey:@"subtitle"];
 }

@@ -119,7 +119,8 @@ static NSLock *_placesToRemoveLock = nil;
 }
 
 - (void)fetchCoverPhotosForPlace:(NSMutableDictionary *)place placesToRemove:(NSMutableArray *)placesToRemove {
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=3", [place objectForKey:@"biz"]];
+  NSInteger numPhotosToFetch = isMultitaskingSupported() ? 3 : 1;
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%d", [place objectForKey:@"biz"], numPhotosToFetch];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   // Run this synchronously

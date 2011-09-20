@@ -287,6 +287,9 @@
 		28E423861424109800F593CE /* grouped_top_cell_highlighted@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423761424109800F593CE /* grouped_top_cell_highlighted@2x.png */; };
 		28E423871424109800F593CE /* grouped_top_cell.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423771424109800F593CE /* grouped_top_cell.png */; };
 		28E423881424109800F593CE /* grouped_top_cell@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423781424109800F593CE /* grouped_top_cell@2x.png */; };
+		28E4F88B1429325700B1CFCA /* icon_heart.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E4F8891429325700B1CFCA /* icon_heart.png */; };
+		28E4F88C1429325700B1CFCA /* icon_heart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E4F88A1429325700B1CFCA /* icon_heart@2x.png */; };
+		28E4F88F1429450900B1CFCA /* UIDevice-Hardware.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E4F88E1429450900B1CFCA /* UIDevice-Hardware.m */; };
 		28E9BCD51405D2B700A0F3BA /* PSScrapeCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */; };
 		28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28E9BD011405F49100A0F3BA /* ZoomViewController.m */; };
 		28E9BD051405F6A300A0F3BA /* place_placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E9BD031405F6A200A0F3BA /* place_placeholder.png */; };
@@ -702,6 +705,10 @@
 		28E423761424109800F593CE /* grouped_top_cell_highlighted@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grouped_top_cell_highlighted@2x.png"; sourceTree = "<group>"; };
 		28E423771424109800F593CE /* grouped_top_cell.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = grouped_top_cell.png; sourceTree = "<group>"; };
 		28E423781424109800F593CE /* grouped_top_cell@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "grouped_top_cell@2x.png"; sourceTree = "<group>"; };
+		28E4F8891429325700B1CFCA /* icon_heart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_heart.png; sourceTree = "<group>"; };
+		28E4F88A1429325700B1CFCA /* icon_heart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_heart@2x.png"; sourceTree = "<group>"; };
+		28E4F88D1429450900B1CFCA /* UIDevice-Hardware.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIDevice-Hardware.h"; path = "Erica/UIDevice-Hardware.h"; sourceTree = "<group>"; };
+		28E4F88E1429450900B1CFCA /* UIDevice-Hardware.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIDevice-Hardware.m"; path = "Erica/UIDevice-Hardware.m"; sourceTree = "<group>"; };
 		28E9BCD31405D2B600A0F3BA /* PSScrapeCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSScrapeCenter.h; sourceTree = "<group>"; };
 		28E9BCD41405D2B700A0F3BA /* PSScrapeCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSScrapeCenter.m; sourceTree = "<group>"; };
 		28E9BD001405F49100A0F3BA /* ZoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZoomViewController.h; sourceTree = "<group>"; };
@@ -825,6 +832,8 @@
 		2814E34013F1F01400D7A85A /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				28E4F88D1429450900B1CFCA /* UIDevice-Hardware.h */,
+				28E4F88E1429450900B1CFCA /* UIDevice-Hardware.m */,
 				286A57821410B614001D9490 /* JSONKit */,
 				282F9218140B5BD3006F5132 /* egodatabase */,
 				28B58A511408995100F0EDB6 /* HTMLParser */,
@@ -1048,6 +1057,8 @@
 		28417EC4140609970050C04D /* icons */ = {
 			isa = PBXGroup;
 			children = (
+				28E4F8891429325700B1CFCA /* icon_heart.png */,
+				28E4F88A1429325700B1CFCA /* icon_heart@2x.png */,
 				280154D71419A5D400E76144 /* icon_distance.png */,
 				280154D81419A5D400E76144 /* icon_distance@2x.png */,
 				280154D31419A22400E76144 /* icon_cancel.png */,
@@ -1730,6 +1741,8 @@
 				28BCC9801428097D00C70AEF /* nux_overlay_root@2x.png in Resources */,
 				28BCC98314280E2700C70AEF /* nux_overlay_detail.png in Resources */,
 				28BCC98414280E2700C70AEF /* nux_overlay_detail@2x.png in Resources */,
+				28E4F88B1429325700B1CFCA /* icon_heart.png in Resources */,
+				28E4F88C1429325700B1CFCA /* icon_heart@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1855,6 +1868,7 @@
 				2831CD1C1427F12800FBAA0F /* Appirater.m in Sources */,
 				28BCC977142808D800C70AEF /* PSOverlayImageView.m in Sources */,
 				2819F8F31428A07C008382DD /* PSMailCenter.m in Sources */,
+				28E4F88F1429450900B1CFCA /* UIDevice-Hardware.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -298,11 +298,7 @@
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
-  UIButton *infoButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
-  [infoButton addTarget:self action:@selector(showInfo) forControlEvents:UIControlEventTouchUpInside];
-//  [infoButton setShowsTouchWhenHighlighted:NO];
-  
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:infoButton] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];

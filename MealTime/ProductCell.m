@@ -25,7 +25,7 @@
     
     // Photo
     _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
-    _photoView.shouldAnimate = YES;
+    _photoView.shouldAnimate = isMultitaskingSupported();
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     
     // Caption

@@ -123,6 +123,12 @@
 }
 
 - (void)share {
+  if (![self dataIsAvailable]) {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Whoops" message:@"Need something to export." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+    [av show];
+    return;
+  }
+  
   // Construct Body
 //  The Codmother Fish and Chips
 //  4.5 star rating (70 reviews)

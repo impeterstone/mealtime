@@ -11,6 +11,7 @@
 #import "WebViewController.h"
 #import "Appirater.h"
 #import "PSMailCenter.h"
+#import "UIDevice-Hardware.h"
 
 @interface InfoViewController (Private)
 
@@ -215,7 +216,7 @@
     [av show];
   }
   if ([[object objectForKey:@"title"] isEqualToString:@"Comments? Suggestions?"]) {
-    [[PSMailCenter defaultCenter] controller:self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion]]];
+    [[PSMailCenter defaultCenter] controller:self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@<br/>HW Model: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion], [[UIDevice currentDevice] platformString]]];
   }
   
   // Links

@@ -50,7 +50,6 @@
 // Buttons
 - (void)findMyLocation;
 
-- (void)locationAcquired;
 - (void)updateCurrentLocation;
 - (void)reverseGeocode;
 

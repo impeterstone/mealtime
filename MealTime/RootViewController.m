@@ -37,6 +37,8 @@
 - (void)searchNearby;
 - (void)sortResults;
 
+- (void)locationAcquired:(NSNotification *)notification;
+
 @end
 
 @implementation RootViewController
@@ -49,7 +51,7 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     [[PlaceDataCenter defaultCenter] setDelegate:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired) name:kLocationAcquired object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
     _sortBy = [@"popularity" retain];
     _pagingStart = 0;
@@ -157,7 +159,7 @@
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding places for you"];
   [_nullView setEmptyTitle:@"No Places Found"];
-  [_nullView setEmptySubtitle:@"Try increasing the search distance or input another location to try again."];
+  [_nullView setEmptySubtitle:@"Try increasing the search distance or try your search again."];
   [_nullView setErrorTitle:@"Something Bad Happened"];
   [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
   [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
@@ -632,7 +634,7 @@
 }
 
 #pragma mark - Actions
-- (void)locationAcquired {
+- (void)locationAcquired:(NSNotification *)notification {
   // 10330 N Wolfe Rd Cupertino, CA 95014
 #if USE_FIXTURES
   

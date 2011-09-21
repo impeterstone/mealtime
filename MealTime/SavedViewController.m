@@ -194,7 +194,7 @@
     for (EGODatabaseRow *row in res) {
       NSData *placeData = [row dataForColumn:@"data"];
       NSMutableDictionary *placeDict = [NSMutableDictionary dictionaryWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:placeData]];
-      [placeDict setObject:[NSNumber numberWithDouble:[row doubleForColumn:@"cdistance"]] forKey:@"cdistance"];
+      [placeDict setObject:[NSString stringWithFormat:@"%.2f", [row doubleForColumn:@"cdistance"]] forKey:@"cdistance"];
       [savedPlaces addObject:placeDict];
     }
     dispatch_async(dispatch_get_main_queue(), ^{

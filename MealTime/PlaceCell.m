@@ -230,7 +230,7 @@
   
   _nameLabel.text = [place objectForKey:@"name"];
   if ([place objectForKey:@"cdistance"]) {
-    _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", [[place objectForKey:@"cdistance"] doubleValue]];
+    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"cdistance"]];
   } else {
     _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
   }

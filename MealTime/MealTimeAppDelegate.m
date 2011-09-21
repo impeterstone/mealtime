@@ -15,6 +15,7 @@
 #import "PSDataCenter.h"
 #import "PSNetworkQueue.h"
 #import "PSLocationCenter.h"
+#import "Crittercism.h"
 
 @interface MealTimeAppDelegate (Private)
 
@@ -87,7 +88,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  NSLog(@"fonts: %@",[UIFont familyNames]);
+//  NSLog(@"fonts: %@",[UIFont familyNames]);
   
   _isBackgrounded = NO;
   
@@ -116,6 +117,12 @@
   
   [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];
+  
+  // Crittercism
+  [Crittercism initWithAppID: @"4e7919a8ddf520403007beb0"
+                      andKey:@"4e7919a8ddf520403007beb0l8haqgmx"
+                   andSecret:@"4jhap5c6gtuexebkmj2x9i8cwq0im1ln"
+       andMainViewController:_navigationController];
   
   return YES;
 }
@@ -161,7 +168,7 @@
     [storedRequest setObject:[row stringForColumn:@"timestamp"] forKey:@"timestamp"];
 
     // Upload data
-    NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime", API_BASE_URL];
+    NSString *smlURLString = [NSString stringWithFormat:@"%@/mealtime?type=%@", API_BASE_URL, [storedRequest objectForKey:@"type"]];
     NSURL *smlURL = [NSURL URLWithString:smlURLString];
     __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:smlURL];
     request.numberOfTimesToRetryOnTimeout = 1;

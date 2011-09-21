@@ -25,7 +25,7 @@
 
 #ifdef STAGING
   #ifdef USE_LOCALHOST
-    #define API_BASE_URL [NSString stringWithFormat:@"https://localhost:5000/%@", API_VERSION]
+    #define API_BASE_URL [NSString stringWithFormat:@"http://localhost:5000/%@", API_VERSION]
   #else
     #define API_BASE_URL [NSString stringWithFormat:@"https://derelicte.herokuapp.com/%@", API_VERSION]
   #endif

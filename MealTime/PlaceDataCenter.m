@@ -37,9 +37,9 @@ static NSLock *_placesToRemoveLock = nil;
     [responseString release];
     
     // Save to DB
-    NSString *requestType = @"places";
-    NSString *requestData = [response JSONString];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+//    NSString *requestType = @"places";
+//    NSString *requestData = [response JSONString];
+//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{
       if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
@@ -76,9 +76,9 @@ static NSLock *_placesToRemoveLock = nil;
       [self fetchYelpCoverPhotoForPlaces:[response objectForKey:@"places"]];
       
       // Save to DB
-      NSString *requestType = @"places";
-      NSString *requestData = [response JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
+//      NSString *requestType = @"places";
+//      NSString *requestData = [response JSONString];
+//      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {

@@ -107,9 +107,15 @@ static NSLock *_placeLock = nil;
     if (success) {
       NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
       NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
-      //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
       [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (biz, data, latitude, longitude, timestamp) VALUES (?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"biz"], placeData, [place objectForKey:@"latitude"], [place objectForKey:@"longitude"], timestamp, nil]];
-      //    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
+      
+      // Save callhome entry
+      NSString *requestType = @"biz";
+      NSString *requestData = [place JSONString];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
+      
+      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{      
@@ -152,41 +158,10 @@ static NSLock *_placeLock = nil;
     }
     
     // Save to DB
-    NSString *requestType = @"photos";
-    NSString *requestData = [response JSONString];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
-  }
-  
-//  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
-//  request.numberOfTimesToRetryOnTimeout = 3;
-//  [request setUserAgent:USER_AGENT];
-//  
-//  [request setCompletionBlock:^{
-//    // GCD
-//    [request retain];
-//    NSString *responseString = [request.responseString copy];
-//
-//    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
-//    [responseString release];
-//    
-//    // Update place object
-//    if ([response objectForKey:@"photos"]) {
-//      [place setObject:[response objectForKey:@"photos"] forKey:@"photos"];
-//    }
-//    
-//    // Save to DB
-//    NSString *biz = [request.userInfo objectForKey:@"biz"];
 //    NSString *requestType = @"photos";
 //    NSString *requestData = [response JSONString];
-//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
-//  }];
-//  
-//  [request setFailedBlock:^{
-//    
-//  }];
-//  
-//  request.queuePriority = NSOperationQueuePriorityVeryHigh;
-  
+//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
+  }
 }
 
 - (void)requestForBizForPlace:(NSMutableDictionary *)place {
@@ -236,56 +211,10 @@ static NSLock *_placeLock = nil;
     }
 
     // Save to DB
-    NSString *requestType = @"biz";
-    NSString *requestData = [response JSONString];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
-  }
-  
-  
-//  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
-//  request.numberOfTimesToRetryOnTimeout = 3;
-//  [request setUserAgent:USER_AGENT];
-//
-//  [request setCompletionBlock:^{
-//    // GCD
-//    [request retain];
-//    NSString *responseString = [request.responseString copy];
-//
-//    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString];
-//    [responseString release];
-//    
-//    // Update place object
-//    // Address
-//    if ([response objectForKey:@"address"]) {
-//      [place setObject:[response objectForKey:@"address"] forKey:@"address"];
-//    }
-//    if ([response objectForKey:@"latitude"]) {
-//      [place setObject:[response objectForKey:@"latitude"] forKey:@"latitude"];
-//    }
-//    if ([response objectForKey:@"longitude"]) {
-//      [place setObject:[response objectForKey:@"longitude"] forKey:@"longitude"];
-//    }
-//    // Update Hours
-//    if ([response objectForKey:@"hours"]) {
-//      [place setObject:[response objectForKey:@"hours"] forKey:@"hours"];
-//    }
-//    // Snippets
-//    if ([response objectForKey:@"snippets"]) {
-//      [place setObject:[response objectForKey:@"snippets"] forKey:@"snippets"];
-//    }
-//    
-//    // Save to DB
-//    NSString *biz = [request.userInfo objectForKey:@"biz"];
 //    NSString *requestType = @"biz";
 //    NSString *requestData = [response JSONString];
-//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
-//  }];
-//  
-//  [request setFailedBlock:^{
-//    
-//  }];
-//  
-//  request.queuePriority = NSOperationQueuePriorityHigh;
+//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
+  }
 }
 
 - (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp {
@@ -362,9 +291,9 @@ static NSLock *_placeLock = nil;
       [responseString release];
       
       // Save to DB
-      NSString *requestType = @"map";
-      NSString *requestData = [response JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [request.userInfo objectForKey:@"biz"], requestType, requestData, nil];
+//      NSString *requestType = @"map";
+//      NSString *requestData = [response JSONString];
+//      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [request.userInfo objectForKey:@"biz"], requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {

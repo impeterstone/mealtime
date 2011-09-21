@@ -12,6 +12,7 @@
 #import "Appirater.h"
 #import "PSMailCenter.h"
 #import "UIDevice-Hardware.h"
+#import "Crittercism.h"
 
 @interface InfoViewController (Private)
 
@@ -117,7 +118,7 @@
   
   // First Section
   NSMutableArray *first = [NSMutableArray array];
-  NSDictionary *comments = [NSDictionary dictionaryWithObjectsAndKeys:@"Comments? Suggestions?", @"title", nil];
+  NSDictionary *comments = [NSDictionary dictionaryWithObjectsAndKeys:@"Send Feedback", @"title", nil];
   NSDictionary *sendlove = [NSDictionary dictionaryWithObjectsAndKeys:@"Send Love", @"title", nil];
   NSDictionary *share = [NSDictionary dictionaryWithObjectsAndKeys:@"Tell a Friend", @"title", nil];
   [first addObject:comments];
@@ -215,8 +216,10 @@
     av.tag = kAlertSendLove;
     [av show];
   }
-  if ([[object objectForKey:@"title"] isEqualToString:@"Comments? Suggestions?"]) {
-    [[PSMailCenter defaultCenter] controller:self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@<br/>HW Model: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion], [[UIDevice currentDevice] platformString]]];
+  if ([[object objectForKey:@"title"] isEqualToString:@"Send Feedback"]) {
+    [Crittercism showCrittercism:self];
+    
+//    [[PSMailCenter defaultCenter] controller:self sendMailTo:[NSArray arrayWithObject:@"feedback@sevenminutelabs.com"] withSubject:@"MealTime Comments & Suggestions" andMessageBody:[NSString stringWithFormat:@"<br/><br/>--- Please write above this line ---<br/>App Version: %@<br/>iOS Version: %@<br/>HW Model: %@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"], [[UIDevice currentDevice] systemVersion], [[UIDevice currentDevice] platformString]]];
   }
   
   // Links

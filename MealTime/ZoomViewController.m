@@ -88,7 +88,8 @@
 }
 
 - (void)receivedRotate:(NSNotification *)notification {
-  
+  CGFloat windowWidth = [[UIApplication sharedApplication].keyWindow width];
+  CGFloat windowHeight = [[UIApplication sharedApplication].keyWindow height];
   UIDeviceOrientation interfaceOrientation = [[UIDevice currentDevice] orientation];
   
   [UIView animateWithDuration:0.4
@@ -96,15 +97,15 @@
                      _containerView.zoomScale = 1.0;
                      if(interfaceOrientation == UIDeviceOrientationPortrait) {
                        self.view.transform = CGAffineTransformMakeRotation(RADIANS(0));
-                       self.view.bounds = CGRectMake(0, 0, 320, 480);
+                       self.view.bounds = CGRectMake(0, 0, windowWidth, windowHeight);
                      }
                      else if(interfaceOrientation == UIDeviceOrientationLandscapeLeft) {
                        self.view.transform = CGAffineTransformMakeRotation(RADIANS(90));
-                       self.view.bounds = CGRectMake(0, 0, 480, 320);
+                       self.view.bounds = CGRectMake(0, 0, windowHeight, windowWidth);
                      }
                      else if(interfaceOrientation == UIDeviceOrientationLandscapeRight) {
                        self.view.transform = CGAffineTransformMakeRotation(RADIANS(-90));
-                       self.view.bounds = CGRectMake(0, 0, 480, 320);
+                       self.view.bounds = CGRectMake(0, 0, windowHeight, windowWidth);
                      }
                    }
                    completion:^(BOOL finished) {

@@ -86,7 +86,8 @@
 
 #pragma mark - View Config
 - (UIView *)backgroundView {
-  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_darkwood.jpg"]] autorelease];
+  NSString *imgName = isDeviceIPad() ? @"bg_darkwood_pad.jpg" : @"bg_darkwood.jpg";
+  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
   bg.frame = self.view.bounds;
   bg.autoresizingMask = ~UIViewAutoresizingNone;
   return bg;
@@ -108,7 +109,8 @@
   // NUX
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:@"nux_overlay_detail.png"]] autorelease];
+    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
     nuxView.alpha = 0.0;
     [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
     [UIView animateWithDuration:0.4 animations:^{

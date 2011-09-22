@@ -107,7 +107,8 @@
 
 #pragma mark - View Config
 - (UIView *)backgroundView {
-  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_darkwood.jpg"]] autorelease];
+  NSString *imgName = isDeviceIPad() ? @"bg_darkwood_pad.jpg" : @"bg_darkwood.jpg";
+  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
   bg.frame = self.view.bounds;
   bg.autoresizingMask = ~UIViewAutoresizingNone;
   return bg;
@@ -129,7 +130,8 @@
   // NUX
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:@"nux_overlay_root.png"]] autorelease];
+    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
     nuxView.alpha = 0.0;
     [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
     [UIView animateWithDuration:0.4 animations:^{
@@ -358,7 +360,7 @@
   }
   
   NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil];
-  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
+  [ActionSheetPicker displayActionPickerWithView:self.view fromBarButtonItem:_distanceButton data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
 }
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view {

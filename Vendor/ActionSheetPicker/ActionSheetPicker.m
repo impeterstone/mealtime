@@ -12,6 +12,7 @@
 @implementation ActionSheetPicker
 
 @synthesize view = _view;
+@synthesize barButtonItem = _barButtonItem;
 
 @synthesize data = _data;
 @synthesize selectedIndex = _selectedIndex;
@@ -36,6 +37,13 @@
 
 + (void)displayActionPickerWithView:(UIView *)aView data:(NSArray *)data selectedIndex:(NSInteger)selectedIndex target:(id)target action:(SEL)action title:(NSString *)title {
 	ActionSheetPicker *actionSheetPicker = [[ActionSheetPicker alloc] initForDataWithContainingView:aView data:data selectedIndex:selectedIndex target:target action:action title:title];
+	[actionSheetPicker showActionPicker];
+	[actionSheetPicker release];
+}
+
++ (void)displayActionPickerWithView:(UIView *)aView fromBarButtonItem:(UIBarButtonItem *)barButtonItem data:(NSArray *)data selectedIndex:(NSInteger)selectedIndex target:(id)target action:(SEL)action title:(NSString *)title {
+	ActionSheetPicker *actionSheetPicker = [[ActionSheetPicker alloc] initForDataWithContainingView:aView data:data selectedIndex:selectedIndex target:target action:action title:title];
+  actionSheetPicker.barButtonItem = barButtonItem;
 	[actionSheetPicker showActionPicker];
 	[actionSheetPicker release];
 }
@@ -140,7 +148,9 @@
 		viewController.view = view;
 		viewController.contentSizeForViewInPopover = viewController.view.frame.size;
 		_popOverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
-		[self.popOverController presentPopoverFromRect:self.view.frame inView:self.view.superview?:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    
+    [self.popOverController presentPopoverFromBarButtonItem:self.barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+//		[self.popOverController presentPopoverFromRect:self.view.frame inView:self.view.superview?:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 	} else {
 		//spawn actionsheet
 		_actionSheet = [[UIActionSheet alloc] initWithTitle:[self isViewPortrait]?nil:@"\n\n\n" delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];

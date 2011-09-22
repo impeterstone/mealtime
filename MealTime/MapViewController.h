@@ -16,9 +16,13 @@
   
   // Views
   MKMapView *_mapView;
+  
+  BOOL _hasSetRegion;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;
 - (void)loadMap;
+- (void)zoomToFitMapAnnotations:(MKMapView *)mapView;
+//- (MKMapRect)mapRectForAnnotations:(NSArray*)annotations;
 
 @end

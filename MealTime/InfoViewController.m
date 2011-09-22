@@ -229,7 +229,6 @@
 }
 
 - (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
-#warning fix this later
   return [InfoCell class];
 }
 

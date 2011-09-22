@@ -130,7 +130,7 @@ static NSLock *_placesToRemoveLock = nil;
   if (!error) {
     NSString *responseString = request.responseString;
     
-    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
 
     [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
     

@@ -17,7 +17,7 @@
 #ifndef NDEBUG
 #define kLocalyticsKey @"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"
 #else
-#define kLocalyticsKey @"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"
+#define kLocalyticsKey @"d700c1cd0a07dd9dbc70c51-dd6fed50-e57d-11e0-2071-00c25d050352"
 #endif
 
 //#define USE_FIXTURES 1

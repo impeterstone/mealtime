@@ -236,6 +236,7 @@
   _whatField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
 //  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.delegate = self;
+  _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
   _whatField.placeholder = @"What? (e.g. Pizza, Subway)";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
@@ -255,6 +256,7 @@
   
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
+  _whereField.autocorrectionType = UITextAutocorrectionTypeNo;
   _whereField.placeholder = @"Where? (Current Location)";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
@@ -475,6 +477,8 @@
                                   @"pagingStart",
                                   [NSString stringWithFormat:@"%d", _pagingCount],
                                   @"pagingCount",
+                                  [[PSLocationCenter defaultCenter] locationString],
+                                  @"location",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
   

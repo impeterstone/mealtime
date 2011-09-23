@@ -143,6 +143,9 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   // J T McHart
   [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"cyTlYYW6q8w8LBXwTZ-Ifw", nil];
   
+  // Cafe Macs
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"hJPioxjTyjubyRPbeYYM0g", nil];
+  
   // Create another list
   sid = [NSString stringFromUUID];
   timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -150,7 +153,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, @"Test List 2", timestamp, nil];
   
   // Cafe Macs
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"hJPioxjTyjubyRPbeYYM0g", nil];  
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"hJPioxjTyjubyRPbeYYM0g", nil];
   
   return YES;
 }
@@ -243,11 +246,11 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 
 #pragma mark - GANTrackerDelegate
 - (void)hitDispatched:(NSString *)hitString {
-  DLog(@"GAN Hit Dispatched: %@", hitString)
+  VLog(@"GAN Hit Dispatched: %@", hitString)
 }
 
 - (void)trackerDispatchDidComplete:(GANTracker *)tracker eventsDispatched:(NSUInteger)hitsDispatched eventsFailedDispatch:(NSUInteger)hitsFailedDispatch {
-  DLog(@"GAN hitsDispatched: %d, hitsFailedDispatch: %d", hitsDispatched, hitsFailedDispatch);
+  VLog(@"GAN hitsDispatched: %d, hitsFailedDispatch: %d", hitsDispatched, hitsFailedDispatch);
 }
 
 - (void)dealloc

@@ -22,11 +22,23 @@
 @implementation ListViewController
 
 - (id)initWithListMode:(ListMode)listMode {
+  return [self initWithListMode:listMode andBiz:nil];
+}
+
+- (id)initWithListMode:(ListMode)listMode andBiz:(NSString *)biz {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _listMode = listMode;
+    if (biz) _biz = [biz copy];
+    _selectedLists = [[NSMutableSet alloc] init];
   }
   return self;
+}
+
+- (void)dealloc {
+  RELEASE_SAFELY(_biz);
+  RELEASE_SAFELY(_selectedLists);
+  [super dealloc];
 }
 
 #pragma mark - View Config
@@ -97,17 +109,38 @@
   // [NSString stringFromUUID];
   
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM lists l JOIN lists_places lp ON l.sid = lp.list_sid ORDER BY timestamp DESC", nil];
+    // If mode is Add, find what lists this biz already belongs to
+    NSMutableSet *existingListSids = nil;
+    if (_listMode == ListModeAdd) {
+      existingListSids = [NSMutableSet set];
+      EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT list_sid FROM lists_places WHERE place_biz = ?", _biz, nil];
+      for (EGODatabaseRow *row in res) {
+        [existingListSids addObject:[row stringForColumn:@"list_sid"]];
+      }
+    }
+
+    // Find all lists NON-EMPTY
+//    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT DISTINCT l.* FROM lists l JOIN lists_places lp ON l.sid = lp.list_sid ORDER BY timestamp DESC", nil];
+    
+    // Find all lists
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM lists ORDER BY timestamp DESC", nil];
     NSMutableArray *lists = [NSMutableArray arrayWithCapacity:1];
     for (EGODatabaseRow *row in res) {
-      [lists addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                        [row stringForColumn:@"sid"],
-                        @"sid",
-                        [row stringForColumn:@"name"],
-                        @"name",
-                        [NSDate dateWithTimeIntervalSince1970:[row doubleForColumn:@"timestamp"]],
-                        @"timestamp",
-                        nil]];
+      NSDictionary *listDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [row stringForColumn:@"sid"],
+                                @"sid",
+                                [row stringForColumn:@"name"],
+                                @"name",
+                                [NSDate dateWithTimeIntervalSince1970:[row doubleForColumn:@"timestamp"]],
+                                @"timestamp",
+                                nil];
+      [lists addObject:listDict];
+      
+      if (_listMode == ListModeAdd) {
+        if ([existingListSids containsObject:[listDict objectForKey:@"sid"]]) {
+          [_selectedLists addObject:listDict];
+        }
+      }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
       [self dataSourceShouldLoadObjects:lists];
@@ -253,6 +286,9 @@
   cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
     cell = [[[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    if (_listMode == ListModeView) {
+      [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+    }
     [_cellCache addObject:cell];
   }
   
@@ -263,16 +299,57 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
+  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
   
   NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   
-  SavedViewController *svc = [[SavedViewController alloc] initWithSid:[object objectForKey:@"sid"] andListName:[object objectForKey:@"name"]];
-  [self.navigationController pushViewController:svc animated:YES];
-  [svc release];
+  if (_listMode == ListModeView) {
+    SavedViewController *svc = [[SavedViewController alloc] initWithSid:[object objectForKey:@"sid"] andListName:[object objectForKey:@"name"]];
+    [self.navigationController pushViewController:svc animated:YES];
+    [svc release];
+  } else {
+    // Toggle 'selected' state
+    BOOL isSelected = ![self cellIsSelected:indexPath withObject:object];
+    
+    if (isSelected) {
+      [_selectedLists addObject:object];
+      cell.accessoryType = UITableViewCellAccessoryCheckmark;
+      
+      // Update DB
+      NSString *sid = [object objectForKey:@"sid"];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, _biz, nil];
+    } else {
+      [_selectedLists removeObject:object];
+      cell.accessoryType = UITableViewCellAccessoryNone;
+      
+      // Update DB
+//      DELETE FROM lists_places WHERE list_sid = '85057A84-BFFB-4D42-8DBE-8BCEF351641B' AND place_biz = 'cyTlYYW6q8w8LBXwTZ-Ifw'
+      NSString *sid = [object objectForKey:@"sid"];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"DELETE FROM lists_places WHERE list_sid = ? AND place_biz = ?", sid, _biz, nil];
+    }
+  }
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+  [super tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
+  
+  if (_listMode == ListModeAdd) {
+    NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    
+    if ([self cellIsSelected:indexPath withObject:object]) {
+      cell.accessoryType = UITableViewCellAccessoryCheckmark;
+    } else {
+      cell.accessoryType = UITableViewCellAccessoryNone;
+    }
+  }
 }
 
 - (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
   return [ListCell class];
+}
+
+- (BOOL)cellIsSelected:(NSIndexPath *)indexPath withObject:(id)object {
+  return [_selectedLists containsObject:object];
 }
 
 @end

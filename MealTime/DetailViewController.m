@@ -300,7 +300,7 @@
   [[GANTracker sharedTracker] trackEvent:@"detail" action:@"lists" label:@"show" value:-1 withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
   
-  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd];
+  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
   UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
   lnc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
   [self presentModalViewController:lnc animated:YES];

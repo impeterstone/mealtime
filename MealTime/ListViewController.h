@@ -17,8 +17,11 @@ typedef uint32_t ListMode;
 
 @interface ListViewController : PSTableViewController {
   ListMode _listMode;
+  NSString *_biz;
+  NSMutableSet *_selectedLists;
 }
 
 - (id)initWithListMode:(ListMode)listMode;
+- (id)initWithListMode:(ListMode)listMode andBiz:(NSString *)biz;
 
 @end

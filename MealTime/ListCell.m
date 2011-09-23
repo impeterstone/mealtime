@@ -13,9 +13,6 @@
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
   self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
   if (self) {
-    //    self.selectionStyle = UITableViewCellSelectionStyleNone;
-    self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    
     self.textLabel.backgroundColor = [UIColor clearColor];
     self.textLabel.font = [PSStyleSheet fontForStyle:@"infoCellTitle"];
     self.textLabel.textColor = [PSStyleSheet textColorForStyle:@"infoCellTitle"];

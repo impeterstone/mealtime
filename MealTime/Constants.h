@@ -9,9 +9,16 @@
 
 #import "MealTimeAppDelegate.h"
 #import "NetworkConstants.h"
+#import "GANTracker.h"
 #import "LocalyticsSession.h"
 #import "UINavigationBar+Custom.h"
 #import "UIToolbar+Custom.h"
+
+#ifndef NDEBUG
+#define kLocalyticsKey @"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"
+#else
+#define kLocalyticsKey @"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"
+#endif
 
 //#define USE_FIXTURES 1
 #define SHOULD_RESET_SQLITE

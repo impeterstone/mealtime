@@ -17,6 +17,9 @@
 #import "PSLocationCenter.h"
 #import "Crittercism.h"
 
+// Dispatch period in seconds
+static const NSInteger kGANDispatchPeriodSec = 10;
+
 @interface MealTimeAppDelegate (Private)
 
 + (void)setupDefaults;
@@ -104,9 +107,6 @@
   // Override StyleSheet
   [PSStyleSheet setStyleSheet:@"AppStyleSheet"];
   
-  // Localytics
-  [[LocalyticsSession sharedLocalyticsSession] startSession:@"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"];
-  
   // PSFacebookCenter
   [PSFacebookCenter defaultCenter];
   
@@ -117,6 +117,15 @@
   
   [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];
+  
+  // Localytics
+  [[LocalyticsSession sharedLocalyticsSession] startSession:kLocalyticsKey];
+  
+  // Google Analytics
+  [[GANTracker sharedTracker] startTrackerWithAccountID:@"UA-25898818-2" dispatchPeriod:kGANDispatchPeriodSec delegate:self];
+  
+  NSError *error;
+  [[GANTracker sharedTracker] trackPageview:@"/appLaunch" withError:&error];
   
   // Crittercism
   [Crittercism initWithAppID: @"4e7919a8ddf520403007beb0"
@@ -135,11 +144,17 @@
 {
   _isBackgrounded = YES;
   [self sendRequestsHome];
+  
+  [[LocalyticsSession sharedLocalyticsSession] close];
+  [[LocalyticsSession sharedLocalyticsSession] upload];
+  
   [[NSNotificationCenter defaultCenter] postNotificationName:kApplicationSuspended object:nil];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+  [[LocalyticsSession sharedLocalyticsSession] resume];
+  [[LocalyticsSession sharedLocalyticsSession] upload];
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
@@ -152,6 +167,8 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application
 {
+  [[LocalyticsSession sharedLocalyticsSession] close];
+  [[LocalyticsSession sharedLocalyticsSession] upload];
 }
 
 #pragma mark - Send Requests Home
@@ -203,6 +220,15 @@
     [_requestQueue addOperation:request];
 //    [request startAsynchronous];
   }
+}
+
+#pragma mark - GANTrackerDelegate
+- (void)hitDispatched:(NSString *)hitString {
+  DLog(@"GAN Hit Dispatched: %@", hitString)
+}
+
+- (void)trackerDispatchDidComplete:(GANTracker *)tracker eventsDispatched:(NSUInteger)hitsDispatched eventsFailedDispatch:(NSUInteger)hitsFailedDispatch {
+  DLog(@"GAN hitsDispatched: %d, hitsFailedDispatch: %d", hitsDispatched, hitsFailedDispatch);
 }
 
 - (void)dealloc

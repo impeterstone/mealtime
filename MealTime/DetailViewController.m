@@ -174,6 +174,15 @@
     // If this view has already been loaded once, don't reload the datasource
     [self restoreDataSource];
   } else {
+    NSError *error;
+    [[GANTracker sharedTracker] trackPageview:@"/detail" withError:&error];
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"load" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [_place objectForKey:@"biz"],
+                                @"biz",
+                                nil];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#load" attributes:localyticsDict];
+    
     [self loadDataSource];
   }
 }
@@ -348,14 +357,28 @@
 }
 
 - (void)toggleStar {
+  NSError *error;
+  NSDictionary *localyticsDict = nil;
   NSString *iconStar = nil;
   if (_isSavedPlace) {
     _isSavedPlace = NO;
     iconStar = @"icon_star_silver.png";
+  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"star#remove" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+  localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                      @"remove",
+                      @"action",
+                      nil];
   } else {
     _isSavedPlace = YES;
     iconStar = @"icon_star_gold.png";
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"star#add" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                    @"add",
+                    @"action",
+                    nil];
   }
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#star" attributes:localyticsDict];
+  
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateNormal];
   [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateHighlighted];
   
@@ -627,6 +650,14 @@
   
   ProductCell *cell = (ProductCell *)[tableView cellForRowAtIndexPath:indexPath];
   
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"zoom" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  [_place objectForKey:@"biz"],
+                                  @"biz",
+                                  nil];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#zoom" attributes:localyticsDict];
+  
   ZoomViewController *zvc = [[ZoomViewController alloc] init];
   [self presentModalViewController:zvc animated:YES];
   zvc.imageView.image = cell.photoView.image;
@@ -679,10 +710,28 @@
   if (buttonIndex == alertView.cancelButtonIndex) return;
   
   if (alertView.tag == kAlertCall) {
+    NSError *error;
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"call" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [_place objectForKey:@"biz"],
+                                    @"biz",
+                                    [_place objectForKey:@"phone"],
+                                    @"phone",
+                                    nil];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#call" attributes:localyticsDict];
+    
     NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
     NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
   } else if (alertView.tag == kAlertReviews) {
+    NSError *error;
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"reviews" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [_place objectForKey:@"biz"],
+                                    @"biz",
+                                    nil];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#reviews" attributes:localyticsDict];
+    
     if (isYelpInstalled()) {
       // yelp:///biz/the-sentinel-san-francisco
       [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
@@ -693,6 +742,16 @@
     }
     
   } else if (alertView.tag == kAlertDirections) {
+    NSError *error;
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"directions" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [_place objectForKey:@"biz"],
+                                    @"biz",
+                                    [_place objectForKey:@"address"],
+                                    @"address",
+                                    nil];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#directions" attributes:localyticsDict];
+    
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
     NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
     NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];

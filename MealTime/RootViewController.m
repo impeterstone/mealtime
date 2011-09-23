@@ -193,6 +193,9 @@
     // If this view has already been loaded once, don't reload the datasource
     [self restoreDataSource];
   } else {
+    NSError *error;
+    [[GANTracker sharedTracker] trackPageview:@"/root" withError:&error];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#load"];
     [self loadDataSource];
   }
 }
@@ -327,17 +330,34 @@
 
 #pragma mark - Button Actios
 - (void)findMyLocation {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#findMyLocation"];
   [[PSLocationCenter defaultCenter] getMyLocation];
 }
 
 - (void)showSaved {
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"root" action:@"star" label:@"show" value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#star"];
+  
   SavedViewController *svc = [[SavedViewController alloc] initWithNibName:nil bundle:nil];
   UINavigationController *snc = [[UINavigationController alloc] initWithRootViewController:svc];
   snc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
   [self presentModalViewController:snc animated:YES];
   [svc release];
   [snc release];
+}
+
+- (void)showInfo {
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"root" action:@"info" label:@"show" value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#info"];
+  
+  InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
+  UINavigationController *inc = [[UINavigationController alloc] initWithRootViewController:ivc];
+  inc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  inc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+  [self presentModalViewController:inc animated:YES];
+  [ivc release];
+  [inc release];
 }
 
 - (void)changeDistance {
@@ -397,19 +417,17 @@
   // Update Distance Label
   [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"root" action:@"changeDistance" label:[NSString stringWithFormat:@"%.1f", distance] value:-1 withError:&error];
+  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  [NSString stringWithFormat:@"%.1f", distance],
+                                  @"distance",
+                                  nil];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#changeDistance" attributes:localyticsDict];
+  
   // Fire a refetch
   _pagingStart = 0;
   [self loadDataSource];
-}
-
-- (void)showInfo {
-  InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
-  UINavigationController *inc = [[UINavigationController alloc] initWithRootViewController:ivc];
-  inc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
-  inc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
-  [self presentModalViewController:inc animated:YES];
-  [ivc release];
-  [inc release];
 }
 
 - (void)searchNearby {
@@ -445,6 +463,20 @@
     // Update distance button label
     [(UIButton *)_distanceButton.customView setTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   }
+  
+  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  self.whatQuery ? self.whatQuery : @"",
+                                  @"what",
+                                  self.whereQuery ? self.whereQuery : @"",
+                                  @"where",
+                                  [[NSUserDefaults standardUserDefaults] stringForKey:@"distanceRadius"],
+                                  @"distance",
+                                  [NSString stringWithFormat:@"%d", _pagingStart],
+                                  @"pagingStart",
+                                  [NSString stringWithFormat:@"%d", _pagingCount],
+                                  @"pagingCount",
+                                  nil];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
   
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
@@ -788,6 +820,18 @@
     // Current Location
     self.whereQuery = nil;
   }
+  
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"root" action:@"search" label:[NSString stringWithFormat:@"what:%@,where:%@", self.whatQuery, self.whereQuery] value:-1 withError:&error];
+  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  self.whatQuery ? self.whatQuery : @"",
+                                  @"what",
+                                  self.whereQuery ? self.whereQuery : @"",
+                                  @"where",
+                                  [[NSUserDefaults standardUserDefaults] stringForKey:@"distanceRadius"],
+                                  @"distance",
+                                  nil];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];
 
   // Reload dataSource
     _pagingStart = 0; // reset paging

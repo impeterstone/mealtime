@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GANTracker.h"
 
 @class PSNetworkQueue;
 
-@interface MealTimeAppDelegate : NSObject <UIApplicationDelegate> {
+@interface MealTimeAppDelegate : NSObject <UIApplicationDelegate, GANTrackerDelegate> {
   UINavigationController *_navigationController;
   PSNetworkQueue *_requestQueue;
   

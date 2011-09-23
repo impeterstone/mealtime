@@ -205,9 +205,6 @@
 		28A1B28213F1CFB000EB971E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28113F1CFB000EB971E /* main.m */; };
 		28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */; };
 		28A1B28913F1CFB000EB971E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28A1B28713F1CFB000EB971E /* MainWindow.xib */; };
-		28A1B3C713F1DAC100EB971E /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */; };
-		28A1B3C813F1DAC100EB971E /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A313F1DAC100EB971E /* LocalyticsSession.m */; };
-		28A1B3C913F1DAC100EB971E /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B3A513F1DAC100EB971E /* UploaderThread.m */; };
 		28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */; };
 		28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 28A87F1D141A392D001ACC62 /* Settings.bundle */; };
 		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
@@ -386,6 +383,10 @@
 		28F8B718142B4E22000F5FEE /* Default.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 28F8B714142B4E22000F5FEE /* Default.jpg */; };
 		28F8B719142B4E22000F5FEE /* Default@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 28F8B715142B4E22000F5FEE /* Default@2x.jpg */; };
 		28F8B71B142B4EDD000F5FEE /* bg_darkwood_pad.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 28F8B71A142B4EDD000F5FEE /* bg_darkwood_pad.jpg */; };
+		28F8B71F142BF9A7000F5FEE /* libGoogleAnalytics.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 28F8B71E142BF9A7000F5FEE /* libGoogleAnalytics.a */; };
+		28F8B728142C094B000F5FEE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B722142C094B000F5FEE /* LocalyticsDatabase.m */; };
+		28F8B729142C094B000F5FEE /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B724142C094B000F5FEE /* LocalyticsSession.m */; };
+		28F8B72A142C094B000F5FEE /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B726142C094B000F5FEE /* UploaderThread.m */; };
 		28FC9B30141235AC0047E11C /* places.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B2F141235AC0047E11C /* places.html */; };
 		28FC9B32141236970047E11C /* photos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B31141236970047E11C /* photos.html */; };
 		28FC9B341412379A0047E11C /* biz.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B331412379A0047E11C /* biz.html */; };
@@ -679,13 +680,6 @@
 		28A1B28413F1CFB000EB971E /* MealTimeAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MealTimeAppDelegate.h; sourceTree = "<group>"; };
 		28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MealTimeAppDelegate.m; sourceTree = "<group>"; };
 		28A1B28813F1CFB000EB971E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		28A1B3A013F1DAC100EB971E /* LocalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsDatabase.h; sourceTree = "<group>"; };
-		28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsDatabase.m; sourceTree = "<group>"; };
-		28A1B3A213F1DAC100EB971E /* LocalyticsSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsSession.h; sourceTree = "<group>"; };
-		28A1B3A313F1DAC100EB971E /* LocalyticsSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsSession.m; sourceTree = "<group>"; };
-		28A1B3A413F1DAC100EB971E /* UploaderThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploaderThread.h; sourceTree = "<group>"; };
-		28A1B3A513F1DAC100EB971E /* UploaderThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploaderThread.m; sourceTree = "<group>"; };
-		28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
 		28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetPicker.h; sourceTree = "<group>"; };
 		28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetPicker.m; sourceTree = "<group>"; };
 		28A87F1D141A392D001ACC62 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
@@ -903,6 +897,15 @@
 		28F8B714142B4E22000F5FEE /* Default.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Default.jpg; sourceTree = "<group>"; };
 		28F8B715142B4E22000F5FEE /* Default@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Default@2x.jpg"; sourceTree = "<group>"; };
 		28F8B71A142B4EDD000F5FEE /* bg_darkwood_pad.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bg_darkwood_pad.jpg; sourceTree = "<group>"; };
+		28F8B71D142BF9A7000F5FEE /* GANTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GANTracker.h; sourceTree = "<group>"; };
+		28F8B71E142BF9A7000F5FEE /* libGoogleAnalytics.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libGoogleAnalytics.a; sourceTree = "<group>"; };
+		28F8B721142C094B000F5FEE /* LocalyticsDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsDatabase.h; sourceTree = "<group>"; };
+		28F8B722142C094B000F5FEE /* LocalyticsDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsDatabase.m; sourceTree = "<group>"; };
+		28F8B723142C094B000F5FEE /* LocalyticsSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalyticsSession.h; sourceTree = "<group>"; };
+		28F8B724142C094B000F5FEE /* LocalyticsSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalyticsSession.m; sourceTree = "<group>"; };
+		28F8B725142C094B000F5FEE /* UploaderThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploaderThread.h; sourceTree = "<group>"; };
+		28F8B726142C094B000F5FEE /* UploaderThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploaderThread.m; sourceTree = "<group>"; };
+		28F8B727142C094B000F5FEE /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
 		28FC9B2F141235AC0047E11C /* places.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = places.html; sourceTree = "<group>"; };
 		28FC9B31141236970047E11C /* photos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = photos.html; sourceTree = "<group>"; };
 		28FC9B331412379A0047E11C /* biz.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = biz.html; sourceTree = "<group>"; };
@@ -929,6 +932,7 @@
 				28B58A5014088C4200F0EDB6 /* libicucore.A.dylib in Frameworks */,
 				28E4234714239DBB00F593CE /* MessageUI.framework in Frameworks */,
 				28E4F90B1429515C00B1CFCA /* Crittercism_v2_9_19.a in Frameworks */,
+				28F8B71F142BF9A7000F5FEE /* libGoogleAnalytics.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1413,10 +1417,11 @@
 		28A1B29713F1D0DC00EB971E /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
+				28F8B720142C094B000F5FEE /* Localytics */,
+				28F8B71C142BF9A7000F5FEE /* GAN */,
 				2831CD191427F12800FBAA0F /* Appirater */,
 				28A87F14141A2E3C001ACC62 /* ActionSheetPicker */,
 				285570B2140C7827004D34EF /* Facebook */,
-				28A1B39F13F1DAC100EB971E /* Localytics */,
 			);
 			path = Vendor;
 			sourceTree = "<group>";
@@ -1489,20 +1494,6 @@
 			);
 			name = SevenMinuteLibrary;
 			path = sevenminutelibrary/src;
-			sourceTree = "<group>";
-		};
-		28A1B39F13F1DAC100EB971E /* Localytics */ = {
-			isa = PBXGroup;
-			children = (
-				28A1B3A013F1DAC100EB971E /* LocalyticsDatabase.h */,
-				28A1B3A113F1DAC100EB971E /* LocalyticsDatabase.m */,
-				28A1B3A213F1DAC100EB971E /* LocalyticsSession.h */,
-				28A1B3A313F1DAC100EB971E /* LocalyticsSession.m */,
-				28A1B3A413F1DAC100EB971E /* UploaderThread.h */,
-				28A1B3A513F1DAC100EB971E /* UploaderThread.m */,
-				28A1B3A613F1DAC100EB971E /* WebserviceConstants.h */,
-			);
-			path = Localytics;
 			sourceTree = "<group>";
 		};
 		28A87F14141A2E3C001ACC62 /* ActionSheetPicker */ = {
@@ -1806,6 +1797,29 @@
 				2804B586140857B300AE996A /* bg_grain@2x.jpg */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		28F8B71C142BF9A7000F5FEE /* GAN */ = {
+			isa = PBXGroup;
+			children = (
+				28F8B71D142BF9A7000F5FEE /* GANTracker.h */,
+				28F8B71E142BF9A7000F5FEE /* libGoogleAnalytics.a */,
+			);
+			path = GAN;
+			sourceTree = "<group>";
+		};
+		28F8B720142C094B000F5FEE /* Localytics */ = {
+			isa = PBXGroup;
+			children = (
+				28F8B721142C094B000F5FEE /* LocalyticsDatabase.h */,
+				28F8B722142C094B000F5FEE /* LocalyticsDatabase.m */,
+				28F8B723142C094B000F5FEE /* LocalyticsSession.h */,
+				28F8B724142C094B000F5FEE /* LocalyticsSession.m */,
+				28F8B725142C094B000F5FEE /* UploaderThread.h */,
+				28F8B726142C094B000F5FEE /* UploaderThread.m */,
+				28F8B727142C094B000F5FEE /* WebserviceConstants.h */,
+			);
+			path = Localytics;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2152,9 +2166,6 @@
 			files = (
 				28A1B28213F1CFB000EB971E /* main.m in Sources */,
 				28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */,
-				28A1B3C713F1DAC100EB971E /* LocalyticsDatabase.m in Sources */,
-				28A1B3C813F1DAC100EB971E /* LocalyticsSession.m in Sources */,
-				28A1B3C913F1DAC100EB971E /* UploaderThread.m in Sources */,
 				2814E38B13F1F01400D7A85A /* NSArray+SML.m in Sources */,
 				2814E38C13F1F01400D7A85A /* NSData+SML.m in Sources */,
 				2814E38D13F1F01400D7A85A /* NSDate+Helper.m in Sources */,
@@ -2251,6 +2262,9 @@
 				2819F8F31428A07C008382DD /* PSMailCenter.m in Sources */,
 				28E4F88F1429450900B1CFCA /* UIDevice-Hardware.m in Sources */,
 				28E4F94C1429515C00B1CFCA /* Crittercism.xcdatamodeld in Sources */,
+				28F8B728142C094B000F5FEE /* LocalyticsDatabase.m in Sources */,
+				28F8B729142C094B000F5FEE /* LocalyticsSession.m in Sources */,
+				28F8B72A142C094B000F5FEE /* UploaderThread.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2334,6 +2348,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Submodules/sevenminutelibrary/src/Vendor/CrittercismSDK\"",
+					"\"$(SRCROOT)/Vendor/GAN\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-lxml2";
@@ -2357,6 +2372,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Submodules/sevenminutelibrary/src/Vendor/CrittercismSDK\"",
+					"\"$(SRCROOT)/Vendor/GAN\"",
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-lxml2";

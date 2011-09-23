@@ -109,6 +109,10 @@
   
   // Toolbar
   [self setupToolbar];
+  
+  NSError *error;
+  [[GANTracker sharedTracker] trackPageview:@"/star" withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#load"];
 }
 
 - (void)setupToolbar {
@@ -129,6 +133,10 @@
     [av show];
     return;
   }
+  
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"star" action:@"export" label:nil value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#export"];
   
   // Construct Body
 //  The Codmother Fish and Chips

@@ -865,7 +865,7 @@ static LocalyticsSession *_sharedLocalyticsSession = nil;
 	return UINT_MAX;
 }
 
-- (oneway void)release {
+- (void)release {
 	// ignore release commands
 }
 

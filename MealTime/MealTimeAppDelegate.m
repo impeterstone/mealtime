@@ -133,7 +133,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
                    andSecret:@"4jhap5c6gtuexebkmj2x9i8cwq0im1ln"
        andMainViewController:_navigationController];
   
-#warning FORCE CREATE TEST LIST
+#ifdef CREATE_DUMMY_LISTS
   // Create 1 list
   NSString *sid = [NSString stringFromUUID];
   NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -154,6 +154,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   
   // Cafe Macs
   [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"hJPioxjTyjubyRPbeYYM0g", nil];
+#endif
   
   return YES;
 }

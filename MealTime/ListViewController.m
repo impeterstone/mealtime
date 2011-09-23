@@ -84,11 +84,24 @@
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   
   if (_listMode == ListModeView) {
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Edit" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    // This should be an edit button
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    _navTitleLabel.text = @"My Food Lists";
   } else {
+    // This should be an add button
     self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Add" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    _navTitleLabel.text = @"Add to List";
   }
-  _navTitleLabel.text = @"My Food Lists";
+  
+  // Nullview
+  [_nullView setLoadingTitle:@"Loading..."];
+  [_nullView setLoadingSubtitle:@"Finding Your Food Lists"];
+  [_nullView setEmptyTitle:@"No Food Lists"];
+  [_nullView setEmptySubtitle:@"You haven't created any food lists yet."];
+  [_nullView setErrorTitle:@"Something Bad Happened"];
+  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -264,7 +277,16 @@
 }
 
 - (void)newList {
-  
+  TSAlertView *alertView = [[[TSAlertView alloc] init] autorelease];
+  alertView.delegate = self;
+  alertView.style = TSAlertViewStyleInput;
+  alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
+  alertView.title = @"Give Your List a Name";
+  alertView.message = @"e.g. My Favorite Bars";
+  [alertView setCancelButtonIndex:0];
+  [alertView addButtonWithTitle:@"Cancel"];
+  [alertView addButtonWithTitle:@"Create"];
+  [alertView show];
 }
 
 #pragma mark - TableView
@@ -350,6 +372,25 @@
 
 - (BOOL)cellIsSelected:(NSIndexPath *)indexPath withObject:(id)object {
   return [_selectedLists containsObject:object];
+}
+
+#pragma mark - AlertView
+- (void)alertView:(TSAlertView *)alertView didDismissWithButtonIndex: (NSInteger) buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  NSString *listName = alertView.inputTextField.text;
+  if ([listName length] > 0) {
+    // Create a list
+    NSString *sid = [NSString stringFromUUID];
+    NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+    NSString *query = @"INSERT INTO lists (sid, name, timestamp) VALUES (?, ?, ?)";
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, listName, timestamp, nil];
+    
+    // Reload dataSource
+    [self loadDataSource];
+  } else {
+    // error empty listName
+  }
 }
 
 @end

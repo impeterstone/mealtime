@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "PSTableViewController.h"
+#import "TSAlertView.h"
 
 enum {
   ListModeView = 0,
@@ -15,7 +16,7 @@ enum {
 };
 typedef uint32_t ListMode;
 
-@interface ListViewController : PSTableViewController {
+@interface ListViewController : PSTableViewController <TSAlertViewDelegate> {
   ListMode _listMode;
   NSString *_biz;
   NSMutableSet *_selectedLists;

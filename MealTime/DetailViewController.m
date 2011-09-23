@@ -30,7 +30,6 @@
 - (void)reviews;
 - (void)directions;
 - (void)showLists;
-- (void)toggleStar;
 
 @end
 
@@ -39,7 +38,6 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _isSavedPlace = NO;
     NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithBiz:[place objectForKey:@"biz"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
@@ -135,13 +133,9 @@
   _navTitleLabel.text = [_place objectForKey:@"name"];
   
   // Favorite Star
-  NSString *iconStar = nil;
-  if (_isSavedPlace) {
-    iconStar = @"icon_star_gold.png";
-  } else {
-    iconStar = @"icon_star_silver.png";
-  }
-  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(toggleStar) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
+  NSString *iconStar = @"icon_star_gold.png";
+
+  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(showLists) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
   _starButton.enabled = NO;
   
   self.navigationItem.rightBarButtonItem = _starButton;
@@ -375,46 +369,13 @@
   _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, desiredSize.height + 10);
 }
 
-- (void)toggleStar {
-  NSError *error;
-  NSDictionary *localyticsDict = nil;
-  NSString *iconStar = nil;
-  if (_isSavedPlace) {
-    _isSavedPlace = NO;
-    iconStar = @"icon_star_silver.png";
-  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"star#remove" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
-  localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                      @"remove",
-                      @"action",
-                      nil];
-  } else {
-    _isSavedPlace = YES;
-    iconStar = @"icon_star_gold.png";
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"star#add" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
-    localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                    @"add",
-                    @"action",
-                    nil];
-  }
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#star" attributes:localyticsDict];
-  
-  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateNormal];
-  [(UIButton *)_starButton.customView setImage:[UIImage imageNamed:iconStar] forState:UIControlStateHighlighted];
-  
-  NSNumber *isSavedPlace = [NSNumber numberWithBool:_isSavedPlace];
-  NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"UPDATE places SET saved = ?, timestamp = ? WHERE biz = ?", isSavedPlace, timestamp, [_place objectForKey:@"biz"], nil];
-}
-
 - (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz {
   EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE biz = ?", biz, nil];
   
   if ([res count] > 0) {
     NSData *placeData = [[[res rows] lastObject] dataForColumn:@"data"];
-    _isSavedPlace = (BOOL)[[[res rows] lastObject] boolForColumn:@"saved"];
     return [NSKeyedUnarchiver unarchiveObjectWithData:placeData];
   } else {
-    _isSavedPlace = NO;
     return nil;
   }
 }

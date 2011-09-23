@@ -89,6 +89,7 @@
   [super loadView];
   
   self.view.backgroundColor = [UIColor blackColor];
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   _navTitleLabel.text = _listName;
   

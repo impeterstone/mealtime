@@ -89,7 +89,7 @@
     _navTitleLabel.text = @"My Food Lists";
   } else {
     // This should be an add button
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Add" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
     _navTitleLabel.text = @"Add to List";
   }
   

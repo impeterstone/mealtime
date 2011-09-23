@@ -17,7 +17,6 @@
 
 - (void)setupToolbar;
 - (void)share;
-- (void)dismiss;
 
 @end
 
@@ -90,7 +89,6 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
-  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   _navTitleLabel.text = _listName;
   
   // Nullview
@@ -189,10 +187,6 @@
 //    [body appendString:@"<br/>"];
   }
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:@"MealTime: My Starred Places" andMessageBody:body];
-}
-                                           
-- (void)dismiss {
-  [self dismissModalViewControllerAnimated:YES];
 }
 
 #pragma mark - DataSource

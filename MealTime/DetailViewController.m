@@ -134,7 +134,7 @@
   
   // Favorite Star
   NSString *iconStar = @"icon_star_gold.png";
-
+  
   _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(showLists) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
   _starButton.enabled = NO;
   
@@ -152,7 +152,7 @@
   [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // iAd
-//  _adView = [self newAdBannerViewWithDelegate:self];
+  //  _adView = [self newAdBannerViewWithDelegate:self];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -174,9 +174,9 @@
     [[GANTracker sharedTracker] trackPageview:@"/detail" withError:&error];
     [[GANTracker sharedTracker] trackEvent:@"detail" action:@"load" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [_place objectForKey:@"biz"],
-                                @"biz",
-                                nil];
+                                    [_place objectForKey:@"biz"],
+                                    @"biz",
+                                    nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#load" attributes:localyticsDict];
     
     [self loadDataSource];
@@ -194,7 +194,7 @@
   
   // Table Header View
   UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)] autorelease];
-
+  
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
   _mapView.delegate = self;
@@ -202,13 +202,13 @@
   _mapView.scrollEnabled = NO;
   
   [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.6], [NSNumber numberWithFloat:0.85], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
-
+  
   UIImageView *disclosureView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]] autorelease];
   disclosureView.contentMode = UIViewContentModeCenter;
   disclosureView.alpha = 0.8;
   disclosureView.frame = CGRectMake(_mapView.width - disclosureView.width - 10, 0, disclosureView.width, _mapView.height);
   [_mapView addSubview:disclosureView];
-
+  
   [tableHeaderView addSubview:_mapView];
   
   // Map Gesture
@@ -242,10 +242,10 @@
   _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
   _hoursView.frame = CGRectMake(0, 0, tableHeaderView.width, 30);
   _hoursView.backgroundColor = [UIColor clearColor];
-//  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
-//  hbg.frame = _hoursView.bounds;
-//  hbg.autoresizingMask = ~UIViewAutoresizingNone;
-//  [_hoursView addSubview:hbg];
+  //  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+  //  hbg.frame = _hoursView.bounds;
+  //  hbg.autoresizingMask = ~UIViewAutoresizingNone;
+  //  [_hoursView addSubview:hbg];
   [tableHeaderView addSubview:_hoursView];
   
   // Hours
@@ -274,15 +274,11 @@
   _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Dir" withTarget:self action:@selector(directions) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Share" withTarget:self action:@selector(reviews) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
@@ -308,16 +304,21 @@
   [mvc release];
 }
 
-- (void)call {  
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertCall;
-  [av show];
+- (void)call {
+  if ([[_place objectForKey:@"phone"] notNil]) {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+    av.tag = kAlertCall;
+    [av show];
+  } else {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"No Phone Number" message:[NSString stringWithFormat:@"%@ does not have a phone number listed.", [_place objectForKey:@"name"]] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+    [av show];
+  }
 }
 
 - (void)reviews {
- UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
- av.tag = kAlertReviews;
- [av show];
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertReviews;
+  [av show];
 }
 
 - (void)directions {
@@ -400,11 +401,11 @@
   
   // Preload from database
   // No sense of order from server right now
-//  [self loadPhotosFromDatabase];
+  //  [self loadPhotosFromDatabase];
   
   
 #if USE_FIXTURES
-
+  
 #else
   // Combined call
   if (!_isCachedPlace) {
@@ -505,24 +506,24 @@
   // causing massive lag, this is a bug with UITableView
   // So for initial large sets of data, just use reloadData
   //
-//  [_tableView beginUpdates];
-//  
-//  // These are the sections that need to be inserted
-//  if (sectionIndexSet) {
-//    [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
-//  }
-//  
-//  // These are the rows that need to be deleted
-//  if ([deleteIndexPaths count] > 0) {
-//    [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-//  }
-//  
-//  // These are the new rows that need to be inserted
-//  if ([newIndexPaths count] > 0) {
-//    [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-//  }
-//  
-//  [_tableView endUpdates];
+  //  [_tableView beginUpdates];
+  //  
+  //  // These are the sections that need to be inserted
+  //  if (sectionIndexSet) {
+  //    [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
+  //  }
+  //  
+  //  // These are the rows that need to be deleted
+  //  if ([deleteIndexPaths count] > 0) {
+  //    [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
+  //  }
+  //  
+  //  // These are the new rows that need to be inserted
+  //  if ([newIndexPaths count] > 0) {
+  //    [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:UITableViewRowAnimationFade];
+  //  }
+  //  
+  //  [_tableView endUpdates];
   //
   // END TABLEVIEW ANIMATION BLOCK
   //

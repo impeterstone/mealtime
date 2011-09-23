@@ -14,7 +14,7 @@
 #import "PSLocationCenter.h"
 #import "PSSearchCenter.h"
 #import "ActionSheetPicker.h"
-#import "SavedViewController.h"
+#import "ListViewController.h"
 #import "InfoViewController.h"
 #import "PSSearchField.h"
 #import "PSOverlayImageView.h"
@@ -32,7 +32,7 @@
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
 
 - (void)changeDistance;
-- (void)showSaved;
+- (void)showLists;
 - (void)showInfo;
 - (void)searchNearby;
 - (void)sortResults;
@@ -296,7 +296,7 @@
   
 //  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(searchNearby)] autorelease]];
    
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showSaved)] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
   
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
   
@@ -335,17 +335,17 @@
   [[PSLocationCenter defaultCenter] getMyLocation];
 }
 
-- (void)showSaved {
+- (void)showLists {
   NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"root" action:@"star" label:@"show" value:-1 withError:&error];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#star"];
+  [[GANTracker sharedTracker] trackEvent:@"root" action:@"lists" label:@"show" value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#showLists"];
   
-  SavedViewController *svc = [[SavedViewController alloc] initWithNibName:nil bundle:nil];
-  UINavigationController *snc = [[UINavigationController alloc] initWithRootViewController:svc];
-  snc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
-  [self presentModalViewController:snc animated:YES];
-  [svc release];
-  [snc release];
+  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeView];
+  UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
+  lnc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  [self presentModalViewController:lnc animated:YES];
+  [lvc release];
+  [lnc release];
 }
 
 - (void)showInfo {

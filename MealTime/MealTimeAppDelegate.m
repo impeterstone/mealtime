@@ -133,6 +133,25 @@ static const NSInteger kGANDispatchPeriodSec = 10;
                    andSecret:@"4jhap5c6gtuexebkmj2x9i8cwq0im1ln"
        andMainViewController:_navigationController];
   
+#warning FORCE CREATE TEST LIST
+  // Create 1 list
+  NSString *sid = [NSString stringFromUUID];
+  NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+  NSString *query = @"INSERT INTO lists (sid, name, timestamp) VALUES (?, ?, ?)";
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, @"Test List 1", timestamp, nil];
+
+  // J T McHart
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"cyTlYYW6q8w8LBXwTZ-Ifw", nil];
+  
+  // Create another list
+  sid = [NSString stringFromUUID];
+  timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+  query = @"INSERT INTO lists (sid, name, timestamp) VALUES (?, ?, ?)";
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, @"Test List 2", timestamp, nil];
+  
+  // Cafe Macs
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, @"hJPioxjTyjubyRPbeYYM0g", nil];  
+  
   return YES;
 }
 

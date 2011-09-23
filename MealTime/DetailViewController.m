@@ -15,6 +15,7 @@
 #import "PlaceAnnotation.h"
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
+#import "ListViewController.h"
 
 @interface DetailViewController (Private)
 
@@ -28,6 +29,7 @@
 - (void)call;
 - (void)reviews;
 - (void)directions;
+- (void)showLists;
 - (void)toggleStar;
 
 @end
@@ -278,17 +280,34 @@
   _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
   NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
   
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Dir" withTarget:self action:@selector(directions) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Reviews" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Share" withTarget:self action:@selector(reviews) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:60 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
   
   [_toolbar setItems:toolbarItems];
   [self setupFooterWithView:_toolbar];
 }
 
 #pragma mark - Actions
+- (void)showLists {
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"lists" label:@"show" value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
+  
+  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd];
+  UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
+  lnc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  [self presentModalViewController:lnc animated:YES];
+  [lvc release];
+  [lnc release];
+}
+
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
   MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
   [self.navigationController pushViewController:mvc animated:YES];

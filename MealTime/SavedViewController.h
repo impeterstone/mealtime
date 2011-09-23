@@ -10,7 +10,12 @@
 #import "PSTableViewController.h"
 
 @interface SavedViewController : PSTableViewController {
+  NSString *_sid;
+  NSString *_listName;
+  
   UIToolbar *_toolbar;
 }
+
+- (id)initWithSid:(NSString *)sid andListName:(NSString *)listName;
 
 @end

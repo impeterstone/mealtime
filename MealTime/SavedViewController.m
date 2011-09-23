@@ -23,10 +23,11 @@
 
 @implementation SavedViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+- (id)initWithSid:(NSString *)sid andListName:(NSString *)listName {
+  self = [super initWithNibName:nil bundle:nil];
   if (self) {
+    _sid = [sid copy];
+    _listName = [listName copy];
   }
   return self;
 }
@@ -42,6 +43,9 @@
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_sid);
+  RELEASE_SAFELY(_listName);
+  
   RELEASE_SAFELY(_toolbar);
   [super dealloc];
 }
@@ -86,7 +90,7 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
-  _navTitleLabel.text = @"Starred Places";
+  _navTitleLabel.text = _listName;
   
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
@@ -111,8 +115,8 @@
   [self setupToolbar];
   
   NSError *error;
-  [[GANTracker sharedTracker] trackPageview:@"/star" withError:&error];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#load"];
+  [[GANTracker sharedTracker] trackPageview:@"/saved" withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#load"];
 }
 
 - (void)setupToolbar {
@@ -195,10 +199,17 @@
   [super loadDataSource];
   
   
+//  SELECT p.*
+//  FROM places p
+//  JOIN lists_places lp
+//  ON p.biz = lp.place_biz
+//  AND lp.list_sid = '59CFBF7C-52B5-4833-8B08-25147B5A728B'
+  
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSNumber *lat = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] latitude]];
     NSNumber *lng = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] longitude]];
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT *, distance(latitude, longitude, ?, ?) as cdistance FROM places WHERE saved = 1 ORDER BY cdistance ASC", lat, lng, nil];
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT p.*, distance(latitude, longitude, ?, ?) as cdistance FROM places p JOIN lists_places lp ON p.biz = lp.place_biz AND lp.list_sid = ? ORDER BY cdistance ASC", lat, lng, _sid, nil];
+    
     NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
     for (EGODatabaseRow *row in res) {
       NSData *placeData = [row dataForColumn:@"data"];

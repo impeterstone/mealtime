@@ -95,6 +95,7 @@
   _tableView.tableFooterView = copyright;
 }
 
+#pragma mark - View
 - (void)loadView {
   [super loadView];
   
@@ -102,18 +103,13 @@
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
   _navTitleLabel.text = @"MealTime";
   
-  
-//  UIImageView *logo = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"7ml_logo.png"]] autorelease];
-//  logo.autoresizingMask = ~UIViewAutoresizingNone;
-//  logo.center = self.view.center;
-//  [self.view addSubview:logo];
-  
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   [self loadDataSource];
 }
 
+#pragma mark - DataSource
 - (void)loadDataSource {
   [super loadDataSource];
   

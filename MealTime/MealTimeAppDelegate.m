@@ -54,20 +54,30 @@ static const NSInteger kGANDispatchPeriodSec = 10;
       [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
       [[NSUserDefaults standardUserDefaults] synchronize];
     } else {
-      // App version was set, compare it to current
       NSString *savedAppVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"appVersion"];
+      
       if (![appVersion isEqualToString:savedAppVersion]) {
-        // Version DOES NOT MATCH
+        // App Version DOES NOT MATCH
         DLog(@"App Version CHANGED FROM OLD: %@ <---> TO NEW: %@", savedAppVersion, appVersion);
         [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
         [[NSUserDefaults standardUserDefaults] synchronize];
-        
+      }
+    }
+    
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"]) {
+      [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+    } else {
+      NSString *savedSchemaVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"];
+      if (![savedSchemaVersion isEqualToString:SCHEMA_VERSION]) {
+        // SQL schema changed
         // Reset the SQLite DB
-#ifdef SHOULD_RESET_SQLITE
         NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
         NSError *error = nil;
         [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
-#endif
+        
+        [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
       }
     }
     

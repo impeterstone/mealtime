@@ -33,11 +33,7 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
-  RELEASE_SAFELY(_toolbar);
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
+  RELEASE_SAFELY(_tabView);
 }
 
 - (void)dealloc
@@ -45,7 +41,7 @@
   RELEASE_SAFELY(_sid);
   RELEASE_SAFELY(_listName);
   
-  RELEASE_SAFELY(_toolbar);
+  RELEASE_SAFELY(_tabView);
   [super dealloc];
 }
 
@@ -119,15 +115,24 @@
 }
 
 - (void)setupToolbar {
-  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
-  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Export via Email" withTarget:self action:@selector(share) width:300 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:share];
   
-  [_toolbar setItems:toolbarItems];
-  [self setupFooterWithView:_toolbar];
+  [self setupFooterWithView:_tabView];
+  
+//  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+//  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Export via Email" withTarget:self action:@selector(share) width:300 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  
+//  [_toolbar setItems:toolbarItems];
+//  [self setupFooterWithView:_toolbar];
 }
 
 - (void)share {

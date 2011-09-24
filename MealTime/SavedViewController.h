@@ -13,7 +13,7 @@
   NSString *_sid;
   NSString *_listName;
   
-  UIToolbar *_toolbar;
+  UIView *_tabView;
 }
 
 - (id)initWithSid:(NSString *)sid andListName:(NSString *)listName;

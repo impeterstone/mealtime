@@ -193,6 +193,7 @@
   cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
     cell = [[[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white.png"]] autorelease]];
     [_cellCache addObject:cell];
   }
   

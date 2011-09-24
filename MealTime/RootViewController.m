@@ -72,7 +72,7 @@
   [super viewDidUnload];
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
-  RELEASE_SAFELY(_toolbar);
+  RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_distanceButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
@@ -92,7 +92,7 @@
   [_whereField removeFromSuperview];
   
   RELEASE_SAFELY(_headerView);
-  RELEASE_SAFELY(_toolbar);
+  RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_distanceButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
@@ -282,33 +282,45 @@
   [self setupHeaderWithView:_headerView];
 }
 
-- (void)setupToolbar {  
-  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+- (void)setupToolbar {
+  _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  // Toolbar Items
-  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  UIButton *star = [UIButton buttonWithFrame:CGRectMake(0, 0, 50, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
+  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [star setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:star];
   
-//  UIImage *refreshImage = [UIImage imageNamed:@"icon_star_silver.png"];
-//  UIButton *refreshButton = [UIButton buttonWithFrame:CGRectMake(0, 0, refreshImage.size.width, refreshImage.size.height) andStyle:nil target:self action:@selector(showSaved)];
-//  [refreshButton setImage:refreshImage forState:UIControlStateNormal];
+  // Center
+  _distanceButton = [UIButton buttonWithFrame:CGRectMake(50, 0, _tabView.width - 100, 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)];
+  [_distanceButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+  [_tabView addSubview:_distanceButton];
+  
+  UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - 50, 0, 50, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
+  [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [heart setImage:[UIImage imageNamed:@"tab_heart.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:heart];
+  
+  [self setupFooterWithView:_tabView];
+  
+//  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
 //  
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:refreshButton] autorelease]];
-  
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(searchNearby)] autorelease]];
-   
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
-  
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  
-  _distanceButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
-  [toolbarItems addObject:_distanceButton];
-  
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
-  
-  [_toolbar setItems:toolbarItems];
-  [self setupFooterWithView:_toolbar];
+//  // Toolbar Items
+//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+//
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
+//  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  
+//  _distanceButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
+//  [toolbarItems addObject:_distanceButton];
+//  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
+//  
+//  [_toolbar setItems:toolbarItems];
+//  [self setupFooterWithView:_toolbar];
 }
 
 - (void)setupSearchTermController {
@@ -382,7 +394,7 @@
   }
   
   NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil];
-  [ActionSheetPicker displayActionPickerWithView:self.view fromBarButtonItem:_distanceButton data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"How Far Away?"];
+  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"Search Radius"];
 }
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view {
@@ -443,11 +455,11 @@
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   NSString *distanceTitle = nil;
   if (_numResults > 0) {
-    distanceTitle = [NSString stringWithFormat:@"Found %d Places within %.1f miles", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"%d Places within %.1f mi", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   } else {
-    distanceTitle = [NSString stringWithFormat:@"No places within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"No Places within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
   }
-  [(UIButton *)_distanceButton.customView setTitle:distanceTitle forState:UIControlStateNormal];
+  [_distanceButton setTitle:distanceTitle forState:UIControlStateNormal];
 }
 
 #pragma mark - Sort
@@ -463,7 +475,7 @@
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
     // Update distance button label
-    [(UIButton *)_distanceButton.customView setTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+    [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:

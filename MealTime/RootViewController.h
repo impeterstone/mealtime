@@ -16,10 +16,10 @@
 
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate> {
   UIView *_headerView;
-  UIToolbar *_toolbar;
+  UIView *_tabView;
   PSSearchField *_whatField;
   UITextField *_whereField;
-  UIBarButtonItem *_distanceButton;
+  UIButton *_distanceButton;
 //  UILabel *_statusLabel;
 //  UILabel *_distanceLabel;
   

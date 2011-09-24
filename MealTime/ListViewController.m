@@ -277,15 +277,9 @@
 }
 
 - (void)newList {
-  TSAlertView *alertView = [[[TSAlertView alloc] init] autorelease];
-  alertView.delegate = self;
+  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"Name Your List" message:@"e.g. Favorite Pizza Joints" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Create", nil] autorelease];
   alertView.style = TSAlertViewStyleInput;
   alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
-  alertView.title = @"Give Your List a Name";
-  alertView.message = @"e.g. My Favorite Bars";
-  [alertView setCancelButtonIndex:0];
-  [alertView addButtonWithTitle:@"Cancel"];
-  [alertView addButtonWithTitle:@"Create"];
   [alertView show];
 }
 

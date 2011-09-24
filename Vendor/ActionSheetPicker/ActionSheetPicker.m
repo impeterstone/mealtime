@@ -149,8 +149,7 @@
 		viewController.contentSizeForViewInPopover = viewController.view.frame.size;
 		_popOverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
     
-    [self.popOverController presentPopoverFromBarButtonItem:self.barButtonItem permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-//		[self.popOverController presentPopoverFromRect:self.view.frame inView:self.view.superview?:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+		[self.popOverController presentPopoverFromRect:self.view.frame inView:self.view.superview?:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 	} else {
 		//spawn actionsheet
 		_actionSheet = [[UIActionSheet alloc] initWithTitle:[self isViewPortrait]?nil:@"\n\n\n" delegate:nil cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];

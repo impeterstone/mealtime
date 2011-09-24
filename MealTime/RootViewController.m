@@ -283,20 +283,22 @@
 }
 
 - (void)setupToolbar {
+  CGFloat tabWidth = isDeviceIPad() ? 100 : 50;
+  
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *star = [UIButton buttonWithFrame:CGRectMake(0, 0, 50, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
+  UIButton *star = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
   [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [star setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
   [_tabView addSubview:star];
   
   // Center
-  _distanceButton = [[UIButton buttonWithFrame:CGRectMake(50, 0, _tabView.width - 100, 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)] retain];
+  _distanceButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)] retain];
   [_distanceButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   [_tabView addSubview:_distanceButton];
   
-  UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - 50, 0, 50, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
+  UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
   [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [heart setImage:[UIImage imageNamed:@"tab_heart.png"] forState:UIControlStateNormal];
   [_tabView addSubview:heart];
@@ -677,6 +679,7 @@
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
   [self dataSourceDidError];
+  [_distanceButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
 }
 
 #pragma mark - Actions
@@ -707,6 +710,7 @@
     
     DLog(@"Attempting Reverse Geocode for lat: %f, lng: %f", latitude, longitude);
     
+    RELEASE_SAFELY(_reverseGeocoder);
     _reverseGeocoder = [[MKReverseGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];    
     _reverseGeocoder.delegate = self;
     [_reverseGeocoder start];
@@ -724,9 +728,6 @@
   _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
   
   [self updateCurrentLocation];
-  
-  _reverseGeocoder = nil;
-  [geocoder release];
 }
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
@@ -735,8 +736,6 @@
 //  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"GPS" message:@"Error finding your location" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Try Again", nil] autorelease];
 //  av.tag = kAlertGPSError;
 //  [av show];
-  _reverseGeocoder = nil;
-  [geocoder release];
   
   [self dataCenterDidFailWithError:nil andUserInfo:nil];
 }

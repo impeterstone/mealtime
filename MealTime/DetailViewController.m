@@ -267,27 +267,27 @@
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
   UIButton *call = [UIButton buttonWithFrame:CGRectMake(0, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(call)];
-  [call setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [call setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [call setImage:[UIImage imageNamed:@"tab_phone.png"] forState:UIControlStateNormal];
   [_tabView addSubview:call];
   
   UIButton *directions = [UIButton buttonWithFrame:CGRectMake(64, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(directions)];
-  [directions setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [directions setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [directions setImage:[UIImage imageNamed:@"tab_directions.png"] forState:UIControlStateNormal];
   [_tabView addSubview:directions];
   
   UIButton *star = [UIButton buttonWithFrame:CGRectMake(128, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
-  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [star setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
   [_tabView addSubview:star];
   
   UIButton *share = [UIButton buttonWithFrame:CGRectMake(192, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(share)];
-  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
   [_tabView addSubview:share];
   
   UIButton *yelp = [UIButton buttonWithFrame:CGRectMake(256, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(yelp)];
-  [yelp setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [yelp setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [yelp setImage:[UIImage imageNamed:@"tab_pencil.png"] forState:UIControlStateNormal];
   [_tabView addSubview:yelp];
   

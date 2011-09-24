@@ -166,7 +166,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
   _isBackgrounded = YES;
-  [self sendRequestsHome];
   
   [[LocalyticsSession sharedLocalyticsSession] close];
   [[LocalyticsSession sharedLocalyticsSession] upload];
@@ -176,6 +175,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
+  [self sendRequestsHome];
   [[LocalyticsSession sharedLocalyticsSession] resume];
   [[LocalyticsSession sharedLocalyticsSession] upload];
 }

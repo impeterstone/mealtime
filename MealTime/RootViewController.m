@@ -291,7 +291,7 @@
   [_tabView addSubview:star];
   
   // Center
-  _distanceButton = [UIButton buttonWithFrame:CGRectMake(50, 0, _tabView.width - 100, 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)];
+  _distanceButton = [[UIButton buttonWithFrame:CGRectMake(50, 0, _tabView.width - 100, 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)] retain];
   [_distanceButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
   [_tabView addSubview:_distanceButton];

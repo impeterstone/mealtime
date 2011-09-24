@@ -82,14 +82,15 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
-  
+
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
   if (_listMode == ListModeView) {
     // This should be an edit button
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+//    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
     _navTitleLabel.text = @"My Food Lists";
   } else {
     // This should be an add button
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+//    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
     _navTitleLabel.text = @"Add to List";
   }
   
@@ -277,7 +278,7 @@
 }
 
 - (void)newList {
-  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"Name Your List" message:@"e.g. Favorite Pizza Joints" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Create", nil] autorelease];
+  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"New List" message:@"e.g. Favorite Pizza Joints" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Create", nil] autorelease];
   alertView.style = TSAlertViewStyleInput;
   alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
   [alertView show];
@@ -303,7 +304,8 @@
   if(cell == nil) { 
     cell = [[[cellClass alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
     if (_listMode == ListModeView) {
-      [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white.png"]] autorelease]];
+//      [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
     }
     [_cellCache addObject:cell];
   }
@@ -329,14 +331,16 @@
     
     if (isSelected) {
       [_selectedLists addObject:object];
-      cell.accessoryType = UITableViewCellAccessoryCheckmark;
+      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_check.png"]] autorelease]];
+//      cell.accessoryType = UITableViewCellAccessoryCheckmark;
       
       // Update DB
       NSString *sid = [object objectForKey:@"sid"];
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)", sid, _biz, nil];
     } else {
       [_selectedLists removeObject:object];
-      cell.accessoryType = UITableViewCellAccessoryNone;
+      [cell setAccessoryView:nil];
+//      cell.accessoryType = UITableViewCellAccessoryNone;
       
       // Update DB
 //      DELETE FROM lists_places WHERE list_sid = '85057A84-BFFB-4D42-8DBE-8BCEF351641B' AND place_biz = 'cyTlYYW6q8w8LBXwTZ-Ifw'
@@ -353,9 +357,11 @@
     NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
     if ([self cellIsSelected:indexPath withObject:object]) {
-      cell.accessoryType = UITableViewCellAccessoryCheckmark;
+      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_check.png"]] autorelease]];
+//      cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
-      cell.accessoryType = UITableViewCellAccessoryNone;
+      [cell setAccessoryView:nil];
+//      cell.accessoryType = UITableViewCellAccessoryNone;
     }
   }
 }

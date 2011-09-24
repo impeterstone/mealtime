@@ -12,14 +12,13 @@
 #import "ProductCell.h"
 
 @interface DetailViewController : PSTableViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, ProductCellDelegate> {
-  UIToolbar *_toolbar;
+  UIView *_tabView;
   NSMutableDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
   MKCoordinateRegion _mapRegion;
   
   // Views
   MKMapView *_mapView;
-  UIBarButtonItem *_starButton;
   UIView *_addressView;
   UILabel *_addressLabel;
   UIView *_hoursView;

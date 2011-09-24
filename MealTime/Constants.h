@@ -39,7 +39,7 @@
 #define kFilterActionSheet 7071
 
 #define kAlertCall 8010
-#define kAlertReviews 8011
+#define kAlertYelp 8011
 #define kAlertShare 8012
 #define kAlertDirections 8013
 #define kAlertGPSError 8014

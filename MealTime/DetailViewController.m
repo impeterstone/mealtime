@@ -16,6 +16,7 @@
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
 #import "ListViewController.h"
+#import "PSMailCenter.h"
 
 @interface DetailViewController (Private)
 
@@ -27,7 +28,8 @@
 - (void)loadMap;
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer;
 - (void)call;
-- (void)reviews;
+- (void)yelp;
+- (void)share;
 - (void)directions;
 - (void)showLists;
 
@@ -58,8 +60,7 @@
 - (void)viewDidUnload {
   [super viewDidUnload];
   RELEASE_SAFELY(_mapView);
-  RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_starButton);
+  RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_hoursView);
   RELEASE_SAFELY(_addressView);
   RELEASE_SAFELY(_addressLabel);
@@ -74,8 +75,7 @@
   RELEASE_SAFELY(_imageSizeCache);
   
   RELEASE_SAFELY(_mapView);
-  RELEASE_SAFELY(_toolbar);
-  RELEASE_SAFELY(_starButton);
+  RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_hoursView);
   RELEASE_SAFELY(_addressView);
   RELEASE_SAFELY(_addressLabel);
@@ -132,13 +132,6 @@
   // NavBar
   _navTitleLabel.text = [_place objectForKey:@"name"];
   
-  // Favorite Star
-  NSString *iconStar = @"icon_star_gold.png";
-  
-  _starButton = [[UIBarButtonItem barButtonWithImage:[UIImage imageNamed:iconStar] withTarget:self action:@selector(showLists) width:40 height:30 buttonType:BarButtonTypeNormal] retain];
-  _starButton.enabled = NO;
-  
-  self.navigationItem.rightBarButtonItem = _starButton;
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   // Nullview
@@ -271,17 +264,47 @@
 }
 
 - (void)setupToolbar {
-  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
-  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+  _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+  UIButton *call = [UIButton buttonWithFrame:CGRectMake(0, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(call)];
+  [call setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [call setImage:[UIImage imageNamed:@"tab_phone.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:call];
   
-  [_toolbar setItems:toolbarItems];
-  [self setupFooterWithView:_toolbar];
+  UIButton *directions = [UIButton buttonWithFrame:CGRectMake(64, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(directions)];
+  [directions setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [directions setImage:[UIImage imageNamed:@"tab_directions.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:directions];
+  
+  UIButton *star = [UIButton buttonWithFrame:CGRectMake(128, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
+  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [star setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:star];
+  
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(192, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:share];
+  
+  UIButton *yelp = [UIButton buttonWithFrame:CGRectMake(256, 0, 64, 49) andStyle:@"detailTab" target:self action:@selector(yelp)];
+  [yelp setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [yelp setImage:[UIImage imageNamed:@"tab_pencil.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:yelp];
+  
+  
+  [self setupFooterWithView:_tabView];
+  
+//  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
+//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
+//  
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
+//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
+//  
+//  [_toolbar setItems:toolbarItems];
+//  [self setupFooterWithView:_toolbar];
 }
 
 #pragma mark - Actions
@@ -315,9 +338,9 @@
   }
 }
 
-- (void)reviews {
+- (void)yelp {
   UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertReviews;
+  av.tag = kAlertYelp;
   [av show];
 }
 
@@ -325,6 +348,56 @@
   UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Driving Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
   av.tag = kAlertDirections;
   [av show];
+}
+
+- (void)share {
+  NSError *error;
+  [[GANTracker sharedTracker] trackEvent:@"star" action:@"export" label:nil value:-1 withError:&error];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#export"];
+  
+  // Construct Body
+  //  The Codmother Fish and Chips
+  //  4.5 star rating (70 reviews)
+  //  Category: Fish & Chips
+  //  Fisherman's Wharf
+  //  2824 Jones St (Map)
+  //  (b/t Beach St & Jefferson St)
+  //  San Francisco, CA
+  //  (415) 606-9349
+  //  2.25 miles
+  //  Price: $
+  NSMutableString *body = [NSMutableString string];
+
+  // Score
+  NSString *score = nil;
+  NSInteger metaScore = [[_place objectForKey:@"score"] integerValue];
+  if (metaScore > 90) {
+    score = @"A+";
+  } else if (metaScore > 80) {
+    score = @"A";
+  } else if (metaScore > 70) {
+    score = @"A-";
+  } else if (metaScore > 60) {
+    score = @"B+";
+  } else if (metaScore > 50) {
+    score = @"B";
+  } else if (metaScore > 40) {
+    score = @"B-";
+  } else if (metaScore > 30) {
+    score = @"C+";
+  } else if (metaScore > 20) {
+    score = @"C";
+  } else if (metaScore >= 10) {
+    score = @"C-";
+  } else {
+    score = @"F";
+  }
+  
+  [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"biz"], [_place objectForKey:@"name"]];
+  [body appendFormat:@"%@<br/>", [[_place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
+  if ([[_place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"phone"]];
+  [body appendFormat:@"Price: %@, Score: %@", [_place objectForKey:@"price"], score];
+  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }
 
 #pragma mark - Load Data
@@ -392,7 +465,6 @@
   [self loadDetails];
   [self loadMap];
   
-  _starButton.enabled = YES;
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
 }
 
@@ -433,7 +505,6 @@
   [self loadDetails];
   [self loadMap];
   
-  _starButton.enabled = YES;
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
   
   [super dataSourceDidLoad];
@@ -704,14 +775,14 @@
     NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
     NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
-  } else if (alertView.tag == kAlertReviews) {
+  } else if (alertView.tag == kAlertYelp) {
     NSError *error;
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"reviews" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
+    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"yelp" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",
                                     nil];
-    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#reviews" attributes:localyticsDict];
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#yelp" attributes:localyticsDict];
     
     if (isYelpInstalled()) {
       // yelp:///biz/the-sentinel-san-francisco

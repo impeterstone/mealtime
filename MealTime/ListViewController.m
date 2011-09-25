@@ -95,14 +95,11 @@
   }
   
   // Nullview
-//  [_nullView setLoadingTitle:@"Loading..."];
-//  [_nullView setLoadingSubtitle:@"Finding Your Food Lists"];
-//  [_nullView setEmptyTitle:@"No Food Lists"];
-//  [_nullView setEmptySubtitle:@"You haven't created any food lists yet."];
-//  [_nullView setErrorTitle:@"Something Bad Happened"];
-//  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
-//  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
-//  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
+  NSString *imgName = isDeviceIPad() ? @"nullview_empty_list_pad.png" : @"nullview_empty_list.png";
+  [_nullView setLoadingTitle:@"Loading..."];
+  [_nullView setLoadingSubtitle:@"Finding Your Food Lists"];
+  [_nullView setEmptyImage:[UIImage imageNamed:imgName]];
+  [_nullView setIsFullScreen:YES];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];

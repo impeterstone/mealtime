@@ -282,6 +282,31 @@
 }
 
 #pragma mark - TableView
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+  if (section == 0) {
+    UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
+    header.backgroundColor = [UIColor clearColor];
+    header.textAlignment = UITextAlignmentCenter;
+    header.numberOfLines = 0;
+    header.text = @"On My iPhone";
+    header.font = [PSStyleSheet fontForStyle:@"groupedSectionHeader"];
+    header.textColor = [PSStyleSheet textColorForStyle:@"groupedSectionHeader"];
+    header.shadowColor = [PSStyleSheet shadowColorForStyle:@"groupedSectionHeader"];
+    header.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"groupedSectionHeader"];
+    return header;
+  } else {
+    return nil;
+  }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+  if (section == 0) {
+    return 30.0;
+  } else {
+    return 0.0;
+  }
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
   Class cellClass = [self cellClassAtIndexPath:indexPath];
   return [cellClass rowHeight];

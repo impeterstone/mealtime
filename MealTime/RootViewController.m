@@ -160,12 +160,10 @@
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding places for you"];
-  [_nullView setEmptyTitle:@"No Places Found"];
-  [_nullView setEmptySubtitle:@"Try increasing the search distance or try your search again."];
-  [_nullView setErrorTitle:@"Something Bad Happened"];
-  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
-  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_noresults.png"]];
   [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
+  [_nullView setIsFullScreen:YES];
+  [_nullView setDelegate:self];
   
   // iAd
 //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -528,6 +526,12 @@
   _whatField.text = _whatQuery;
 }
 
+- (void)reloadDataSource {
+  [super reloadDataSource];
+  _pagingStart = 0;
+  [self loadDataSource];
+}
+
 - (void)loadDataSource {
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
@@ -862,6 +866,7 @@
                      _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _whereTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _headerView.height = 44;
+                     _nullView.frame = CGRectMake(0, 44, _nullView.width, _nullView.height + 36);
                      _whereField.top = 7;
                    }
                    completion:^(BOOL finished) {
@@ -909,6 +914,7 @@
                        _whatTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
                        _whereTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
                        _headerView.height = 80;
+                       _nullView.frame = CGRectMake(0, 80, _nullView.width, _nullView.height - 36);
                        _whereField.top = 42;
                      }
                      completion:^(BOOL finished) {

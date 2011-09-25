@@ -136,13 +136,11 @@
   
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
-  [_nullView setLoadingSubtitle:@"Finding yummy food for you"];
-  [_nullView setEmptyTitle:@"No Photos Found"];
-  [_nullView setEmptySubtitle:@"This place has no photos."];
-  [_nullView setErrorTitle:@"Something Bad Happened"];
-  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
-  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
+  [_nullView setLoadingSubtitle:@"Finding photos of yummy food."];
+  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_error.png"]];
   [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
+  [_nullView setIsFullScreen:YES];
+  [_nullView setDelegate:self];
   
   // iAd
   //  _adView = [self newAdBannerViewWithDelegate:self];
@@ -468,6 +466,11 @@
   [self loadMap];
   
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
+}
+
+- (void)reloadDataSource {
+  [super reloadDataSource];
+  [self loadDataSource];
 }
 
 - (void)loadDataSource {

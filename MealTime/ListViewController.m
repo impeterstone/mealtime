@@ -283,23 +283,51 @@
 
 #pragma mark - TableView
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-  if (section == 0) {
-    UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
+  if (section == 0 && [[self.items objectAtIndex:section] count] > 0) {
+    UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
+    headerView.backgroundColor = [UIColor clearColor];
+    UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(20, 0, headerView.width - 40, headerView.height)] autorelease];
     header.backgroundColor = [UIColor clearColor];
-    header.textAlignment = UITextAlignmentCenter;
+    header.textAlignment = UITextAlignmentLeft;
     header.numberOfLines = 0;
     header.text = @"On My iPhone";
-    header.font = [PSStyleSheet fontForStyle:@"groupedSectionHeader"];
-    header.textColor = [PSStyleSheet textColorForStyle:@"groupedSectionHeader"];
-    header.shadowColor = [PSStyleSheet shadowColorForStyle:@"groupedSectionHeader"];
-    header.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"groupedSectionHeader"];
-    return header;
+    header.font = [PSStyleSheet fontForStyle:@"listSectionHeader"];
+    header.textColor = [PSStyleSheet textColorForStyle:@"listSectionHeader"];
+    header.shadowColor = [PSStyleSheet shadowColorForStyle:@"listSectionHeader"];
+    header.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"listSectionHeader"];
+    [headerView addSubview:header];
+    return headerView;
   } else {
     return nil;
   }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+  if (section == 0) {
+    return 30.0;
+  } else {
+    return 0.0;
+  }
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+  if (section == 0 && [[self.items objectAtIndex:section] count] > 0) {
+    UILabel *footer = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
+    footer.backgroundColor = [UIColor clearColor];
+    footer.textAlignment = UITextAlignmentCenter;
+    footer.numberOfLines = 0;
+    footer.text = @"These lists are stored on your iPhone.";
+    footer.font = [PSStyleSheet fontForStyle:@"groupedSectionFooter"];
+    footer.textColor = [PSStyleSheet textColorForStyle:@"groupedSectionFooter"];
+    footer.shadowColor = [PSStyleSheet shadowColorForStyle:@"groupedSectionFooter"];
+    footer.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"groupedSectionFooter"];
+    return footer;
+  } else {
+    return nil;
+  }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
   if (section == 0) {
     return 30.0;
   } else {

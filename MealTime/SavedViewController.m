@@ -89,13 +89,10 @@
   
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
-  [_nullView setLoadingSubtitle:@"Finding Starred Places"];
-  [_nullView setEmptyTitle:@"No Starred Places"];
-  [_nullView setEmptySubtitle:@"You haven't starred any places yet. To star a place tap on the star while viewing a place."];
-  [_nullView setErrorTitle:@"Something Bad Happened"];
-  [_nullView setErrorSubtitle:@"Hmm... Something didn't work.\nIt might be the network connection.\nTrying again might fix it."];
+  [_nullView setLoadingSubtitle:@"Finding Places"];
+  [_nullView setEmptyTitle:@"This List is Empty"];
+  [_nullView setEmptySubtitle:@"You haven't added any places to this list yet."];
   [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
-  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -137,7 +134,7 @@
 
 - (void)share {
   if (![self dataIsAvailable]) {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Whoops" message:@"Need something to export." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Whoops" message:@"Need something in this list first." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
     [av show];
     return;
   }
@@ -191,7 +188,7 @@
     [body appendFormat:@"Price: %@, Score: %@<br/>", [place objectForKey:@"price"], score];
 //    [body appendString:@"<br/>"];
   }
-  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:@"MealTime: My Starred Places" andMessageBody:body];
+  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", _listName] andMessageBody:body];
 }
 
 #pragma mark - DataSource

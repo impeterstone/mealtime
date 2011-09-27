@@ -491,7 +491,7 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  _distance,
+                                  [NSNumber numberWithFloat:_distance],
                                   @"distance",
                                   [NSString stringWithFormat:@"%d", _pagingStart],
                                   @"pagingStart",
@@ -862,7 +862,7 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  _distance,
+                                  [NSNumber numberWithFloat:_distance],
                                   @"distance",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];

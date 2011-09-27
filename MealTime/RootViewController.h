@@ -39,6 +39,8 @@
   NSString *_whereQuery;
   NSInteger _numResults;
   
+  CGFloat _distance;
+  
   BOOL _isSearchActive;
 }
 

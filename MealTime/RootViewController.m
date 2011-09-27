@@ -63,6 +63,8 @@
     
     _isSearchActive = NO;
     
+    _distance = 3.0;
+    
     _scrollCount = 0;
   }
   return self;
@@ -268,7 +270,7 @@
   
   _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
   UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:nil action:nil];
-  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
   [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
   _whereField.rightView = distanceButton;
   
@@ -293,7 +295,7 @@
   // Center
   _distanceButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)] retain];
   [_distanceButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+  [_distanceButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
   [_tabView addSubview:_distanceButton];
   
   UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
@@ -375,7 +377,7 @@
 }
 
 - (void)changeDistance {
-  CGFloat distance = [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"];
+  CGFloat distance = _distance;
   NSInteger ind = 0;
   if (distance == 0.2) {
     ind = 0;
@@ -426,10 +428,14 @@
       break;
   }
   
-  [[NSUserDefaults standardUserDefaults] setFloat:distance forKey:@"distanceRadius"];
+  if (_distance == distance) return; // Distance didn't change
+  
+  _distance = distance;
   
   // Update Distance Label
-  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", distance] forState:UIControlStateNormal];
+  
+  [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
   
   NSError *error;
   [[GANTracker sharedTracker] trackEvent:@"root" action:@"changeDistance" label:[NSString stringWithFormat:@"%.1f", distance] value:-1 withError:&error];
@@ -455,9 +461,9 @@
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   NSString *distanceTitle = nil;
   if (_numResults > 0) {
-    distanceTitle = [NSString stringWithFormat:@"%d Places within %.1f mi", _numResults, [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"%d Places within %.1f mi", _numResults, _distance];
   } else {
-    distanceTitle = [NSString stringWithFormat:@"No Places within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]];
+    distanceTitle = [NSString stringWithFormat:@"No Places within %.1f mi", _distance];
   }
   [_distanceButton setTitle:distanceTitle forState:UIControlStateNormal];
 }
@@ -473,9 +479,11 @@
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
-  if (isReload) {
+  if (isReload) {    
     // Update distance button label
-    [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] forState:UIControlStateNormal];
+    [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
+    
+    [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -483,7 +491,7 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [[NSUserDefaults standardUserDefaults] stringForKey:@"distanceRadius"],
+                                  _distance,
                                   @"distance",
                                   [NSString stringWithFormat:@"%d", _pagingStart],
                                   @"pagingStart",
@@ -497,7 +505,7 @@
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:[[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"] start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:_distance start:_pagingStart rpp:_pagingCount];
 #endif
 }
 
@@ -840,6 +848,13 @@
     self.whereQuery = nil;
   }
   
+  // Smart distance
+  if ([_whereField.text length] > 0) {
+    _distance = 10.0;
+  } else {
+    _distance = 3.0;
+  }
+  
   NSError *error;
   [[GANTracker sharedTracker] trackEvent:@"root" action:@"search" label:[NSString stringWithFormat:@"what:%@,where:%@", self.whatQuery, self.whereQuery] value:-1 withError:&error];
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -847,7 +862,7 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [[NSUserDefaults standardUserDefaults] stringForKey:@"distanceRadius"],
+                                  _distance,
                                   @"distance",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];

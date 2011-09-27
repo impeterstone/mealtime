@@ -287,7 +287,7 @@
   
   UIButton *star = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
   [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [star setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
+  [star setImage:[UIImage imageNamed:@"tab_list.png"] forState:UIControlStateNormal];
   [_tabView addSubview:star];
   
   // Center
@@ -297,8 +297,8 @@
   [_tabView addSubview:_distanceButton];
   
   UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
-  [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [heart setImage:[UIImage imageNamed:@"tab_heart.png"] forState:UIControlStateNormal];
+  [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [heart setImage:[UIImage imageNamed:@"tab_info.png"] forState:UIControlStateNormal];
   [_tabView addSubview:heart];
   
   [self setupFooterWithView:_tabView];

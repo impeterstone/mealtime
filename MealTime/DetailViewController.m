@@ -486,7 +486,9 @@
     if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > WEEK_SECONDS) {
       [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
     }
-    [self dataSourceShouldLoadObjects:[_place objectForKey:@"photos"]];
+    NSArray *photos = [_place objectForKey:@"photos"];
+    
+    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
   }
   
   // Get ALL reviews for this place
@@ -513,104 +515,13 @@
   [super dataSourceDidLoad];
 }
 
-- (void)dataSourceShouldLoadObjects:(id)objects {
-  //
-  // PREPARE DATASOURCE
-  //
-  
-  /**
-   SECTIONS
-   If an existing section doesn't exist, create one
-   */
-  
-  NSIndexSet *sectionIndexSet = nil;
-  
-  int sectionStart = 0;
-  if ([self.items count] == 0) {
-    // No section created yet, make one
-    [self.items addObject:[NSMutableArray arrayWithCapacity:1]];
-    sectionIndexSet = [NSIndexSet indexSetWithIndex:sectionStart];
-  }
-  
-  /**
-   ROWS
-   Determine if this is a refresh/firstload or a load more
-   */
-  
-  // Table Row Insert/Delete/Update indexPaths
-  NSMutableArray *newIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  NSMutableArray *deleteIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  //  NSMutableArray *updateIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  
-  // This is a FRESH reload
-  // NOTE: THIS TABLE DOES NOT SUPPORT LOAD MORE
-  
-  // We should scroll the table to the top
-  [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-  
-  // Check to see if the first section is empty
-  if ([[self.items objectAtIndex:0] count] == 0) {
-    // empty section, insert
-    [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-    for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-      [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-    }
-  } else {
-    // section has data, delete and reinsert
-    for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-      [deleteIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-    }
-    [[self.items objectAtIndex:0] removeAllObjects];
-    // reinsert
-    [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-    for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-      [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-    }
-  }
-  
-  //
-  // DONT ANIMATE, JUST RELOAD
-  //
-  [_tableView reloadData];
-  
-  //
-  // BEGIN TABLEVIEW ANIMATION BLOCK
-  // NOTE: Animating LARGE sets of data will call
-  // cellForRowAtIndexPath for ALL rows
-  // causing massive lag, this is a bug with UITableView
-  // So for initial large sets of data, just use reloadData
-  //
-  //  [_tableView beginUpdates];
-  //  
-  //  // These are the sections that need to be inserted
-  //  if (sectionIndexSet) {
-  //    [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
-  //  }
-  //  
-  //  // These are the rows that need to be deleted
-  //  if ([deleteIndexPaths count] > 0) {
-  //    [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-  //  }
-  //  
-  //  // These are the new rows that need to be inserted
-  //  if ([newIndexPaths count] > 0) {
-  //    [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:UITableViewRowAnimationFade];
-  //  }
-  //  
-  //  [_tableView endUpdates];
-  //
-  // END TABLEVIEW ANIMATION BLOCK
-  //
-  
-  [self dataSourceDidLoad];
-}
-
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
   // Match place from request to current, make sure this request is still valid
   if (![[userInfo objectForKey:@"place"] isEqual:_place]) return;
   
-  [self dataSourceShouldLoadObjects:[_place objectForKey:@"photos"]];
+  NSArray *photos = [_place objectForKey:@"photos"];
+  [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {

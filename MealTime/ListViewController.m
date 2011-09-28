@@ -13,9 +13,9 @@
 
 @interface ListViewController (Private)
 
-- (void)edit;
 - (void)dismiss;
 - (void)newList;
+- (void)editList;
 
 @end
 
@@ -83,14 +83,14 @@
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
 
-  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
+//  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
   if (_listMode == ListModeView) {
     // This should be an edit button
-//    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Edit" withTarget:self action:@selector(editList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
     _navTitleLabel.text = @"My Food Lists";
   } else {
     // This should be an add button
-//    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"New" withTarget:self action:@selector(newList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
     _navTitleLabel.text = @"Add to List";
   }
   
@@ -154,111 +154,10 @@
       }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-      [self dataSourceShouldLoadObjects:lists];
+      [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:lists] shouldAnimate:YES];
     });
   });
   
-}
-
-- (void)dataSourceShouldLoadObjects:(id)objects {
-  //
-  // PREPARE DATASOURCE
-  //
-  
-  BOOL isReload = YES;
-  BOOL tableViewCellShouldAnimate = NO;
-  UITableViewRowAnimation rowAnimation = isReload ? UITableViewRowAnimationNone : UITableViewRowAnimationFade;
-  
-  /**
-   SECTIONS
-   If an existing section doesn't exist, create one
-   */
-  
-  NSIndexSet *sectionIndexSet = nil;
-  
-  int sectionStart = 0;
-  if ([self.items count] == 0) {
-    // No section created yet, make one
-    [self.items addObject:[NSMutableArray arrayWithCapacity:1]];
-    sectionIndexSet = [NSIndexSet indexSetWithIndex:sectionStart];
-  }
-  
-  /**
-   ROWS
-   Determine if this is a refresh/firstload or a load more
-   */
-  
-  // Table Row Insert/Delete/Update indexPaths
-  NSMutableArray *newIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  NSMutableArray *deleteIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  //  NSMutableArray *updateIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  
-  int rowStart = 0;
-  if (isReload) {
-    // This is a FRESH reload
-    
-    // We should scroll the table to the top
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-    
-    // Check to see if the first section is empty
-    if ([[self.items objectAtIndex:0] count] == 0) {
-      // empty section, insert
-      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-    } else {
-      // section has data, delete and reinsert
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [deleteIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-      [[self.items objectAtIndex:0] removeAllObjects];
-      // reinsert
-      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-    }
-  } else {
-    // This is a load more
-    
-    rowStart = [[self.items objectAtIndex:0] count]; // row starting offset for inserting
-    [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-    for (int row = rowStart; row < [[self.items objectAtIndex:0] count]; row++) {
-      [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-    }
-  }
-  
-  if (tableViewCellShouldAnimate) {
-    //
-    // BEGIN TABLEVIEW ANIMATION BLOCK
-    //
-    [_tableView beginUpdates];
-    
-    // These are the sections that need to be inserted
-    if (sectionIndexSet) {
-      [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
-    }
-    
-    // These are the rows that need to be deleted
-    if ([deleteIndexPaths count] > 0) {
-      [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-    }
-    
-    // These are the new rows that need to be inserted
-    if ([newIndexPaths count] > 0) {
-      [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:rowAnimation];
-    }
-    
-    [_tableView endUpdates];
-    //
-    // END TABLEVIEW ANIMATION BLOCK
-    //
-  } else {
-    [_tableView reloadData];
-  }
-  
-  [self dataSourceDidLoad];
 }
 
 - (void)dataSourceDidLoad {
@@ -266,12 +165,13 @@
 }
 
 #pragma mark - Actions
-- (void)edit {
-  
-}
-
 - (void)dismiss {
   [self dismissModalViewControllerAnimated:YES];
+}
+
+- (void)editList {
+  [(UIButton *)self.navigationItem.leftBarButtonItem.customView setSelected:!_tableView.editing];
+  [_tableView setEditing:!_tableView.editing animated:YES];
 }
 
 - (void)newList {
@@ -283,7 +183,7 @@
 
 #pragma mark - TableView
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-  if (section == 0 && [[self.items objectAtIndex:section] count] > 0) {
+  if (section == 0) {
     UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
     headerView.backgroundColor = [UIColor clearColor];
     UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(20, 0, headerView.width - 40, headerView.height)] autorelease];
@@ -311,7 +211,7 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
-  if (section == 0 && [[self.items objectAtIndex:section] count] > 0) {
+  if (section == 0) {
     UILabel *footer = [[[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
     footer.backgroundColor = [UIColor clearColor];
     footer.textAlignment = UITextAlignmentCenter;
@@ -413,6 +313,38 @@
       [cell setAccessoryView:nil];
 //      cell.accessoryType = UITableViewCellAccessoryNone;
     }
+  }
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
+  return UITableViewCellEditingStyleDelete;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+  if (editingStyle == UITableViewCellEditingStyleDelete) {
+    // remove from database
+    id object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    NSString *sid = [object objectForKey:@"sid"];
+    NSString *query = @"DELETE FROM lists WHERE sid = ?";
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, nil];
+    
+    // remove from dataSource
+//    if (numRowsInSection <= 1) {
+//      [self.items removeObjectAtIndex:indexPath.section];
+//    } else {
+//      [[self.items objectAtIndex:indexPath.section] removeObjectAtIndex:indexPath.row];
+//    }
+    
+    // remove from table
+    [self loadDataSource];
+    
+//    [tableView beginUpdates];
+//    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//    if (numRowsInSection <= 1) {
+//      [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
+//    }
+//    [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationFade];
+//    [tableView endUpdates];
   }
 }
 

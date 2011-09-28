@@ -215,7 +215,7 @@
       [savedPlaces addObject:placeDict];
     }
     dispatch_async(dispatch_get_main_queue(), ^{
-      [self dataSourceShouldLoadObjects:savedPlaces];
+    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:savedPlaces] shouldAnimate:YES];
     });
   });
   
@@ -230,107 +230,6 @@
 
 - (void)dataSourceDidLoad {
   [super dataSourceDidLoad];
-}
-
-- (void)dataSourceShouldLoadObjects:(id)objects {
-  //
-  // PREPARE DATASOURCE
-  //
-  
-  BOOL isReload = YES;
-  BOOL tableViewCellShouldAnimate = NO;
-  UITableViewRowAnimation rowAnimation = isReload ? UITableViewRowAnimationNone : UITableViewRowAnimationFade;
-  
-  /**
-   SECTIONS
-   If an existing section doesn't exist, create one
-   */
-  
-  NSIndexSet *sectionIndexSet = nil;
-  
-  int sectionStart = 0;
-  if ([self.items count] == 0) {
-    // No section created yet, make one
-    [self.items addObject:[NSMutableArray arrayWithCapacity:1]];
-    sectionIndexSet = [NSIndexSet indexSetWithIndex:sectionStart];
-  }
-  
-  /**
-   ROWS
-   Determine if this is a refresh/firstload or a load more
-   */
-  
-  // Table Row Insert/Delete/Update indexPaths
-  NSMutableArray *newIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  NSMutableArray *deleteIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  //  NSMutableArray *updateIndexPaths = [NSMutableArray arrayWithCapacity:1];
-  
-  int rowStart = 0;
-  if (isReload) {
-    // This is a FRESH reload
-    
-    // We should scroll the table to the top
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-    
-    // Check to see if the first section is empty
-    if ([[self.items objectAtIndex:0] count] == 0) {
-      // empty section, insert
-      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-    } else {
-      // section has data, delete and reinsert
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [deleteIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-      [[self.items objectAtIndex:0] removeAllObjects];
-      // reinsert
-      [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-      for (int row = 0; row < [[self.items objectAtIndex:0] count]; row++) {
-        [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-      }
-    }
-  } else {
-    // This is a load more
-    
-    rowStart = [[self.items objectAtIndex:0] count]; // row starting offset for inserting
-    [[self.items objectAtIndex:0] addObjectsFromArray:objects];
-    for (int row = rowStart; row < [[self.items objectAtIndex:0] count]; row++) {
-      [newIndexPaths addObject:[NSIndexPath indexPathForRow:row inSection:0]];
-    }
-  }
-  
-  if (tableViewCellShouldAnimate) {
-    //
-    // BEGIN TABLEVIEW ANIMATION BLOCK
-    //
-    [_tableView beginUpdates];
-    
-    // These are the sections that need to be inserted
-    if (sectionIndexSet) {
-      [_tableView insertSections:sectionIndexSet withRowAnimation:UITableViewRowAnimationNone];
-    }
-    
-    // These are the rows that need to be deleted
-    if ([deleteIndexPaths count] > 0) {
-      [_tableView deleteRowsAtIndexPaths:deleteIndexPaths withRowAnimation:UITableViewRowAnimationNone];
-    }
-    
-    // These are the new rows that need to be inserted
-    if ([newIndexPaths count] > 0) {
-      [_tableView insertRowsAtIndexPaths:newIndexPaths withRowAnimation:rowAnimation];
-    }
-    
-    [_tableView endUpdates];
-    //
-    // END TABLEVIEW ANIMATION BLOCK
-    //
-  } else {
-    [_tableView reloadData];
-  }
-  
-  [self dataSourceDidLoad];
 }
 
 #pragma mark - TableView

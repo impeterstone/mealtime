@@ -40,6 +40,7 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
+    _cachedTimestamp = nil;
     NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithBiz:[place objectForKey:@"biz"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
@@ -71,6 +72,7 @@
 - (void)dealloc
 {
   [[BizDataCenter defaultCenter] setDelegate:nil];
+  RELEASE_SAFELY(_cachedTimestamp);
   RELEASE_SAFELY(_place);
   RELEASE_SAFELY(_imageSizeCache);
   
@@ -447,6 +449,7 @@
   EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE biz = ?", biz, nil];
   
   if ([res count] > 0) {
+    _cachedTimestamp = [[NSDate dateWithTimeIntervalSince1970:[[[res rows] lastObject] doubleForColumn:@"timestamp"]] retain];
     NSData *placeData = [[[res rows] lastObject] dataForColumn:@"data"];
     return [NSKeyedUnarchiver unarchiveObjectWithData:placeData];
   } else {
@@ -476,22 +479,18 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
-  // Preload from database
-  // No sense of order from server right now
-  //  [self loadPhotosFromDatabase];
-  
-  
-#if USE_FIXTURES
-  
-#else
   // Combined call
   if (!_isCachedPlace) {
     [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
   } else {
+    if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > WEEK_SECONDS) {
+      [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
+    }
     [self dataSourceShouldLoadObjects:[_place objectForKey:@"photos"]];
   }
   
   // Get ALL reviews for this place
+  // Only do this once, so check userDefaults
   if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -503,7 +502,6 @@
       [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
     }
   }
-#endif
 }
 
 - (void)dataSourceDidLoad {  

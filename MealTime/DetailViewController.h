@@ -27,6 +27,7 @@
   
   NSInteger _photoCount;
   
+  NSDate *_cachedTimestamp;
   BOOL _isCachedPlace;
 }
 

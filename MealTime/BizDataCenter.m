@@ -108,7 +108,7 @@ static NSLock *_placeLock = nil;
       NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
       NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
       [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
-      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (biz, data, latitude, longitude, timestamp) VALUES (?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"biz"], placeData, [place objectForKey:@"latitude"], [place objectForKey:@"longitude"], timestamp, nil]];
+      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (biz, data, latitude, longitude, score, timestamp) VALUES (?, ?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"biz"], placeData, [place objectForKey:@"latitude"], [place objectForKey:@"longitude"], [place objectForKey:@"score"], timestamp, nil]];
       
       // Save callhome entry
       NSString *requestType = @"biz";

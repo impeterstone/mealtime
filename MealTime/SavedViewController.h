@@ -9,12 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "PSTableViewController.h"
 
-@interface SavedViewController : PSTableViewController {
+@interface SavedViewController : PSTableViewController <UIActionSheetDelegate> {
   NSString *_sid;
   NSString *_listName;
+  NSString *_sortOrder;
+  NSString *_sortDirection;
   
   UIView *_tabView;
 }
+
+@property (nonatomic, retain) NSString *sortOrder;
+@property (nonatomic, retain) NSString *sortDirection;
 
 - (id)initWithSid:(NSString *)sid andListName:(NSString *)listName;
 

@@ -17,16 +17,22 @@
 
 - (void)setupToolbar;
 - (void)share;
+- (void)sort;
 
 @end
 
 @implementation SavedViewController
+
+@synthesize sortOrder = _sortOrder;
+@synthesize sortDirection = _sortDirection;
 
 - (id)initWithSid:(NSString *)sid andListName:(NSString *)listName {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _sid = [sid copy];
     _listName = [listName copy];
+    self.sortOrder = @"cdistance";
+    self.sortDirection = @"ASC";
   }
   return self;
 }
@@ -40,6 +46,7 @@
 {
   RELEASE_SAFELY(_sid);
   RELEASE_SAFELY(_listName);
+  RELEASE_SAFELY(_sortOrder);
   
   RELEASE_SAFELY(_tabView);
   [super dealloc];
@@ -114,8 +121,13 @@
 - (void)setupToolbar {
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *share = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width, 49) andStyle:@"detailTab" target:self action:@selector(share)];
-  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width / 2, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
+  [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [sort setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:sort];
+  
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width / 2, 0, _tabView.width / 2, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
   [_tabView addSubview:share];
   
@@ -130,6 +142,11 @@
 //  
 //  [_toolbar setItems:toolbarItems];
 //  [self setupFooterWithView:_toolbar];
+}
+
+- (void)sort {
+  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort List" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Distance", @"Rating", nil] autorelease];
+  [as showInView:self.view];
 }
 
 - (void)share {
@@ -192,6 +209,11 @@
 }
 
 #pragma mark - DataSource
+- (void)reloadDataSource {
+  [super reloadDataSource];
+  [self loadDataSource];
+}
+
 - (void)loadDataSource {
   [super loadDataSource];
   
@@ -205,7 +227,8 @@
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSNumber *lat = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] latitude]];
     NSNumber *lng = [NSNumber numberWithFloat:[[PSLocationCenter defaultCenter] longitude]];
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT p.*, distance(latitude, longitude, ?, ?) as cdistance FROM places p JOIN lists_places lp ON p.biz = lp.place_biz AND lp.list_sid = ? ORDER BY cdistance ASC", lat, lng, _sid, nil];
+    NSString *query = [NSString stringWithFormat:@"SELECT p.*, distance(latitude, longitude, ?, ?) as cdistance FROM places p JOIN lists_places lp ON p.biz = lp.place_biz AND lp.list_sid = ? ORDER BY %@ %@", self.sortOrder, self.sortDirection];
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, lat, lng, _sid, nil];
     
     NSMutableArray *savedPlaces = [NSMutableArray arrayWithCapacity:1];
     for (EGODatabaseRow *row in res) {
@@ -280,6 +303,25 @@
   DetailViewController *dvc = [[DetailViewController alloc] initWithPlace:place];
   [self.navigationController pushViewController:dvc animated:YES];
   [dvc release];
+}
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == actionSheet.cancelButtonIndex) return;
+  
+  switch (buttonIndex) {
+    case 0: // distance
+      self.sortOrder = @"cdistance";
+      self.sortDirection = @"ASC";
+      break;
+    case 1: // rating
+      self.sortOrder = @"score";
+      self.sortDirection = @"DESC";
+      break;
+    default:
+      break;
+  }
+  [self reloadDataSource];
 }
 
 @end

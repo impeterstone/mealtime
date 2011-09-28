@@ -65,6 +65,11 @@ static const NSInteger kGANDispatchPeriodSec = 10;
     }
     
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"]) {
+      // No schema found, reset the DB anyways
+      NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
+      NSError *error = nil;
+      [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
+      
       [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
       [[NSUserDefaults standardUserDefaults] synchronize];
     } else {

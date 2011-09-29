@@ -45,6 +45,8 @@
 #define kAlertDirections 8013
 #define kAlertGPSError 8014
 #define kAlertSendLove 8015
+#define kAlertRenameList 8016
+#define kAlertNewList 8017
 
 // Notifications
 #define kLocationAcquired @"LocationAcquired"

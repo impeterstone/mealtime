@@ -78,6 +78,10 @@
 }
 
 #pragma mark - View
+- (void)viewWillAppear:(BOOL)animated {
+  [super viewWillAppear:animated];
+  [self loadDataSource];
+}
 - (void)loadView {
   [super loadView];
   
@@ -102,8 +106,6 @@
   NSError *error;
   [[GANTracker sharedTracker] trackPageview:@"/list" withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#load"];
-  
-  [self loadDataSource];
 }
 
 - (void)setupTableHeader {
@@ -190,6 +192,7 @@
 
 - (void)newList {
   TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"New List" message:@"e.g. Favorite Pizza Joints" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Create", nil] autorelease];
+  alertView.tag = kAlertNewList;
   alertView.style = TSAlertViewStyleInput;
   alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
   [alertView show];
@@ -385,43 +388,45 @@
 - (void)alertView:(TSAlertView *)alertView didDismissWithButtonIndex: (NSInteger) buttonIndex {
   if (buttonIndex == alertView.cancelButtonIndex) return;
   
-  NSString *listName = alertView.inputTextField.text;
-  if ([listName length] > 0) {
-    // Create a list
-    
-    // Get the largest position from DB
-    NSString *maxQuery = @"SELECT MAX(position) AS maxpos FROM lists";
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:maxQuery];
-    int newpos = [[[res rows] lastObject] intForColumn:@"maxpos"] + 1;
-    
-    NSNumber *position = [NSNumber numberWithInt:newpos];
-    
-    NSString *sid = [NSString stringFromUUID];
-    NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-    NSString *query = [NSString stringWithFormat:@"INSERT INTO lists (sid, name, position, timestamp) VALUES (?, ?, ?, ?)", maxQuery];
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, listName, position, timestamp, nil];
-    
-    NSDictionary *listDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                              sid,
-                              @"sid",
-                              listName,
-                              @"name",
-                              position,
-                              @"position",
-                              timestamp,
-                              @"timestamp",
-                              nil];
-    
-    if ([self.items count] == 0) {
-      // no section, insert one
-      [self.items addObject:[NSMutableArray array]];
-      [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+  if (alertView.tag == kAlertNewList) {
+    NSString *listName = alertView.inputTextField.text;
+    if ([listName length] > 0) {
+      // Create a list
+      
+      // Get the largest position from DB
+      NSString *maxQuery = @"SELECT MAX(position) AS maxpos FROM lists";
+      EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:maxQuery];
+      int newpos = [[[res rows] lastObject] intForColumn:@"maxpos"] + 1;
+      
+      NSNumber *position = [NSNumber numberWithInt:newpos];
+      
+      NSString *sid = [NSString stringFromUUID];
+      NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+      NSString *query = [NSString stringWithFormat:@"INSERT INTO lists (sid, name, position, timestamp) VALUES (?, ?, ?, ?)", maxQuery];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, listName, position, timestamp, nil];
+      
+      NSDictionary *listDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                sid,
+                                @"sid",
+                                listName,
+                                @"name",
+                                position,
+                                @"position",
+                                timestamp,
+                                @"timestamp",
+                                nil];
+      
+      if ([self.items count] == 0) {
+        // no section, insert one
+        [self.items addObject:[NSMutableArray array]];
+        [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+      }
+      
+      [[self.items objectAtIndex:0] addObject:listDict];
+      [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:([[self.items objectAtIndex:0] count] - 1) inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+    } else {
+      // error empty listName
     }
-    
-    [[self.items objectAtIndex:0] addObject:listDict];
-    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:([[self.items objectAtIndex:0] count] - 1) inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-  } else {
-    // error empty listName
   }
 }
 

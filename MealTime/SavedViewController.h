@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "PSTableViewController.h"
+#import "TSAlertView.h"
 
-@interface SavedViewController : PSTableViewController <UIActionSheetDelegate> {
+@interface SavedViewController : PSTableViewController <UIActionSheetDelegate, TSAlertViewDelegate> {
   NSString *_sid;
   NSString *_listName;
   NSString *_sortOrder;

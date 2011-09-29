@@ -12,12 +12,15 @@
 #import "PlaceCell.h"
 #import "DetailViewController.h"
 #import "PSMailCenter.h"
+#import "PSDatabaseCenter.h"
 
 @interface SavedViewController (Private)
 
 - (void)setupToolbar;
 - (void)share;
 - (void)sort;
+- (void)rename;
+- (void)delete;
 
 @end
 
@@ -121,15 +124,25 @@
 - (void)setupToolbar {
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width / 2, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
+  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
   [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [sort setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
   [_tabView addSubview:sort];
   
-  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width / 2, 0, _tabView.width / 2, 49) andStyle:@"detailTab" target:self action:@selector(share)];
-  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
   [_tabView addSubview:share];
+  
+  UIButton *rename = [UIButton buttonWithFrame:CGRectMake(2 * _tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(rename)];
+  [rename setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [rename setImage:[UIImage imageNamed:@"tab_pencil.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:rename];
+  
+  UIButton *delete = [UIButton buttonWithFrame:CGRectMake(3 * _tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(delete)];
+  [delete setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [delete setImage:[UIImage imageNamed:@"tab_heart.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:delete];
   
   [self setupFooterWithView:_tabView];
   
@@ -142,6 +155,19 @@
 //  
 //  [_toolbar setItems:toolbarItems];
 //  [self setupFooterWithView:_toolbar];
+}
+
+- (void)rename {
+  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"Rename List" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Rename", nil] autorelease];
+  alertView.tag = kAlertRenameList;
+  alertView.style = TSAlertViewStyleInput;
+  alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
+  alertView.inputTextField.placeholder = _listName;
+  [alertView show];
+}
+
+- (void)delete {
+  
 }
 
 - (void)sort {
@@ -324,4 +350,19 @@
   [self reloadDataSource];
 }
 
+#pragma mark - AlertView
+- (void)alertView:(TSAlertView *)alertView didDismissWithButtonIndex: (NSInteger) buttonIndex {
+  if (buttonIndex == alertView.cancelButtonIndex) return;
+  
+  if (alertView.tag == kAlertRenameList) {
+    NSString *newListName = alertView.inputTextField.text;
+    if ([newListName length] > 0) {
+      NSString *query = @"UPDATE lists SET name = ? WHERE sid = ?";
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, newListName, _sid, nil];
+      RELEASE_SAFELY(_listName);
+      _listName = [newListName copy];
+      _navTitleLabel.text = _listName;
+    }
+  }
+}
 @end

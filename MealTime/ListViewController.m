@@ -311,7 +311,7 @@
     
     if (isSelected) {
       [_selectedLists addObject:object];
-      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_check.png"]] autorelease]];
+      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"table_accessory_check.png"]] autorelease]];
 //      cell.accessoryType = UITableViewCellAccessoryCheckmark;
       
       // Update DB
@@ -337,7 +337,7 @@
     NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
     if ([self cellIsSelected:indexPath withObject:object]) {
-      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_check.png"]] autorelease]];
+      [cell setAccessoryView:[[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"table_accessory_check.png"]] autorelease]];
 //      cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
       [cell setAccessoryView:nil];

@@ -119,8 +119,9 @@
 }
 
 - (void)setupTableHeader {
-  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 64)] autorelease];
-  UIButton *addButton = [UIButton buttonWithFrame:CGRectMake(10, 10, self.view.width - 20, 44) andStyle:@"listNewButton" target:self action:@selector(newList)];
+  CGFloat padding = isDeviceIPad() ? 20 : 10;
+  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44 + (padding * 2))] autorelease];
+  UIButton *addButton = [UIButton buttonWithFrame:CGRectMake(padding, padding, self.view.width - (padding * 2), 44) andStyle:@"listNewButton" target:self action:@selector(newList)];
   [addButton setBackgroundImage:[UIImage stretchableImageNamed:@"grouped_full_cell.png" withLeftCapWidth:6 topCapWidth:6] forState:UIControlStateNormal];
   [addButton setBackgroundImage:[UIImage stretchableImageNamed:@"grouped_full_cell_highlighted.png" withLeftCapWidth:6 topCapWidth:6] forState:UIControlStateHighlighted];
   [addButton setTitle:@"Create a New List" forState:UIControlStateNormal];
@@ -211,9 +212,11 @@
 #pragma mark - TableView
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
   if (section == 0) {
+    CGFloat padding = isDeviceIPad() ? 60 : 20;
+    
     UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 30)] autorelease];
     headerView.backgroundColor = [UIColor clearColor];
-    UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(20, 0, headerView.width - 40, headerView.height)] autorelease];
+    UILabel *header = [[[UILabel alloc] initWithFrame:CGRectMake(padding, 0, headerView.width - (padding * 2), headerView.height)] autorelease];
     header.backgroundColor = [UIColor clearColor];
     header.textAlignment = UITextAlignmentLeft;
     header.numberOfLines = 0;

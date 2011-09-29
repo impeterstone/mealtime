@@ -14,6 +14,7 @@
 #import "PSMailCenter.h"
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
+#import "MapViewController.h"
 
 @interface SavedViewController (Private)
 
@@ -169,8 +170,14 @@
 }
 
 - (void)showMap {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Coming Soon" message:@"Map Mode Coming Soon" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
-  [av show];
+//  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Coming Soon" message:@"Map Mode Coming Soon" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+//  [av show];
+  
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#showMap"];
+  
+  MapViewController *mvc = [[MapViewController alloc] initWithPlaces:[self.items objectAtIndex:0]];
+  [self.navigationController pushViewController:mvc animated:YES];
+  [mvc release];
 }
 
 - (void)rename {

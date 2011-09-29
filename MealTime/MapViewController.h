@@ -11,8 +11,10 @@
 #import "PSBaseViewController.h"
 
 @interface MapViewController : PSBaseViewController <MKMapViewDelegate> {
+  NSArray *_places;
   NSDictionary *_place;
   MKCoordinateRegion _mapRegion;
+  MKAnnotationView *_selectedAnnotationView;
   
   // Views
   MKMapView *_mapView;
@@ -20,6 +22,7 @@
   BOOL _hasSetRegion;
 }
 
+- (id)initWithPlaces:(NSArray *)places;
 - (id)initWithPlace:(NSDictionary *)place;
 - (void)loadMap;
 - (void)zoomToFitMapAnnotations:(MKMapView *)mapView;

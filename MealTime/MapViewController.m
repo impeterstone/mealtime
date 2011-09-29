@@ -14,10 +14,19 @@
 
 @implementation MapViewController
 
+- (id)initWithPlaces:(NSArray *)places {
+  self = [super initWithNibName:nil bundle:nil];
+  if (self) {
+    _places = [[NSArray arrayWithArray:places] retain];
+    _hasSetRegion = NO;
+  }
+  return self;
+}
+
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _place = place;
+    _places = [[NSArray arrayWithObject:place] retain];
     _hasSetRegion = NO;
   }
   return self;
@@ -30,6 +39,7 @@
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_places);
   
   RELEASE_SAFELY(_mapView);
   [super dealloc];
@@ -60,7 +70,9 @@
 {
   [super loadView];
   
-  _navTitleLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+//  _navTitleLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+  _navTitleLabel.text = @"Map";
+  
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
   // Map
@@ -78,7 +90,7 @@
   NSError *error;
   [[GANTracker sharedTracker] trackPageview:@"/map" withError:&error];
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  [_place objectForKey:@"biz"],
+                                  _places,
                                   @"biz",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"map#load" attributes:localyticsDict];
@@ -88,9 +100,11 @@
   NSArray *oldAnnotations = [_mapView annotations];
   [_mapView removeAnnotations:oldAnnotations];
   
-  PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
-  [_mapView addAnnotation:placeAnnotation];
-  [placeAnnotation release];
+  for (NSDictionary *place in _places) {
+    PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:place];
+    [_mapView addAnnotation:placeAnnotation];
+    [placeAnnotation release];
+  }
 }
 
 -(void)zoomToFitMapAnnotations:(MKMapView*)mapView
@@ -180,13 +194,16 @@
 }
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)view calloutAccessoryControlTapped:(UIControl *)control {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  _selectedAnnotationView = view;
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [view.annotation title]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
   av.tag = kAlertDirections;
   [av show];
 }
 
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
-  [mapView selectAnnotation:[[mapView annotations] firstObject] animated:YES];
+  if ([_places count] == 1) {
+    [mapView selectAnnotation:[[mapView annotations] firstObject] animated:YES];
+  }
 }
 
 #pragma mark - UIAlertView
@@ -195,7 +212,7 @@
   
   if (alertView.tag == kAlertDirections) {
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
-    NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+    NSString *address = [_selectedAnnotationView.annotation subtitle];
     NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }

@@ -368,7 +368,6 @@
   
   InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
   UINavigationController *inc = [[UINavigationController alloc] initWithRootViewController:ivc];
-  inc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
   inc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
   [self presentModalViewController:inc animated:YES];
   [ivc release];

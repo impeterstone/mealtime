@@ -59,6 +59,13 @@ static const NSInteger kGANDispatchPeriodSec = 10;
       if (![appVersion isEqualToString:savedAppVersion]) {
         // App Version DOES NOT MATCH
         DLog(@"App Version CHANGED FROM OLD: %@ <---> TO NEW: %@", savedAppVersion, appVersion);
+#define SHOULD_RESET_NUX
+#ifdef SHOULD_RESET_NUX
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownRootOverlay"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownDetailOverlay"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownListOverlay"];
+        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownSavedOverlay"];
+#endif
         [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
         [[NSUserDefaults standardUserDefaults] synchronize];
       }

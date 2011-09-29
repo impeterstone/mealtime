@@ -6,6 +6,10 @@
 	<false/>
 	<key>hasShownDetailOverlay</key>
 	<false/>
+	<key>hasShownListOverlay</key>
+	<false/>
+	<key>hasShownSavedOverlay</key>
+	<false/>
 	<key>isLoggedIn</key>
 	<false/>
 	<key>lastExitDate</key>

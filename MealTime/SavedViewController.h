@@ -17,6 +17,8 @@
   NSString *_sortDirection;
   
   UIView *_tabView;
+  
+  BOOL _hasNotes;
 }
 
 @property (nonatomic, retain) NSString *sortOrder;

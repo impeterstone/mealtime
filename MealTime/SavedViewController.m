@@ -15,6 +15,7 @@
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
 #import "MapViewController.h"
+#import "NoteViewController.h"
 
 @interface SavedViewController (Private)
 
@@ -23,6 +24,7 @@
 - (void)sort;
 - (void)rename;
 - (void)showMap;
+- (void)showNotes;
 
 @end
 
@@ -80,16 +82,16 @@
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
   
   // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownSavedOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownSavedOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_saved_pad.png" : @"nux_overlay_saved.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
+//  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownSavedOverlay"]) {
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownSavedOverlay"];
+//    NSString *imgName = isDeviceIPad() ? @"nux_overlay_saved_pad.png" : @"nux_overlay_saved.png";
+//    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
+//    nuxView.alpha = 0.0;
+//    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+//    [UIView animateWithDuration:0.4 animations:^{
+//      nuxView.alpha = 1.0;
+//    }];
+//  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -106,6 +108,15 @@
 
 - (void)loadView {
   [super loadView];
+  
+  NSString *query = @"SELECT notes FROM lists WHERE sid = ?";
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _sid, nil];
+  NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"notes"];
+  if ([savedNote length] > 0) {
+    _hasNotes = YES;
+  } else {
+    _hasNotes = NO;
+  }
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
@@ -135,21 +146,27 @@
 }
 
 - (void)setupToolbar {
-  CGFloat tabWidth = isDeviceIPad() ? 256 : 106;
+  CGFloat tabWidth = isDeviceIPad() ? 192 : 80;
   
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
-  [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  NSString *notesIcon = _hasNotes ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
+  UIButton *notes = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showNotes)];
+  [notes setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [notes setImage:[UIImage imageNamed:notesIcon] forState:UIControlStateNormal];
+  [_tabView addSubview:notes];
+  
+  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
+  [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [sort setImage:[UIImage imageNamed:@"icon_tab_sort.png"] forState:UIControlStateNormal];
   [_tabView addSubview:sort];
   
-  UIButton *share = [UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(tabWidth * 2, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(share)];
   [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [share setImage:[UIImage imageNamed:@"icon_tab_envelope.png"] forState:UIControlStateNormal];
   [_tabView addSubview:share];
   
-  UIButton *rename = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(rename)];
+  UIButton *rename = [UIButton buttonWithFrame:CGRectMake(tabWidth * 3, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(rename)];
   [rename setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
   [rename setImage:[UIImage imageNamed:@"icon_tab_rename.png"] forState:UIControlStateNormal];
   [_tabView addSubview:rename];
@@ -165,17 +182,35 @@
 //  
 //  [_toolbar setItems:toolbarItems];
 //  [self setupFooterWithView:_toolbar];
+  
+
+}
+
+- (void)showNotes {  
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#showNotes"];
+  
+  NoteViewController *nvc = [[NoteViewController alloc] initWithListSid:_sid];
+  UINavigationController *nnc = [[UINavigationController alloc] initWithRootViewController:nvc];
+  [self presentModalViewController:nnc animated:YES];
+  [nvc release];
+  [nnc release];
 }
 
 - (void)showMap {
 //  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Coming Soon" message:@"Map Mode Coming Soon" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
 //  [av show];
   
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#showMap"];
-  
-  MapViewController *mvc = [[MapViewController alloc] initWithPlaces:[self.items objectAtIndex:0]];
-  [self.navigationController pushViewController:mvc animated:YES];
-  [mvc release];
+  if ([self dataIsAvailable]) {
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#showMap"];
+    
+    MapViewController *mvc = [[MapViewController alloc] initWithPlaces:[self.items objectAtIndex:0]];
+    [self.navigationController pushViewController:mvc animated:YES];
+    [mvc release];
+  } else {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Whoops" message:@"Need something in this list first." delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] autorelease];
+    [av show];
+    return;
+  }
 }
 
 - (void)rename {

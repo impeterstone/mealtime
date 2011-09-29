@@ -11,11 +11,11 @@
 #import "PSTextView.h"
 
 @interface NoteViewController : PSBaseViewController {
-  NSMutableDictionary *_place;
+  NSString *_sid;
   PSTextView *_noteView;
 }
 
-- (id)initWithPlace:(NSDictionary *)place;
+- (id)initWithListSid:(NSString *)sid;
 - (void)moveTextViewForKeyboard:(NSNotification*)aNotification up:(BOOL)up;
 
 @end

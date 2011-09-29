@@ -16,10 +16,10 @@
 
 @implementation NoteViewController
 
-- (id)initWithPlace:(NSDictionary *)place {
+- (id)initWithListSid:(NSString *)sid {
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
-    _place = [[NSMutableDictionary alloc] initWithDictionary:place];
+    _sid = [sid copy];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -34,7 +34,7 @@
 }
 
 - (void)dealloc {
-  RELEASE_SAFELY(_place);
+  RELEASE_SAFELY(_sid);
   
   RELEASE_SAFELY(_noteView);
   
@@ -73,9 +73,9 @@
   [self.view addSubview:_noteView];
   
   // Set Note saved text
-  NSString *query = @"SELECT note FROM places WHERE biz = ?";
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [_place objectForKey:@"biz"], nil];
-  NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"note"];
+  NSString *query = @"SELECT notes FROM lists WHERE sid = ?";
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _sid, nil];
+  NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"notes"];
   if ([savedNote length] > 0) {
     _noteView.text = savedNote;
   }
@@ -85,8 +85,8 @@
 
 - (void)dismiss {
   // Save the note to the DB
-  NSString *query = @"UPDATE places SET note = ? WHERE biz = ?";
-  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _noteView.text, [_place objectForKey:@"biz"], nil];
+  NSString *query = @"UPDATE lists SET notes = ? WHERE sid = ?";
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _noteView.text, _sid, nil];
   
   [self dismissModalViewControllerAnimated:YES];
 }

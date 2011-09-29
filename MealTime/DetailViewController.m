@@ -16,7 +16,6 @@
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
 #import "ListViewController.h"
-#import "NoteViewController.h"
 #import "PSMailCenter.h"
 
 @interface DetailViewController (Private)
@@ -33,7 +32,6 @@
 - (void)share;
 - (void)directions;
 - (void)showLists;
-- (void)showNotes;
 
 @end
 
@@ -47,17 +45,7 @@
     if (cachedPlace) {
       _isCachedPlace = YES;
       _place = [cachedPlace retain];
-      
-      NSString *query = @"SELECT note FROM places WHERE biz = ?";
-      EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [_place objectForKey:@"biz"], nil];
-      NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"note"];
-      if ([savedNote length] > 0) {
-        _hasNote = YES;
-      } else {
-        _hasNote = NO;
-      }
     } else {
-      _hasNote = NO;
       _isCachedPlace = NO;
       _place = [[NSMutableDictionary alloc] initWithDictionary:place];
     }
@@ -148,7 +136,7 @@
   
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
-  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_share.png"] withTarget:self action:@selector(share) width:40 height:30 buttonType:BarButtonTypeNormal];
+//  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_share.png"] withTarget:self action:@selector(share) width:40 height:30 buttonType:BarButtonTypeNormal];
   
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
@@ -294,11 +282,10 @@
   [list setImage:[UIImage imageNamed:@"icon_tab_list.png"] forState:UIControlStateNormal];
   [_tabView addSubview:list];
   
-  NSString *noteIcon = _hasNote ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
-  UIButton *notes = [UIButton buttonWithFrame:CGRectMake(_tabView.width - (tabWidth * 2), 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showNotes)];
-  [notes setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [notes setImage:[UIImage imageNamed:noteIcon] forState:UIControlStateNormal];
-  [_tabView addSubview:notes];
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width - (tabWidth * 2), 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [share setImage:[UIImage imageNamed:@"icon_tab_envelope.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:share];
   
   UIButton *yelp = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(yelp)];
   [yelp setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
@@ -322,16 +309,6 @@
 }
 
 #pragma mark - Actions
-- (void)showNotes {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showNotes"];
-  
-  NoteViewController *nvc = [[NoteViewController alloc] initWithPlace:_place];
-  UINavigationController *nnc = [[UINavigationController alloc] initWithRootViewController:nvc];
-  [self presentModalViewController:nnc animated:YES];
-  [nvc release];
-  [nnc release];
-}
-
 - (void)showLists {
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
   

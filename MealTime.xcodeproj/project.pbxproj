@@ -13,8 +13,6 @@
 		280154D61419A22400E76144 /* icon_cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 280154D41419A22400E76144 /* icon_cancel@2x.png */; };
 		28015D891434B8A200EEB862 /* nux_overlay_list.png in Resources */ = {isa = PBXBuildFile; fileRef = 28015D871434B8A200EEB862 /* nux_overlay_list.png */; };
 		28015D8A1434B8A200EEB862 /* nux_overlay_list@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28015D881434B8A200EEB862 /* nux_overlay_list@2x.png */; };
-		28015D8D1434B96600EEB862 /* nux_overlay_saved.png in Resources */ = {isa = PBXBuildFile; fileRef = 28015D8B1434B96600EEB862 /* nux_overlay_saved.png */; };
-		28015D8E1434B96600EEB862 /* nux_overlay_saved@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28015D8C1434B96600EEB862 /* nux_overlay_saved@2x.png */; };
 		2801854E141843D700024444 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 2801854D141843D700024444 /* Icon-72.png */; };
 		2804B581140857A100AE996A /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 2804B57F140857A100AE996A /* Icon.png */; };
 		2804B582140857A100AE996A /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2804B580140857A100AE996A /* Icon@2x.png */; };
@@ -229,7 +227,6 @@
 		289050D9142EF9CD006632F8 /* nullview_noresults.png in Resources */ = {isa = PBXBuildFile; fileRef = 289050D6142EF9CD006632F8 /* nullview_noresults.png */; };
 		289050DA142EF9CD006632F8 /* nullview_noresults@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 289050D7142EF9CD006632F8 /* nullview_noresults@2x.png */; };
 		2895087C1434BD180008A015 /* nux_overlay_list_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2895087A1434BD180008A015 /* nux_overlay_list_pad.png */; };
-		2895087D1434BD180008A015 /* nux_overlay_saved_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2895087B1434BD180008A015 /* nux_overlay_saved_pad.png */; };
 		2896F3091420B9F10075EF21 /* PSSearchField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2896F3081420B9F00075EF21 /* PSSearchField.m */; };
 		2896F30E1420BEEC0075EF21 /* icon_clear.png in Resources */ = {isa = PBXBuildFile; fileRef = 2896F30A1420BEEC0075EF21 /* icon_clear.png */; };
 		2896F30F1420BEEC0075EF21 /* icon_clear@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2896F30B1420BEEC0075EF21 /* icon_clear@2x.png */; };
@@ -449,8 +446,6 @@
 		280154D41419A22400E76144 /* icon_cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_cancel@2x.png"; sourceTree = "<group>"; };
 		28015D871434B8A200EEB862 /* nux_overlay_list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_list.png; sourceTree = "<group>"; };
 		28015D881434B8A200EEB862 /* nux_overlay_list@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nux_overlay_list@2x.png"; sourceTree = "<group>"; };
-		28015D8B1434B96600EEB862 /* nux_overlay_saved.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved.png; sourceTree = "<group>"; };
-		28015D8C1434B96600EEB862 /* nux_overlay_saved@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nux_overlay_saved@2x.png"; sourceTree = "<group>"; };
 		2801854D141843D700024444 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		2804B57F140857A100AE996A /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		2804B580140857A100AE996A /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
@@ -753,7 +748,6 @@
 		289050D6142EF9CD006632F8 /* nullview_noresults.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_noresults.png; sourceTree = "<group>"; };
 		289050D7142EF9CD006632F8 /* nullview_noresults@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nullview_noresults@2x.png"; sourceTree = "<group>"; };
 		2895087A1434BD180008A015 /* nux_overlay_list_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_list_pad.png; sourceTree = "<group>"; };
-		2895087B1434BD180008A015 /* nux_overlay_saved_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved_pad.png; sourceTree = "<group>"; };
 		2896F3071420B9F00075EF21 /* PSSearchField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSSearchField.h; sourceTree = "<group>"; };
 		2896F3081420B9F00075EF21 /* PSSearchField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSSearchField.m; sourceTree = "<group>"; };
 		2896F30A1420BEEC0075EF21 /* icon_clear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_clear.png; sourceTree = "<group>"; };
@@ -1737,8 +1731,6 @@
 		28BCC9781428097D00C70AEF /* nux */ = {
 			isa = PBXGroup;
 			children = (
-				28015D8B1434B96600EEB862 /* nux_overlay_saved.png */,
-				28015D8C1434B96600EEB862 /* nux_overlay_saved@2x.png */,
 				28015D871434B8A200EEB862 /* nux_overlay_list.png */,
 				28015D881434B8A200EEB862 /* nux_overlay_list@2x.png */,
 				28BCC98114280E2700C70AEF /* nux_overlay_detail.png */,
@@ -1750,7 +1742,6 @@
 				28AF9FD0142B4A12005E1A50 /* nux_overlay_detail_pad.png */,
 				28AF9FD1142B4A12005E1A50 /* nux_overlay_root_pad.png */,
 				2895087A1434BD180008A015 /* nux_overlay_list_pad.png */,
-				2895087B1434BD180008A015 /* nux_overlay_saved_pad.png */,
 			);
 			path = nux;
 			sourceTree = "<group>";
@@ -2354,10 +2345,7 @@
 				283858A41434B06100262DD5 /* icon_nav_globe@2x.png in Resources */,
 				28015D891434B8A200EEB862 /* nux_overlay_list.png in Resources */,
 				28015D8A1434B8A200EEB862 /* nux_overlay_list@2x.png in Resources */,
-				28015D8D1434B96600EEB862 /* nux_overlay_saved.png in Resources */,
-				28015D8E1434B96600EEB862 /* nux_overlay_saved@2x.png in Resources */,
 				2895087C1434BD180008A015 /* nux_overlay_list_pad.png in Resources */,
-				2895087D1434BD180008A015 /* nux_overlay_saved_pad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

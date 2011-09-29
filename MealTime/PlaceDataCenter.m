@@ -125,6 +125,7 @@ static NSLock *_placesToRemoveLock = nil;
   
   // Run this synchronously
   ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  request.userAgent = USER_AGENT;
   [request startSynchronous];
   NSError *error = [request error];
   if (!error) {

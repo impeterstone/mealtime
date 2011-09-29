@@ -177,9 +177,6 @@
     // If this view has already been loaded once, don't reload the datasource
     [self restoreDataSource];
   } else {
-    NSError *error;
-    [[GANTracker sharedTracker] trackPageview:@"/detail" withError:&error];
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"load" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",
@@ -326,6 +323,8 @@
 
 #pragma mark - Actions
 - (void)showNotes {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showNotes"];
+  
   NoteViewController *nvc = [[NoteViewController alloc] initWithPlace:_place];
   UINavigationController *nnc = [[UINavigationController alloc] initWithRootViewController:nvc];
   [self presentModalViewController:nnc animated:YES];
@@ -334,8 +333,6 @@
 }
 
 - (void)showLists {
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"lists" label:@"show" value:-1 withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
   
   ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
@@ -346,6 +343,8 @@
 }
 
 - (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showMap"];
+  
   MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
   [self.navigationController pushViewController:mvc animated:YES];
   [mvc release];
@@ -375,8 +374,6 @@
 }
 
 - (void)share {
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"star" action:@"export" label:nil value:-1 withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#export"];
   
   // Construct Body
@@ -638,8 +635,6 @@
   
   ProductCell *cell = (ProductCell *)[tableView cellForRowAtIndexPath:indexPath];
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"detail" action:@"zoom" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   [_place objectForKey:@"biz"],
                                   @"biz",
@@ -698,8 +693,6 @@
   if (buttonIndex == alertView.cancelButtonIndex) return;
   
   if (alertView.tag == kAlertCall) {
-    NSError *error;
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"call" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",
@@ -712,8 +705,6 @@
     NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
   } else if (alertView.tag == kAlertYelp) {
-    NSError *error;
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"yelp" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",
@@ -730,8 +721,6 @@
     }
     
   } else if (alertView.tag == kAlertDirections) {
-    NSError *error;
-    [[GANTracker sharedTracker] trackEvent:@"detail" action:@"directions" label:[_place objectForKey:@"biz"] value:-1 withError:&error];
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",

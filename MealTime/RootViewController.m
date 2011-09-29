@@ -193,8 +193,6 @@
     // If this view has already been loaded once, don't reload the datasource
     [self restoreDataSource];
   } else {
-    NSError *error;
-    [[GANTracker sharedTracker] trackPageview:@"/root" withError:&error];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#load"];
     [self loadDataSource];
   }
@@ -257,7 +255,7 @@
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
   _whereField.autocorrectionType = UITextAutocorrectionTypeNo;
-  _whereField.placeholder = @"Where? (Current Location)";
+  _whereField.placeholder = @"Current Location";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
 //  _whereField.inputAccessoryView = tb;
@@ -350,8 +348,6 @@
 }
 
 - (void)showLists {
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"root" action:@"lists" label:@"show" value:-1 withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#showLists"];
   
   ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeView];
@@ -362,8 +358,6 @@
 }
 
 - (void)showInfo {
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"root" action:@"info" label:@"show" value:-1 withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#info"];
   
   InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
@@ -435,8 +429,6 @@
   
   [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"root" action:@"changeDistance" label:[NSString stringWithFormat:@"%.1f", distance] value:-1 withError:&error];
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   [NSString stringWithFormat:@"%.1f", distance],
                                   @"distance",
@@ -503,7 +495,8 @@
 #if USE_FIXTURES
   [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
 #else
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:_whereQuery distance:_distance start:_pagingStart rpp:_pagingCount];
+  NSString *where = _whereQuery ? _whereQuery : [_currentAddress componentsJoinedByString:@" "];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:where distance:_distance start:_pagingStart rpp:_pagingCount];
 #endif
 }
 
@@ -642,7 +635,9 @@
   RELEASE_SAFELY(_currentAddress);
   _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
   
-  [self updateCurrentLocation];
+  // fetch Yelp Places
+  _pagingStart = 0; // reset paging
+  [self fetchDataSource];
 }
 
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
@@ -656,12 +651,6 @@
 }
 
 - (void)updateCurrentLocation {
-  NSString *formattedAddress = [_currentAddress componentsJoinedByString:@" "];
-  
-  // fetch Yelp Places
-  _pagingStart = 0; // reset paging
-  self.whereQuery = formattedAddress;
-  [self fetchDataSource];
 }
 
 
@@ -758,8 +747,6 @@
     _distance = 3.0;
   }
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"root" action:@"search" label:[NSString stringWithFormat:@"what:%@,where:%@", self.whatQuery, self.whereQuery] value:-1 withError:&error];
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   self.whatQuery ? self.whatQuery : @"",
                                   @"what",

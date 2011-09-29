@@ -144,10 +144,10 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   [[LocalyticsSession sharedLocalyticsSession] startSession:kLocalyticsKey];
   
   // Google Analytics
-  [[GANTracker sharedTracker] startTrackerWithAccountID:@"UA-25898818-2" dispatchPeriod:kGANDispatchPeriodSec delegate:self];
-  
-  NSError *error;
-  [[GANTracker sharedTracker] trackPageview:@"/appLaunch" withError:&error];
+//  [[GANTracker sharedTracker] startTrackerWithAccountID:@"UA-25898818-2" dispatchPeriod:kGANDispatchPeriodSec delegate:self];
+//  
+//  NSError *error;
+//  [[GANTracker sharedTracker] trackPageview:@"/appLaunch" withError:&error];
   
   // Crittercism
   [Crittercism initWithAppID: @"4e7919a8ddf520403007beb0"

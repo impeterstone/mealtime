@@ -79,6 +79,8 @@
   if ([savedNote length] > 0) {
     _noteView.text = savedNote;
   }
+  
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"note#load"];
 }
 
 - (void)dismiss {

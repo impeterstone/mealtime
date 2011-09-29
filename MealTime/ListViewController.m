@@ -113,8 +113,6 @@
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackPageview:@"/list" withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#load"];
 }
 
@@ -328,6 +326,8 @@
       [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"DELETE FROM lists_places WHERE list_sid = ? AND place_biz = ?", sid, _biz, nil];
     }
   }
+  
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#select"];
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -367,6 +367,8 @@
       [self.items removeObjectAtIndex:indexPath.section];
       [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
     }
+    
+    [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#delete"];
   }
 }
 
@@ -387,6 +389,7 @@
   [sourceObject release];
   [destinationObject release];
   
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#move"];
 }
 
 - (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
@@ -437,6 +440,8 @@
       
       [[self.items objectAtIndex:0] addObject:listDict];
       [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:([[self.items objectAtIndex:0] count] - 1) inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+      
+      [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#new"];
     } else {
       // error empty listName
     }

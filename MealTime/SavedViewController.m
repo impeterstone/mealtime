@@ -131,8 +131,6 @@
   // Toolbar
   [self setupToolbar];
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackPageview:@"/saved" withError:&error];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#load"];
 }
 
@@ -192,6 +190,8 @@
 - (void)sort {
   UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort List" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Distance", @"Rating", nil] autorelease];
   [as showInView:self.view];
+  
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#sort"];
 }
 
 - (void)share {
@@ -201,9 +201,7 @@
     return;
   }
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackEvent:@"star" action:@"export" label:nil value:-1 withError:&error];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#export"];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#share"];
   
   // Construct Body
 //  The Codmother Fish and Chips
@@ -381,6 +379,8 @@
       RELEASE_SAFELY(_listName);
       _listName = [newListName copy];
       _navTitleLabel.text = _listName;
+      
+      [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#rename"];
     }
   }
 }

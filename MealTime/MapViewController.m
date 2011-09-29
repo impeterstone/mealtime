@@ -87,13 +87,7 @@
   // Position the map so that all overlays and annotations are visible on screen.
   [self zoomToFitMapAnnotations:_mapView];
   
-  NSError *error;
-  [[GANTracker sharedTracker] trackPageview:@"/map" withError:&error];
-  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  _places,
-                                  @"biz",
-                                  nil];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"map#load" attributes:localyticsDict];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"map#load"];
 }
 
 - (void)loadMap {

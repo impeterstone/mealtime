@@ -29,6 +29,7 @@
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _listMode = listMode;
+    _numLists = 0;
     if (biz) _biz = [biz copy];
     _selectedLists = [[NSMutableSet alloc] init];
   }
@@ -84,15 +85,9 @@
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Done" withTarget:self action:@selector(dismiss) width:60.0 height:30.0 buttonType:BarButtonTypeBlue];
 
 //  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
-  if (_listMode == ListModeView) {
-    // This should be an edit button
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Edit" withTarget:self action:@selector(editList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
-    _navTitleLabel.text = @"My Food Lists";
-  } else {
-    // This should be an add button
-    self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_plus.png"] withTarget:self action:@selector(newList) width:40 height:30 buttonType:BarButtonTypeNormal];
-    _navTitleLabel.text = @"Add to List";
-  }
+  // This should be an edit button
+  self.navigationItem.leftBarButtonItem = [UIBarButtonItem barButtonWithTitle:@"Edit" withTarget:self action:@selector(editList) width:60.0 height:30.0 buttonType:BarButtonTypeNormal];
+  _navTitleLabel.text = @"My Food Lists";
   
   // Nullview
   NSString *imgName = isDeviceIPad() ? @"nullview_empty_list_pad.png" : @"nullview_empty_list.png";
@@ -109,6 +104,20 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#load"];
   
   [self loadDataSource];
+}
+
+- (void)setupTableHeader {
+  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 64)] autorelease];
+  UIButton *addButton = [UIButton buttonWithFrame:CGRectMake(10, 10, self.view.width - 20, 44) andStyle:@"listNewButton" target:self action:@selector(newList)];
+  [addButton setBackgroundImage:[UIImage stretchableImageNamed:@"grouped_full_cell.png" withLeftCapWidth:6 topCapWidth:6] forState:UIControlStateNormal];
+  [addButton setBackgroundImage:[UIImage stretchableImageNamed:@"grouped_full_cell_highlighted.png" withLeftCapWidth:6 topCapWidth:6] forState:UIControlStateHighlighted];
+  [addButton setTitle:@"Create a New List" forState:UIControlStateNormal];
+  [headerView addSubview:addButton];
+  _tableView.tableHeaderView = headerView;
+}
+
+- (BOOL)dataIsAvailable {
+  return YES;
 }
 
 #pragma mark - DataSource
@@ -134,14 +143,16 @@
 //    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT DISTINCT l.* FROM lists l JOIN lists_places lp ON l.sid = lp.list_sid ORDER BY timestamp DESC", nil];
     
     // Find all lists
-    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM lists ORDER BY timestamp DESC", nil];
-    NSMutableArray *lists = [NSMutableArray arrayWithCapacity:1];
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM lists ORDER BY position ASC", nil];
+    NSMutableArray *lists = [[NSMutableArray arrayWithCapacity:1] retain];
     for (EGODatabaseRow *row in res) {
       NSDictionary *listDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                 [row stringForColumn:@"sid"],
                                 @"sid",
                                 [row stringForColumn:@"name"],
                                 @"name",
+                                [NSNumber numberWithInt:[row intForColumn:@"position"]],
+                                @"position",
                                 [NSDate dateWithTimeIntervalSince1970:[row doubleForColumn:@"timestamp"]],
                                 @"timestamp",
                                 nil];
@@ -153,8 +164,11 @@
         }
       }
     }
+    _numLists = [lists count];
+    NSLog(@"list count: %d", _numLists);
     dispatch_async(dispatch_get_main_queue(), ^{
       [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:lists] shouldAnimate:YES];
+      [lists release];
     });
   });
   
@@ -329,23 +343,34 @@
     [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, nil];
     
     // remove from dataSource
-//    if (numRowsInSection <= 1) {
-//      [self.items removeObjectAtIndex:indexPath.section];
-//    } else {
-//      [[self.items objectAtIndex:indexPath.section] removeObjectAtIndex:indexPath.row];
-//    }
+    [[self.items objectAtIndex:indexPath.section] removeObjectAtIndex:indexPath.row];
+    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
     
-    // remove from table
-    [self loadDataSource];
-    
-//    [tableView beginUpdates];
-//    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//    if (numRowsInSection <= 1) {
-//      [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationFade];
-//    }
-//    [tableView reloadRowsAtIndexPaths:[tableView indexPathsForVisibleRows] withRowAnimation:UITableViewRowAnimationFade];
-//    [tableView endUpdates];
+    // Check if the section is empty
+    if ([[self.items objectAtIndex:indexPath.section] count] == 0) {
+      [self.items removeObjectAtIndex:indexPath.section];
+      [tableView deleteSections:[NSIndexSet indexSetWithIndex:indexPath.section] withRowAnimation:UITableViewRowAnimationNone];
+    }
   }
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+  id sourceObject = [[[self.items objectAtIndex:sourceIndexPath.section] objectAtIndex:sourceIndexPath.row] retain];
+  id destinationObject = [[[self.items objectAtIndex:destinationIndexPath.section] objectAtIndex:destinationIndexPath.row] retain];
+  
+  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+  
+  NSString *query = @"UPDATE lists SET position = ? WHERE sid = ?";
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [destinationObject objectForKey:@"position"], [sourceObject objectForKey:@"sid"], nil];
+  [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [sourceObject objectForKey:@"position"], [destinationObject objectForKey:@"sid"], nil];
+  
+  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
+  
+  [[self.items objectAtIndex:sourceIndexPath.section] removeObjectAtIndex:sourceIndexPath.row];
+  [[self.items objectAtIndex:destinationIndexPath.section] insertObject:sourceObject atIndex:destinationIndexPath.row];
+  [sourceObject release];
+  [destinationObject release];
+  
 }
 
 - (Class)cellClassAtIndexPath:(NSIndexPath *)indexPath {
@@ -363,13 +388,38 @@
   NSString *listName = alertView.inputTextField.text;
   if ([listName length] > 0) {
     // Create a list
+    
+    // Get the largest position from DB
+    NSString *maxQuery = @"SELECT MAX(position) AS maxpos FROM lists";
+    EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQuery:maxQuery];
+    int newpos = [[[res rows] lastObject] intForColumn:@"maxpos"] + 1;
+    
+    NSNumber *position = [NSNumber numberWithInt:newpos];
+    
     NSString *sid = [NSString stringFromUUID];
     NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-    NSString *query = @"INSERT INTO lists (sid, name, timestamp) VALUES (?, ?, ?)";
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, listName, timestamp, nil];
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO lists (sid, name, position, timestamp) VALUES (?, ?, ?, ?)", maxQuery];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, sid, listName, position, timestamp, nil];
     
-    // Reload dataSource
-    [self loadDataSource];
+    NSDictionary *listDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                              sid,
+                              @"sid",
+                              listName,
+                              @"name",
+                              position,
+                              @"position",
+                              timestamp,
+                              @"timestamp",
+                              nil];
+    
+    if ([self.items count] == 0) {
+      // no section, insert one
+      [self.items addObject:[NSMutableArray array]];
+      [self.tableView insertSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationNone];
+    }
+    
+    [[self.items objectAtIndex:0] addObject:listDict];
+    [self.tableView insertRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:([[self.items objectAtIndex:0] count] - 1) inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
   } else {
     // error empty listName
   }

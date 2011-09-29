@@ -20,6 +20,8 @@ typedef uint32_t ListMode;
   ListMode _listMode;
   NSString *_biz;
   NSMutableSet *_selectedLists;
+  
+  NSInteger _numLists;
 }
 
 - (id)initWithListMode:(ListMode)listMode;

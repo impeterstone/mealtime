@@ -22,7 +22,7 @@
 
 //#define USE_FIXTURES 1
 //#define SHOULD_RESET_SQLITE
-#define SCHEMA_VERSION @"4"
+#define SCHEMA_VERSION @"8"
 
 // Core Data (From PSConstants.h)
 #define CORE_DATA_SQL_FILE @"spotlight.sqlite"

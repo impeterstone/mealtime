@@ -16,6 +16,7 @@
 #import "PSDatabaseCenter.h"
 #import "PSOverlayImageView.h"
 #import "ListViewController.h"
+#import "NoteViewController.h"
 #import "PSMailCenter.h"
 
 @interface DetailViewController (Private)
@@ -32,6 +33,7 @@
 - (void)share;
 - (void)directions;
 - (void)showLists;
+- (void)showNotes;
 
 @end
 
@@ -45,7 +47,17 @@
     if (cachedPlace) {
       _isCachedPlace = YES;
       _place = [cachedPlace retain];
+      
+      NSString *query = @"SELECT note FROM places WHERE biz = ?";
+      EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [_place objectForKey:@"biz"], nil];
+      NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"note"];
+      if ([savedNote length] > 0) {
+        _hasNote = YES;
+      } else {
+        _hasNote = NO;
+      }
     } else {
+      _hasNote = NO;
       _isCachedPlace = NO;
       _place = [[NSMutableDictionary alloc] initWithDictionary:place];
     }
@@ -136,6 +148,8 @@
   
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   
+  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_share.png"] withTarget:self action:@selector(share) width:40 height:30 buttonType:BarButtonTypeNormal];
+  
   // Nullview
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding photos of yummy food."];
@@ -180,13 +194,13 @@
   // Map
   CGFloat mapHeight = 0.0;
   if (isDeviceIPad()) {
-    mapHeight = 400.0;
+    mapHeight = 320.0;
   } else {
-    mapHeight = 200.0;
+    mapHeight = 160.0;
   }
   
   // Table Header View
-  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)] autorelease];
+  UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight + 30)] autorelease];
   
   // Map
   _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
@@ -194,7 +208,7 @@
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
   
-  [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.6], [NSNumber numberWithFloat:0.85], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
+  [_mapView addGradientLayerWithColors:[NSArray arrayWithObjects:(id)[RGBACOLOR(0, 0, 0, 0.8) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.0) CGColor], (id)[RGBACOLOR(0, 0, 0, 0.6) CGColor], (id)[RGBACOLOR(0, 0, 0, 1.0) CGColor], nil] andLocations:[NSArray arrayWithObjects:[NSNumber numberWithFloat:0.0], [NSNumber numberWithFloat:0.6], [NSNumber numberWithFloat:0.85], [NSNumber numberWithFloat:0.99], [NSNumber numberWithFloat:1.0], nil]];
   
   UIImageView *disclosureView = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]] autorelease];
   disclosureView.contentMode = UIViewContentModeCenter;
@@ -211,9 +225,9 @@
   [_mapView addGestureRecognizer:mapTap];
   
   // Address
-  _addressView = [[UIView alloc] initWithFrame:CGRectMake(0, tableHeaderView.bottom - 30, tableHeaderView.width, 30)];
+  _addressView = [[UIView alloc] initWithFrame:CGRectMake(0, mapHeight, tableHeaderView.width, 30)];
   _addressView.backgroundColor = [UIColor clearColor];
-  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_section_header.png"]] autorelease];
   abg.frame = _addressView.bounds;
   abg.autoresizingMask = ~UIViewAutoresizingNone;
   [_addressView addSubview:abg];
@@ -270,27 +284,28 @@
   
   UIButton *call = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(call)];
   [call setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [call setImage:[UIImage imageNamed:@"tab_phone.png"] forState:UIControlStateNormal];
+  [call setImage:[UIImage imageNamed:@"icon_tab_phone.png"] forState:UIControlStateNormal];
   [_tabView addSubview:call];
   
   UIButton *directions = [UIButton buttonWithFrame:CGRectMake(tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(directions)];
   [directions setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [directions setImage:[UIImage imageNamed:@"tab_directions.png"] forState:UIControlStateNormal];
+  [directions setImage:[UIImage imageNamed:@"icon_tab_directions.png"] forState:UIControlStateNormal];
   [_tabView addSubview:directions];
   
-  UIButton *star = [UIButton buttonWithFrame:CGRectMake((tabWidth * 2), 0, _tabView.width - (tabWidth * 4), 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
-  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [star setImage:[UIImage imageNamed:@"tab_list.png"] forState:UIControlStateNormal];
-  [_tabView addSubview:star];
+  UIButton *list = [UIButton buttonWithFrame:CGRectMake((tabWidth * 2), 0, _tabView.width - (tabWidth * 4), 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
+  [list setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [list setImage:[UIImage imageNamed:@"icon_tab_list.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:list];
   
-  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width - (tabWidth * 2), 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(share)];
-  [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
-  [_tabView addSubview:share];
+  NSString *noteIcon = _hasNote ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
+  UIButton *notes = [UIButton buttonWithFrame:CGRectMake(_tabView.width - (tabWidth * 2), 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showNotes)];
+  [notes setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [notes setImage:[UIImage imageNamed:noteIcon] forState:UIControlStateNormal];
+  [_tabView addSubview:notes];
   
   UIButton *yelp = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(yelp)];
   [yelp setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [yelp setImage:[UIImage imageNamed:@"tab_yelp.png"] forState:UIControlStateNormal];	
+  [yelp setImage:[UIImage imageNamed:@"icon_tab_yelp.png"] forState:UIControlStateNormal];	
   [_tabView addSubview:yelp];
   
   
@@ -310,6 +325,14 @@
 }
 
 #pragma mark - Actions
+- (void)showNotes {
+  NoteViewController *nvc = [[NoteViewController alloc] initWithPlace:_place];
+  UINavigationController *nnc = [[UINavigationController alloc] initWithRootViewController:nvc];
+  [self presentModalViewController:nnc animated:YES];
+  [nvc release];
+  [nnc release];
+}
+
 - (void)showLists {
   NSError *error;
   [[GANTracker sharedTracker] trackEvent:@"detail" action:@"lists" label:@"show" value:-1 withError:&error];
@@ -317,7 +340,6 @@
   
   ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
   UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
-  lnc.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
   [self presentModalViewController:lnc animated:YES];
   [lvc release];
   [lnc release];

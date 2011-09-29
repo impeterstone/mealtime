@@ -29,6 +29,7 @@
   
   NSDate *_cachedTimestamp;
   BOOL _isCachedPlace;
+  BOOL _hasNote;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;

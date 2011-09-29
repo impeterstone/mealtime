@@ -20,7 +20,7 @@
 - (void)share;
 - (void)sort;
 - (void)rename;
-- (void)delete;
+- (void)showMap;
 
 @end
 
@@ -95,6 +95,7 @@
   
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
+  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_globe"] withTarget:self action:@selector(showMap) width:40 height:30 buttonType:BarButtonTypeNormal];
   _navTitleLabel.text = _listName;
   
   // Nullview
@@ -122,27 +123,24 @@
 }
 
 - (void)setupToolbar {
+  CGFloat tabWidth = isDeviceIPad() ? 256 : 106;
+  
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
+  UIButton *sort = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
   [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
-  [sort setImage:[UIImage imageNamed:@"tab_star.png"] forState:UIControlStateNormal];
+  [sort setImage:[UIImage imageNamed:@"icon_tab_sort.png"] forState:UIControlStateNormal];
   [_tabView addSubview:sort];
   
-  UIButton *share = [UIButton buttonWithFrame:CGRectMake(_tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(share)];
+  UIButton *share = [UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"detailTab" target:self action:@selector(share)];
   [share setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
-  [share setImage:[UIImage imageNamed:@"tab_envelope.png"] forState:UIControlStateNormal];
+  [share setImage:[UIImage imageNamed:@"icon_tab_envelope.png"] forState:UIControlStateNormal];
   [_tabView addSubview:share];
   
-  UIButton *rename = [UIButton buttonWithFrame:CGRectMake(2 * _tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(rename)];
-  [rename setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
-  [rename setImage:[UIImage imageNamed:@"tab_pencil.png"] forState:UIControlStateNormal];
+  UIButton *rename = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(rename)];
+  [rename setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
+  [rename setImage:[UIImage imageNamed:@"icon_tab_rename.png"] forState:UIControlStateNormal];
   [_tabView addSubview:rename];
-  
-  UIButton *delete = [UIButton buttonWithFrame:CGRectMake(3 * _tabView.width / 4, 0, _tabView.width / 4, 49) andStyle:@"detailTab" target:self action:@selector(delete)];
-  [delete setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
-  [delete setImage:[UIImage imageNamed:@"tab_heart.png"] forState:UIControlStateNormal];
-  [_tabView addSubview:delete];
   
   [self setupFooterWithView:_tabView];
   
@@ -157,17 +155,18 @@
 //  [self setupFooterWithView:_toolbar];
 }
 
+- (void)showMap {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Coming Soon" message:@"Map Mode Coming Soon" delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+  [av show];
+}
+
 - (void)rename {
-  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"Rename List" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Rename", nil] autorelease];
+  TSAlertView *alertView = [[[TSAlertView alloc] initWithTitle:@"Rename List" message:@"Give your list a new name!" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Rename", nil] autorelease];
   alertView.tag = kAlertRenameList;
   alertView.style = TSAlertViewStyleInput;
   alertView.buttonLayout = TSAlertViewButtonLayoutNormal;
   alertView.inputTextField.placeholder = _listName;
   [alertView show];
-}
-
-- (void)delete {
-  
 }
 
 - (void)sort {

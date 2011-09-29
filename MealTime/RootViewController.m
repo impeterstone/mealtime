@@ -510,11 +510,14 @@
   _pagingTotal += _pagingCount;
   _pagingStart += _pagingCount; // load another page
   
-  if (_whereQuery) {
-    [self fetchDataSource];
-  } else {
-    [self findMyLocation];
-  }
+  NSString *where = _whereQuery ? _whereQuery : [_currentAddress componentsJoinedByString:@" "];
+  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:where distance:_distance start:_pagingStart rpp:_pagingCount];
+  
+//  if (_whereQuery) {
+//    [self fetchDataSource];
+//  } else {
+//    [self findMyLocation];
+//  }
 }
 
 - (void)restoreDataSource {

@@ -81,6 +81,8 @@
   
   [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
   
+  [self loadDataSource];
+  
   // NUX
 //  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownSavedOverlay"]) {
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownSavedOverlay"];
@@ -102,8 +104,6 @@
 
 - (void)viewDidAppear:(BOOL)animated {
   [super viewDidAppear:animated];
-  
-  [self loadDataSource];
 }
 
 - (void)loadView {

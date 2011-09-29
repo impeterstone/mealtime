@@ -28,7 +28,7 @@
     _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
     _photoView.shouldAnimate = NO;
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
-    _photoView.placeholderImage = [UIImage imageNamed:@"place_placeholder.png"];
+    _photoView.placeholderImage = nil;
     
     // Disclosure
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];

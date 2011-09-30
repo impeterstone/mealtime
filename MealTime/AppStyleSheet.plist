@@ -158,7 +158,7 @@
 		<key>shadowOffset</key>
 		<string>{0,0}</string>
 	</dict>
-	<key>distanceButton</key>
+	<key>filterButton</key>
 	<dict>
 		<key>fontName</key>
 		<string>HelveticaNeue-Bold</string>

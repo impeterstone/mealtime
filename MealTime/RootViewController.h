@@ -19,7 +19,7 @@
   UIView *_tabView;
   PSSearchField *_whatField;
   UITextField *_whereField;
-  UIButton *_distanceButton;
+  UIButton *_filterButton;
 //  UILabel *_statusLabel;
 //  UILabel *_distanceLabel;
   
@@ -34,6 +34,7 @@
   
   MKReverseGeocoder *_reverseGeocoder;
   
+  NSString *_radius;
   NSString *_sortBy;
   NSString *_whatQuery;
   NSString *_whereQuery;

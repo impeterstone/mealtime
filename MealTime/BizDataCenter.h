@@ -16,15 +16,13 @@
 - (void)getPhotosFromFixturesForBiz:(NSString *)biz;
 - (void)getBizFromFixturesForBiz:(NSString *)biz;
 
+
 - (void)fetchDetailsForPlace:(NSDictionary *)place;
 
-- (void)requestForPhotosForPlace:(NSMutableDictionary *)place start:(NSString *)start rpp:(NSString *)rpp;
+- (void)requestForPhotosForPlace:(NSMutableDictionary *)place;
 - (void)requestForBizForPlace:(NSMutableDictionary *)place;
 
 
 - (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp;
-
-// DEPRECATED
-- (void)fetchYelpMapForBiz:(NSString *)biz;
 
 @end

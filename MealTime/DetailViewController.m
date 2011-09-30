@@ -20,7 +20,7 @@
 
 @interface DetailViewController (Private)
 
-- (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz;
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithAlias:(NSString *)alias;
 
 - (void)setupMap;
 - (void)setupToolbar;
@@ -41,7 +41,7 @@
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _cachedTimestamp = nil;
-    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithBiz:[place objectForKey:@"biz"]];
+    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithAlias:[place objectForKey:@"alias"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
       _place = [cachedPlace retain];
@@ -334,7 +334,7 @@
 
 - (void)call {
   if ([[_place objectForKey:@"phone"] notNil]) {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phoneString"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
     av.tag = kAlertCall;
     [av show];
   } else {
@@ -429,7 +429,7 @@
     _addressLabel.text = @"No address listed";
   }
   
-  if ([[_place objectForKey:@"hours"] notNil]) {
+  if ([_place objectForKey:@"hours"] && [[_place objectForKey:@"hours"] count] > 0) {
     _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@"\n"];
   } else {
     _hoursLabel.text = @"No hours listed";
@@ -446,8 +446,8 @@
   _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, desiredSize.height + 10);
 }
 
-- (NSMutableDictionary *)loadPlaceFromDatabaseWithBiz:(NSString *)biz {
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE biz = ?", biz, nil];
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithAlias:(NSString *)alias {
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE alias = ?", alias, nil];
   
   if ([res count] > 0) {
     _cachedTimestamp = [[NSDate dateWithTimeIntervalSince1970:[[[res rows] lastObject] doubleForColumn:@"timestamp"]] retain];
@@ -494,17 +494,17 @@
   
   // Get ALL reviews for this place
   // Only do this once, so check userDefaults
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    
-    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
-    int i = 0;
-    for (i = 0; i < numReviews; i = i + 400) {
-      // Fire off requests for reviews 400 at a time
-      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
-    }
-  }
+//  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+//    
+//    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
+//    int i = 0;
+//    for (i = 0; i < numReviews; i = i + 400) {
+//      // Fire off requests for reviews 400 at a time
+//      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+//    }
+//  }
 }
 
 - (void)dataSourceDidLoad {  
@@ -673,9 +673,9 @@
                                     nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#call" attributes:localyticsDict];
     
-    NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-    NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:telString]];
+//    NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
+//    NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[_place objectForKey:@"phone"]]];
   } else if (alertView.tag == kAlertYelp) {
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],

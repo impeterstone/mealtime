@@ -82,7 +82,7 @@
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
-  RELEASE_SAFELY(_distanceButton);
+  RELEASE_SAFELY(_filterButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -109,7 +109,7 @@
   
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
-  RELEASE_SAFELY(_distanceButton);
+  RELEASE_SAFELY(_filterButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
   RELEASE_SAFELY(_whatTermController);
@@ -278,11 +278,11 @@
   where.contentMode = UIViewContentModeCenter;
   _whereField.leftView = where;
   
-  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
-  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:nil action:nil];
-  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
-  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-  _whereField.rightView = distanceButton;
+//  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
+//  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:nil action:nil];
+//  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
+//  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+//  _whereField.rightView = distanceButton;
   
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   
@@ -303,10 +303,10 @@
   [_tabView addSubview:star];
   
   // Center
-  _distanceButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"distanceButton" target:self action:@selector(changeDistance)] retain];
-  [_distanceButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [_distanceButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
-  [_tabView addSubview:_distanceButton];
+  _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(changeDistance)] retain];
+  [_filterButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
+  [_tabView addSubview:_filterButton];
   
   UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
   [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
@@ -324,8 +324,8 @@
 //  
 //  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
 //  
-//  _distanceButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
-//  [toolbarItems addObject:_distanceButton];
+//  _filterButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
+//  [toolbarItems addObject:_filterButton];
 //  
 //  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
 //  
@@ -397,13 +397,9 @@
     ind = 3;
   } else if (distance == 5.0) {
     ind = 4;
-  } else if (distance == 10.0) {
-    ind = 5;
-  } else if (distance == 20.0) {
-    ind = 6;
   }
   
-  NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", @"10 miles", @"20 miles", nil];
+  NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", nil];
   [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"Search Radius"];
 }
 
@@ -425,12 +421,6 @@
     case 4:
       distance = 5.0;
       break;
-    case 5:
-      distance = 10.0;
-      break;
-    case 6:
-      distance = 20.0;
-      break;
     default:
       distance = 0.5;
       break;
@@ -439,17 +429,17 @@
   if (_distance == distance) return; // Distance didn't change
   
   _distance = distance;
+  RELEASE_SAFELY(_radius);
+  _radius = [[NSString stringWithFormat:@"%.0f", distance * 1609] retain];
   
   // Update Distance Label
-  [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", distance] forState:UIControlStateNormal];
-  
-  [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
+  [_filterButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   [NSString stringWithFormat:@"%.1f", distance],
                                   @"distance",
                                   nil];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#changeDistance" attributes:localyticsDict];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter" attributes:localyticsDict];
   
   // Fire a refetch
   _pagingStart = 0;
@@ -471,7 +461,7 @@
   } else {
     distanceTitle = [NSString stringWithFormat:@"No Places within %.1f mi", _distance];
   }
-  [_distanceButton setTitle:distanceTitle forState:UIControlStateNormal];
+  [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
 }
 
 #pragma mark - Sort
@@ -487,9 +477,7 @@
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {    
     // Update distance button label
-    [_distanceButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
-    
-    [(UIButton *)_whereField.rightView setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
+    [_filterButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -509,7 +497,7 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
 
   NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:nil sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:_radius sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
 }
 
 #pragma mark - State Machine
@@ -568,7 +556,7 @@
   NSDictionary *paging = [response objectForKey:@"paging"];
   NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
   NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
-  if (currentPage == numPages) {
+  if (currentPage == (numPages - 1)) {
     _hasMore = NO;
   } else {
     _hasMore = YES;
@@ -591,7 +579,7 @@
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
   [self dataSourceDidError];
-  [_distanceButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
+  [_filterButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
 }
 
 #pragma mark - Actions
@@ -746,7 +734,7 @@
   
   // Smart distance
   if ([_whereField.text length] > 0) {
-    _distance = 10.0;
+    _distance = 5.0;
   } else {
     _distance = 3.0;
   }

@@ -80,8 +80,6 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   
-  [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
-  
   [self loadDataSource];
   
   // Update notes icon
@@ -113,8 +111,6 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-  
-  [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

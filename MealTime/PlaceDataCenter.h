@@ -17,8 +17,4 @@
 
 - (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow start:(NSInteger)start rpp:(NSInteger)rpp;
 
-- (void)fetchYelpPlacesForQuery:(NSString *)query andAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp;
-- (void)fetchYelpCoverPhotoForPlaces:(NSMutableArray *)places;
-- (void)fetchCoverPhotosForPlace:(NSMutableDictionary *)place placesToRemove:(NSMutableArray *)placesToRemove;
-
 @end

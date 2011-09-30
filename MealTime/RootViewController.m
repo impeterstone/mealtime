@@ -154,14 +154,10 @@
       nuxView.alpha = 1.0;
     }];
   }
-  
-  [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
-  
-  [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
   
   [_whatField resignFirstResponder];
   [_whereField resignFirstResponder];
@@ -514,7 +510,6 @@
 
   NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
   [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:nil sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
-
 }
 
 #pragma mark - State Machine
@@ -527,14 +522,7 @@
   _pagingTotal += _pagingCount;
   _pagingStart += _pagingCount; // load another page
   
-  NSString *where = _whereQuery ? _whereQuery : [_currentAddress componentsJoinedByString:@" "];
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:where distance:_distance start:_pagingStart rpp:_pagingCount];
-  
-//  if (_whereQuery) {
-//    [self fetchDataSource];
-//  } else {
-//    [self findMyLocation];
-//  }
+  [self fetchDataSource];
 }
 
 - (void)restoreDataSource {
@@ -561,12 +549,6 @@
   
   [super loadDataSource];
   [self fetchDataSource];
-  
-//  if (_whereQuery) {
-//    [self fetchDataSource];
-//  } else {
-//    [self findMyLocation];
-//  }
 }
 
 - (void)dataSourceDidLoad {

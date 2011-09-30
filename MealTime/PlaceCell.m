@@ -25,10 +25,9 @@
     _place = nil;
     
     // Photo
-    _photoView = [[PSImageArrayView alloc] initWithFrame:CGRectZero];
-    _photoView.shouldAnimate = NO;
+    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
+    _photoView.shouldAnimate = isMultitaskingSupported();
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
-    _photoView.placeholderImage = nil;
     
     // Disclosure
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];
@@ -147,7 +146,6 @@
   _priceLabel.text = nil;
   _scoreLabel.text = nil;
   _photoView.image = nil;
-  [_photoView unloadImageArray];
   _photoView.urlPath = nil;
   _place = nil;
   _ribbonView.alpha = 0.0;
@@ -217,18 +215,14 @@
 {
   NSMutableDictionary *place = (NSMutableDictionary *)object;
   _place = place;
-  id coverPhotos = [place objectForKey:@"coverPhotos"];
-  if (coverPhotos && [coverPhotos notNil]) {
-    _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
-    _photoView.urlPathArray = [coverPhotos valueForKey:@"src"];
-    [_photoView loadImageArray];
-    _ribbonView.alpha = 1.0;
-  } else {
-    [_photoView unloadImageArray];
-    _photoView.image = _photoView.placeholderImage;
-  }
+  
+  _photoView.urlPath = [place objectForKey:@"coverPhoto"];
+  [_photoView loadImageAndDownload:YES];
+  
+  _ribbonLabel.text = [[place objectForKey:@"numReviews"] notNil] ? [NSString stringWithFormat:@"%@ mentions", [_place objectForKey:@"numReviews"]] : @"No Mentions";
   
   _nameLabel.text = [place objectForKey:@"name"];
+  
   if ([place objectForKey:@"cdistance"]) {
     _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"cdistance"]];
   } else {
@@ -277,178 +271,4 @@
 //  _ribbonLabel.text = [[place objectForKey:@"numreviews"] notNil] ? [NSString stringWithFormat:@"%@ reviews ", [place objectForKey:@"numreviews"]] : @"0 reviews ";
 }
 
-- (void)getCoverPhotoFromFixtureForPlace:(NSMutableDictionary *)place {
-  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"photos" ofType:@"html"];
-  NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
-  NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
-  
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
-    [responseString release];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
-      if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
-        // randomObject - causes too many reloading of pictures
-        NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
-        [place setObject:src forKey:@"src"];
-        
-        NSArray *srcArray = [response objectForKey:@"photos"]; 
-        [place setObject:srcArray forKey:@"srcArray"];
-        
-        // Only update the image if cell hasn't been reused
-        if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-          _photoView.urlPathArray = [srcArray valueForKey:@"src"];
-          [_photoView loadImageArray];
-          
-          _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
-          _ribbonView.alpha = 1.0;
-        }
-      } else {
-        if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-          [_photoView unloadImageArray];
-          _photoView.image = _photoView.placeholderImage;
-        }
-        [place setObject:[NSNull null] forKey:@"src"];
-        [place setObject:[NSNull null] forKey:@"srcArray"];
-      }
-      [response release];
-    });
-  });
-  
-}
-
-#pragma mark - UNUSED / DEPRECATED
-- (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place {
-  NSInteger numPhotosToFetch = isMultitaskingSupported() ? 3 : 1;
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%d", [place objectForKey:@"biz"], numPhotosToFetch];
-  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
-  
-  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
-  request.numberOfTimesToRetryOnTimeout = 1;
-  [request setShouldContinueWhenAppEntersBackground:YES];
-  [request setUserAgent:USER_AGENT];
-  
-  [request setCompletionBlock:^{
-    // GCD
-    NSString *responseString = [request.responseString copy];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString] retain];
-      [responseString release];
-      
-      dispatch_async(dispatch_get_main_queue(), ^{
-        [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
-        if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
-          // randomObject - causes too many reloading of pictures
-          NSString *src = [[[response objectForKey:@"photos"] firstObject] objectForKey:@"src"];
-          [place setObject:src forKey:@"src"];
-          
-          NSArray *srcArray = [response objectForKey:@"photos"];
-          [place setObject:srcArray forKey:@"srcArray"];
-          
-          // Only update the image if cell hasn't been reused
-          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-            _photoView.urlPathArray = [srcArray valueForKey:@"src"];
-            [_photoView loadImageArray];
-
-            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
-            _ribbonView.alpha = 1.0;
-          }
-        } else {
-          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-            [_photoView unloadImageArray];
-            _photoView.image = _photoView.placeholderImage;
-          }
-          [place setObject:[NSNull null] forKey:@"src"];
-          [place setObject:[NSNull null] forKey:@"srcArray"];
-        }
-        [response release];
-      });
-    });
-  }];
-  
-  [request setFailedBlock:^{
-    
-  }];
-  
-  [[PSNetworkQueue sharedQueue] addOperation:request];
-//  [request startAsynchronous];
-}
-
-//- (void)fetchYelpBizForPlace:(NSMutableDictionary *)place {
-//  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=1&sort_by=relevance_desc", [_place objectForKey:@"biz"]];
-//  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
-//  
-//  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
-//  [request setShouldContinueWhenAppEntersBackground:YES];
-//  [request setUserAgent:USER_AGENT];
-//  
-//  // UserInfo
-//  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-//  
-//  [request setCompletionBlock:^{
-//    // GCD
-//    NSString *responseString = [request.responseString copy];
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-//      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapeBizWithHTMLString:responseString] retain];
-//      [responseString release];
-//      
-//      // Save to DB
-//      NSString *biz = [request.userInfo objectForKey:@"biz"];
-//      NSString *requestType = @"biz";
-//      NSString *requestData = [response JSONRepresentation];
-//      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", biz, requestType, requestData, nil];
-//      
-//      dispatch_async(dispatch_get_main_queue(), ^{
-//        if ([[response objectForKey:@"photos"] count] > 0) {
-//          NSArray *srcArray = [[response objectForKey:@"photos"] subarrayWithRange:NSMakeRange(0, 4)];
-//          [place setObject:srcArray forKey:@"srcArray"];
-//          
-//          // Only update the image if cell hasn't been reused
-//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-//            
-//          }
-//          
-//        }
-//        
-//        
-//        
-//        if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
-//          
-//          // Only update the image if cell hasn't been reused
-//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-//            _photoView.urlPathArray = [srcArray valueForKey:@"src"];
-//            [_photoView loadImageArray];
-//            
-//            _ribbonLabel.text = [[place objectForKey:@"numphotos"] notNil] ? [NSString stringWithFormat:@"%@ photos", [place objectForKey:@"numphotos"]] : @"0 photos";
-//            _ribbonView.alpha = 1.0;
-//          }
-//        } else {
-//          if ([[place objectForKey:@"biz"] isEqualToString:[_place objectForKey:@"biz"]]) {
-//            [_photoView unloadImageArray];
-//            _photoView.image = _photoView.placeholderImage;
-//          }
-//          [place setObject:[NSNull null] forKey:@"src"];
-//          [place setObject:[NSNull null] forKey:@"srcArray"];
-//        }
-//        [response release];
-//      });
-//    });
-//  }];
-//  
-//  [request setFailedBlock:^{
-//    
-//  }];
-//  
-//  request.queuePriority = NSOperationQueuePriorityHigh;
-//  [[PSNetworkQueue sharedQueue] addOperation:request];
-//}
-  
-- (void)resumeAnimations {
-  [_photoView resumeAnimations];
-}
-
-- (void)pauseAnimations {
-  [_photoView pauseAnimations];
-}
 @end

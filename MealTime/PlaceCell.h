@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "PSCell.h"
-#import "PSImageArrayView.h"
+#import "PSURLCacheImageView.h"
 
 @interface PlaceCell : PSCell <PSImageViewDelegate> {
-  PSImageArrayView *_photoView;
+  PSURLCacheImageView *_photoView;
   UIImageView *_disclosureView;
   
   // Ribbon
@@ -28,12 +28,5 @@
   
   NSDictionary *_place;
 }
-
-- (void)resumeAnimations;
-- (void)pauseAnimations;
-
-- (void)getCoverPhotoFromFixtureForPlace:(NSMutableDictionary *)place;
-- (void)fetchYelpCoverPhotoForPlace:(NSMutableDictionary *)place;
-//- (void)fetchYelpBizForPlace:(NSMutableDictionary *)place;
 
 @end

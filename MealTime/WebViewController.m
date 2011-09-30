@@ -20,11 +20,14 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  _webView.delegate = nil;
   RELEASE_SAFELY(_webView);
 }
 
 - (void)dealloc
 {
+  _webView.delegate = nil;
+  
   RELEASE_SAFELY(_URLString);
   
   RELEASE_SAFELY(_webView);

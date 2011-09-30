@@ -23,11 +23,15 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  _containerView.delegate = nil;
+  
   RELEASE_SAFELY(_imageView);
   RELEASE_SAFELY(_containerView);
 }
 
 - (void)dealloc {
+  _containerView.delegate = nil;
+  
   RELEASE_SAFELY(_imageView);
   RELEASE_SAFELY(_containerView);
   [super dealloc];

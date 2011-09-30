@@ -24,9 +24,18 @@
   return self;
 }
 
+- (void)viewDidUnload {
+  [super viewDidUnload];
+  
+  _dismissGesture.delegate = nil;
+  RELEASE_SAFELY(_dismissGesture);
+}
+
 - (void)dealloc {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+  
+  _dismissGesture.delegate = nil;
   RELEASE_SAFELY(_dismissGesture);
   [super dealloc];
 }

@@ -12,23 +12,21 @@
 #import "ProductCell.h"
 
 @interface DetailViewController : PSTableViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, ProductCellDelegate> {
-  UIView *_tabView;
   NSMutableDictionary *_place;
   NSMutableDictionary *_imageSizeCache;
+  NSDate *_cachedTimestamp;
   MKCoordinateRegion _mapRegion;
+  NSInteger _photoCount;
+  BOOL _isCachedPlace;
   
   // Views
+  UIView *_tabView;
   MKMapView *_mapView;
   UIView *_addressView;
   UILabel *_addressLabel;
   UIView *_hoursView;
   UIScrollView *_hoursScrollView;
   UILabel *_hoursLabel;
-  
-  NSInteger _photoCount;
-  
-  NSDate *_cachedTimestamp;
-  BOOL _isCachedPlace;
 }
 
 - (id)initWithPlace:(NSDictionary *)place;

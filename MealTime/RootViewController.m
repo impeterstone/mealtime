@@ -72,6 +72,12 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  
+  _whereField.delegate = nil;
+  _whatField.delegate = nil;
+  _whatTermController.delegate = nil;
+  _whereTermController.delegate = nil;
+  
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
@@ -92,6 +98,13 @@
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
   [_whatField removeFromSuperview];
   [_whereField removeFromSuperview];
+  
+  _whereField.delegate = nil;
+  _whatField.delegate = nil;
+  _whatTermController.delegate = nil;
+  _whereTermController.delegate = nil;
+  
+  _reverseGeocoder.delegate = nil;
   
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);

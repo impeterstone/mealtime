@@ -13,9 +13,14 @@
 - (id)initWithPlace:(NSDictionary *)place {
   self = [super init];
   if (self) {
-    _place = place; // assign
+    _place = [place copy]; // assign
   }
   return self;
+}
+
+- (void)dealloc {
+  [_place release];
+  [super dealloc];
 }
 
 - (CLLocationCoordinate2D)coordinate {

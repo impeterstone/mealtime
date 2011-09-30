@@ -60,6 +60,7 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  _mapView.delegate = nil;
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_hoursView);
@@ -71,6 +72,7 @@
 
 - (void)dealloc
 {
+  _mapView.delegate = nil;
   [[BizDataCenter defaultCenter] setDelegate:nil];
   RELEASE_SAFELY(_cachedTimestamp);
   RELEASE_SAFELY(_place);
@@ -599,7 +601,6 @@
   cell = (ProductCell *)[tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if(cell == nil) { 
     cell = [[[ProductCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
-    cell.delegate = self;
   }
   
   [self tableView:tableView configureCell:cell atIndexPath:indexPath];
@@ -655,15 +656,6 @@
 - (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
   [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
 }
-
-#pragma mark - ProductCellDelegate
-//- (void)productCell:(ProductCell *)cell didLoadImage:(UIImage *)image {
-//  // UNUSED
-//  NSString *sizeString = NSStringFromCGSize(image.size);
-//  NSIndexPath *indexPath = [_tableView indexPathForCell:cell];
-//  NSDictionary *product = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-//  [_imageSizeCache setValue:sizeString forKey:[product objectForKey:@"src"]];
-//}
 
 #pragma mark - UIAlertView
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {

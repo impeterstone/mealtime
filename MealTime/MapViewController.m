@@ -34,6 +34,7 @@
 
 - (void)viewDidUnload {
   [super viewDidUnload];
+  _mapView.delegate = nil;
   RELEASE_SAFELY(_mapView);
 }
 
@@ -41,6 +42,7 @@
 {
   RELEASE_SAFELY(_places);
   
+  _mapView.delegate = nil;
   RELEASE_SAFELY(_mapView);
   [super dealloc];
 }

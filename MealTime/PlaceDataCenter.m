@@ -122,7 +122,12 @@ static NSLock *_placesToRemoveLock = nil;
 
 - (void)fetchCoverPhotosForPlace:(NSMutableDictionary *)place placesToRemove:(NSMutableArray *)placesToRemove {
   NSInteger numPhotosToFetch = isMultitaskingSupported() ? 3 : 1;
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%d", [place objectForKey:@"biz"], numPhotosToFetch];
+  
+//http://google.com/gwt/x?u=http%3A%2F%2Flite.yelp.com/biz_photos/xDwEMq8kgT0eQepn90Jkvg%3Frpp%3D3&ct=pg1&whp=30
+  
+  NSString *yelpUrlString = [NSString stringWithFormat:@"http://google.com/gwt/x?ct=pg1&whp=30&u=http%%3A%%2F%%2Flite.yelp.com/biz_photos/%@%%3Frpp=%d", [place objectForKey:@"biz"], numPhotosToFetch];
+  
+//  NSString *yelpUrlString = [NSString stringWithFormat:@"http://lite.yelp.com/biz_photos/%@?rpp=%d", [place objectForKey:@"biz"], numPhotosToFetch];
   NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
   
   // Run this synchronously
@@ -133,11 +138,13 @@ static NSLock *_placesToRemoveLock = nil;
   if (!error) {
     NSString *responseString = request.responseString;
     
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
+    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosFromProxyWithHTMLString:responseString];
+
+//    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
 
     [place setObject:[response objectForKey:@"numphotos"] forKey:@"numphotos"];
     
-    if ([[response objectForKey:@"numphotos"] integerValue] > 0) {
+    if ([[response objectForKey:@"photos"] count] > 0) {
       [place setObject:[response objectForKey:@"photos"] forKey:@"coverPhotos"];
     } else {
       [_placesToRemoveLock lock];

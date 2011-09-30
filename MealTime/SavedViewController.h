@@ -18,7 +18,11 @@
   
   UIView *_tabView;
   
+  NSString *_listNotes;
   BOOL _hasNotes;
+  
+  // Just pointers
+  UIButton *_notesButton;
 }
 
 @property (nonatomic, retain) NSString *sortOrder;

@@ -54,6 +54,7 @@
   RELEASE_SAFELY(_sid);
   RELEASE_SAFELY(_listName);
   RELEASE_SAFELY(_sortOrder);
+  RELEASE_SAFELY(_listNotes);
   
   RELEASE_SAFELY(_tabView);
   [super dealloc];
@@ -83,6 +84,20 @@
   
   [self loadDataSource];
   
+  // Update notes icon
+  NSString *query = @"SELECT notes FROM lists WHERE sid = ?";
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _sid, nil];
+  RELEASE_SAFELY(_listNotes);
+  _listNotes = [[[[res rows] lastObject] stringForColumn:@"notes"] retain];
+  if ([_listNotes length] > 0) {
+    _hasNotes = YES;
+  } else {
+    _hasNotes = NO;
+  }
+  
+  NSString *notesIcon = _hasNotes ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
+  [_notesButton setImage:[UIImage imageNamed:notesIcon] forState:UIControlStateNormal];
+  
   // NUX
 //  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownSavedOverlay"]) {
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownSavedOverlay"];
@@ -109,15 +124,6 @@
 - (void)loadView {
   [super loadView];
   
-  NSString *query = @"SELECT notes FROM lists WHERE sid = ?";
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, _sid, nil];
-  NSString *savedNote = [[[res rows] lastObject] stringForColumn:@"notes"];
-  if ([savedNote length] > 0) {
-    _hasNotes = YES;
-  } else {
-    _hasNotes = NO;
-  }
-  
   self.view.backgroundColor = [UIColor blackColor];
   self.navigationItem.leftBarButtonItem = [UIBarButtonItem navBackButtonWithTarget:self action:@selector(back)];
   self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_globe"] withTarget:self action:@selector(showMap) width:40 height:30 buttonType:BarButtonTypeNormal];
@@ -131,6 +137,7 @@
   [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_empty.png"]];
   
   // Table
+  
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   if (isDeviceIPad()) {
@@ -150,11 +157,11 @@
   
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  NSString *notesIcon = _hasNotes ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
   UIButton *notes = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showNotes)];
   [notes setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [notes setImage:[UIImage imageNamed:notesIcon] forState:UIControlStateNormal];
+  [notes setImage:[UIImage imageNamed:@"icon_tab_notepad.png"] forState:UIControlStateNormal];
   [_tabView addSubview:notes];
+  _notesButton = notes; // just a pointer
   
   UIButton *sort = [UIButton buttonWithFrame:CGRectMake(tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(sort)];
   [sort setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center.png" withLeftCapWidth:8 topCapWidth:0] forState:UIControlStateNormal];
@@ -250,6 +257,14 @@
 //  2.25 miles
 //  Price: $
   NSMutableString *body = [NSMutableString string];
+  // If we have notes, append them too
+  if (_hasNotes) {
+    [body appendFormat:@"<b>Notes:</b><br/>%@<br/>", _listNotes];
+    [body appendString:@"<br/>"];
+  }
+  [body appendString:@"<b>Places:</b><br/>"];
+  
+  // Interate thru places
   for (NSDictionary *place in [self.items objectAtIndex:0]) {
     // Score
     NSString *score = nil;
@@ -276,12 +291,11 @@
       score = @"F";
     }
 
-    [body appendString:@"<br/>"];
     [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [place objectForKey:@"biz"], [place objectForKey:@"name"]];
     [body appendFormat:@"%@<br/>", [[place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
     if ([[place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [place objectForKey:@"phone"]];
     [body appendFormat:@"Price: %@, Score: %@<br/>", [place objectForKey:@"price"], score];
-//    [body appendString:@"<br/>"];
+    [body appendString:@"<br/>"];
   }
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", _listName] andMessageBody:body];
 }
@@ -419,4 +433,10 @@
     }
   }
 }
+
+#pragma mark - NoteViewControllerDelegate
+- (void)notesDidChangeWithText:(NSString *)text {
+  
+}
+
 @end

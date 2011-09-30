@@ -248,7 +248,7 @@
 //  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.delegate = self;
   _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
-  _whatField.placeholder = @"What? (e.g. Pizza, Subway)";
+  _whatField.placeholder = @"Find: e.g. pizza, patxi's";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
 //  _whatField.inputAccessoryView = tb;

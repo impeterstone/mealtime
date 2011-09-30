@@ -234,6 +234,7 @@
   
   // Hours
   _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
+  _hoursView.userInteractionEnabled = NO;
   _hoursView.frame = CGRectMake(0, 0, tableHeaderView.width, 30);
   _hoursView.backgroundColor = [UIColor clearColor];
   //  UIImageView *hbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
@@ -244,6 +245,7 @@
   
   // Hours
   _hoursScrollView = [[UIScrollView alloc] initWithFrame:_hoursView.bounds];
+  _hoursScrollView.userInteractionEnabled = NO;
   _hoursScrollView.showsVerticalScrollIndicator = NO;
   _hoursScrollView.showsHorizontalScrollIndicator = NO;
   _hoursScrollView.scrollsToTop = NO;

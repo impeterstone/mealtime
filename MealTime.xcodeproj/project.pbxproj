@@ -310,6 +310,7 @@
 		28CEDCBA14356D88008F827A /* nux_overlay_saved_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB714356D88008F827A /* nux_overlay_saved_pad.png */; };
 		28CEDCBB14356D88008F827A /* nux_overlay_saved.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB814356D88008F827A /* nux_overlay_saved.png */; };
 		28CEDCBC14356D88008F827A /* nux_overlay_saved@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB914356D88008F827A /* nux_overlay_saved@2x.png */; };
+		28CEDCBF14357FF6008F827A /* PSReachabilityCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CEDCBE14357FF6008F827A /* PSReachabilityCenter.m */; };
 		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
@@ -857,6 +858,8 @@
 		28CEDCB714356D88008F827A /* nux_overlay_saved_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved_pad.png; sourceTree = "<group>"; };
 		28CEDCB814356D88008F827A /* nux_overlay_saved.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved.png; sourceTree = "<group>"; };
 		28CEDCB914356D88008F827A /* nux_overlay_saved@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nux_overlay_saved@2x.png"; sourceTree = "<group>"; };
+		28CEDCBD14357FF6008F827A /* PSReachabilityCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSReachabilityCenter.h; sourceTree = "<group>"; };
+		28CEDCBE14357FF6008F827A /* PSReachabilityCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSReachabilityCenter.m; sourceTree = "<group>"; };
 		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
@@ -1612,6 +1615,8 @@
 				28A9FB1C13F3215900EFB191 /* PSStyleSheet.plist */,
 				2814E32013F1F01400D7A85A /* PSAlertCenter.h */,
 				2814E32113F1F01400D7A85A /* PSAlertCenter.m */,
+				28CEDCBD14357FF6008F827A /* PSReachabilityCenter.h */,
+				28CEDCBE14357FF6008F827A /* PSReachabilityCenter.m */,
 				28F7490C13F202430056D111 /* PSDataCenter.h */,
 				28F7490D13F202430056D111 /* PSDataCenter.m */,
 				28F7490E13F202430056D111 /* PSDataCenterDelegate.h */,
@@ -2489,6 +2494,7 @@
 				28377683142CA05500E939EC /* ListCell.m in Sources */,
 				28377691142CB4CA00E939EC /* TSAlertView.m in Sources */,
 				283858601434851500262DD5 /* NoteViewController.m in Sources */,
+				28CEDCBF14357FF6008F827A /* PSReachabilityCenter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

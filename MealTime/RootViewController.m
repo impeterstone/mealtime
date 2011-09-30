@@ -18,6 +18,7 @@
 #import "InfoViewController.h"
 #import "PSSearchField.h"
 #import "PSOverlayImageView.h"
+#import "PSReachabilityCenter.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -173,10 +174,12 @@
   self.view.backgroundColor = [UIColor blackColor];
   
   // Nullview
+  NSString *imgError = isDeviceIPad() ? @"nullview_error_pad.png" : @"nullview_error.png";
+  NSString *imgEmpty = isDeviceIPad() ? @"nullview_noresults_pad.png" : @"nullview_noresults.png";
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding places for you"];
-  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_noresults.png"]];
-  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
+  [_nullView setEmptyImage:[UIImage imageNamed:imgEmpty]];
+  [_nullView setErrorImage:[UIImage imageNamed:imgError]];
   [_nullView setIsFullScreen:YES];
   [_nullView setDelegate:self];
   
@@ -357,7 +360,11 @@
 
 #pragma mark - Button Actios
 - (void)findMyLocation {
-  [[PSLocationCenter defaultCenter] getMyLocation];
+  if ([[PSReachabilityCenter defaultCenter] isNetworkReachable]) {
+    [[PSLocationCenter defaultCenter] getMyLocation];
+  } else {
+    [self dataCenterDidFailWithError:nil andUserInfo:nil];
+  }
 }
 
 - (void)showLists {

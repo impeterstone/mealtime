@@ -16,6 +16,7 @@
 #import "PSNetworkQueue.h"
 #import "PSLocationCenter.h"
 #import "Crittercism.h"
+#import "PSReachabilityCenter.h"
 
 // Dispatch period in seconds
 static const NSInteger kGANDispatchPeriodSec = 10;
@@ -114,6 +115,8 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 //  NSLog(@"fonts: %@",[UIFont familyNames]);
+  
+  [PSReachabilityCenter defaultCenter];
   
   _isBackgrounded = NO;
   

@@ -90,7 +90,9 @@ static NSLock *_placesToRemoveLock = nil;
   }];
   
   [request setFailedBlock:^{
-    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
+      [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
+    }
   }];
   
   [[PSNetworkQueue sharedQueue] addOperation:request];

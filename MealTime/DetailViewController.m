@@ -141,10 +141,11 @@
 //  self.navigationItem.rightBarButtonItem = [UIBarButtonItem barButtonWithImage:[UIImage imageNamed:@"icon_nav_share.png"] withTarget:self action:@selector(share) width:40 height:30 buttonType:BarButtonTypeNormal];
   
   // Nullview
+  NSString *img = isDeviceIPad() ? @"nullview_error_pad.png" : @"nullview_error.png";
   [_nullView setLoadingTitle:@"Loading..."];
   [_nullView setLoadingSubtitle:@"Finding photos of yummy food."];
-  [_nullView setEmptyImage:[UIImage imageNamed:@"nullview_error.png"]];
-  [_nullView setErrorImage:[UIImage imageNamed:@"nullview_error.png"]];
+  [_nullView setEmptyImage:[UIImage imageNamed:img]];
+  [_nullView setErrorImage:[UIImage imageNamed:img]];
   [_nullView setIsFullScreen:YES];
   [_nullView setDelegate:self];
   

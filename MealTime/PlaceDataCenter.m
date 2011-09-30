@@ -9,6 +9,7 @@
 #import "PlaceDataCenter.h"
 #import "PSScrapeCenter.h"
 #import "PSDatabaseCenter.h"
+#import "PSLocationCenter.h"
 
 static NSLock *_placesToRemoveLock = nil;
 
@@ -47,6 +48,66 @@ static NSLock *_placesToRemoveLock = nil;
       }
     });
   });
+}
+
+
+#pragma mark - Server Calls
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow start:(NSInteger)start rpp:(NSInteger)rpp {
+  
+  // sortby options
+  // best_match
+  // distance
+  // rating
+  
+  // cflt options
+  // restaurants
+  // nightlife
+  
+  // If location is empty, use current location
+  
+  // Params
+  NSString *cfltParam = @"cflt=restaurants";
+  NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sort_by=%@", sortby] : @"sort_by=";
+  NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : @"radius=";
+  NSString *queryParam = query ? [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]] : @"find_desc=";
+  NSString *locationParam = location ? [NSString stringWithFormat:@"find_loc=%@", [location stringByURLEncoding]] : [NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]];
+  
+  NSString *startParam = [NSString stringWithFormat:@"start=%d", start];
+  NSString *rppParam = [NSString stringWithFormat:@"rpp=%d", rpp];
+  
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/search?%@&%@&%@&%@&%@&%@&%@", cfltParam, sortbyParam, radiusParam, queryParam, locationParam, startParam, rppParam];
+ 
+  NSURL *url = [NSURL URLWithString:urlString];
+  
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+  request.numberOfTimesToRetryOnTimeout = 1;
+  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request setUserAgent:USER_AGENT];
+  
+  [request setCompletionBlock:^{
+    // GCD
+    [request retain];
+    NSString *responseString = [request.responseString copy];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
+      [responseString release];
+      
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+          [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
+        }
+        [request release];
+      });
+    });
+  }];
+  
+  [request setFailedBlock:^{
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
+      [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
+    }
+  }];
+  
+  [[PSNetworkQueue sharedQueue] addOperation:request];
 }
 
 - (void)fetchYelpPlacesForQuery:(NSString *)query andAddress:(NSString *)address distance:(CGFloat)distance start:(NSInteger)start rpp:(NSInteger)rpp {

@@ -511,13 +511,10 @@
                                   @"location",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
-  
-#if USE_FIXTURES
-  [[PlaceDataCenter defaultCenter] getPlacesFromFixtures];
-#else
-  NSString *where = _whereQuery ? _whereQuery : [_currentAddress componentsJoinedByString:@" "];
-  [[PlaceDataCenter defaultCenter] fetchYelpPlacesForQuery:_whatQuery andAddress:where distance:_distance start:_pagingStart rpp:_pagingCount];
-#endif
+
+  NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:nil sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
+
 }
 
 #pragma mark - State Machine
@@ -563,11 +560,13 @@
   }
   
   [super loadDataSource];
-  if (_whereQuery) {
-    [self fetchDataSource];
-  } else {
-    [self findMyLocation];
-  }
+  [self fetchDataSource];
+  
+//  if (_whereQuery) {
+//    [self fetchDataSource];
+//  } else {
+//    [self findMyLocation];
+//  }
 }
 
 - (void)dataSourceDidLoad {

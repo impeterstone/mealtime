@@ -299,18 +299,7 @@
   
   
   [self setupFooterWithView:_tabView];
-  
-//  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
-//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-//  
-//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Call" withTarget:self action:@selector(call) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Directions" withTarget:self action:@selector(directions) width:100 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Yelp" withTarget:self action:@selector(reviews) width:90 height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"]];
-//  
-//  [_toolbar setItems:toolbarItems];
-//  [self setupFooterWithView:_toolbar];
+  _footerView.top += _footerView.height; // hide footer
 }
 
 #pragma mark - Actions
@@ -512,6 +501,10 @@
   [self loadMap];
   
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
+  
+  [UIView animateWithDuration:0.4 animations:^{
+    _footerView.top -= _footerView.height;
+  }];
   
   [super dataSourceDidLoad];
 }

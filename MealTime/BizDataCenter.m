@@ -126,7 +126,7 @@ static NSLock *_placeLock = nil;
   }
   
   // Construct URL
-  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz_photos/%@?rpp=-1", [place objectForKey:@"biz"]];
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz_photos/%@?rpp=9999", [place objectForKey:@"biz"]];
   NSURL *url = [NSURL URLWithString:urlString];
   
   // Run this synchronously

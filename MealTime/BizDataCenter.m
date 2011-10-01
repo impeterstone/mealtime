@@ -77,7 +77,7 @@ static NSLock *_placeLock = nil;
     [self requestForPhotosForPlace:place];
     
     // Check to see if we actually got photos and bizDetails
-    BOOL success = ([[place objectForKey:@"biz"] notNil]) ? YES : NO;
+    BOOL success = ([place objectForKey:@"biz"]) ? YES : NO;
     
     // Write this place to the local DB
     NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -109,7 +109,7 @@ static NSLock *_placeLock = nil;
 - (void)requestForPhotosForPlace:(NSMutableDictionary *)place {
   // Make sure there is a biz
   // If there is no biz, that also means no photos
-  if (![[place objectForKey:@"biz"] notNil]) {
+  if (![place objectForKey:@"biz"]) {
     [_placeLock lock];
     @try {
       // Update place object
@@ -158,7 +158,7 @@ static NSLock *_placeLock = nil;
 
 - (void)requestForBizForPlace:(NSMutableDictionary *)place {
   // Construct URL
-  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz/%@", [place objectForKey:@"alias"]];
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz/%@?rpp=0", [place objectForKey:@"alias"]];
   NSURL *url = [NSURL URLWithString:urlString];
   
   // Run this synchronously
@@ -210,20 +210,15 @@ static NSLock *_placeLock = nil;
   }
 }
 
-- (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp {
-  NSString *yelpUrlString = [NSString stringWithFormat:@"http://www.yelp.com/biz/%@?rpp=%d&start=%d", biz, rpp, start];
-  NSURL *yelpUrl = [NSURL URLWithString:yelpUrlString];
+- (void)fetchReviewsForAlias:(NSString *)alias start:(NSInteger)start rpp:(NSInteger)rpp {
+  // Construct URL
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz/%@?rpp=%d&start=%d", alias, rpp, start];
+  NSURL *url = [NSURL URLWithString:urlString];
   
-  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:yelpUrl];
+  __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.numberOfTimesToRetryOnTimeout = 1;
   [request setShouldContinueWhenAppEntersBackground:YES];
   [request setUserAgent:USER_AGENT];
-  
-  // UserInfo
-  NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:2];
-  [userInfo setObject:biz forKey:@"biz"];
-  [userInfo setObject:@"reviews" forKey:@"requestType"];
-  [request setUserInfo:userInfo];
   
   [request setCompletionBlock:^{
     // GCD
@@ -237,7 +232,7 @@ static NSLock *_placeLock = nil;
       // Save to DB
       NSString *requestType = @"reviews";
       NSString *requestData = [response JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [request.userInfo objectForKey:@"biz"], requestType, requestData, nil];
+      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", alias, requestType, requestData, nil];
       
       dispatch_async(dispatch_get_main_queue(), ^{
         [response release];
@@ -248,7 +243,7 @@ static NSLock *_placeLock = nil;
   
   [request setFailedBlock:^{
     // If a review scrape failed, we should rescrape
-    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:biz];
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:alias];
     [[NSUserDefaults standardUserDefaults] synchronize];
   }];
   

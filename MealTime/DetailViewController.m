@@ -333,7 +333,7 @@
 }
 
 - (void)call {
-  if ([[_place objectForKey:@"phone"] notNil]) {
+  if ([_place objectForKey:@"phone"] && [_place objectForKey:@"formattedPhone"]) {
     UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"formattedPhone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
     av.tag = kAlertCall;
     [av show];
@@ -398,7 +398,7 @@
   
   [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"biz"], [_place objectForKey:@"name"]];
   [body appendFormat:@"%@<br/>", [[_place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
-  if ([[_place objectForKey:@"formattedPhone"] notNil]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"formattedPhone"]];
+  if ([_place objectForKey:@"formattedPhone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"formattedPhone"]];
   [body appendFormat:@"Price: %@, Score: %@", [_place objectForKey:@"price"], score];
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }
@@ -423,8 +423,8 @@
 }
 
 - (void)loadDetails {
-  if ([[_place objectForKey:@"address"] notNil]) {
-    _addressLabel.text = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+  if ([_place objectForKey:@"formattedAddress"]) {
+    _addressLabel.text = [_place objectForKey:@"formattedAddress"];
   } else {
     _addressLabel.text = @"No address listed";
   }
@@ -494,15 +494,15 @@
   
   // Get ALL reviews for this place
   // Only do this once, so check userDefaults
-//  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"biz"]]) {
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"biz"]];
+//  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"alias"]]) {
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"alias"]];
 //    [[NSUserDefaults standardUserDefaults] synchronize];
 //    
-//    NSInteger numReviews = [[_place objectForKey:@"numreviews"] notNil] ? [[_place objectForKey:@"numreviews"] integerValue] : 0;
+//    NSInteger numReviews = [[_place objectForKey:@"numReviews"] notNil] ? [[_place objectForKey:@"numReviews"] integerValue] : 0;
 //    int i = 0;
 //    for (i = 0; i < numReviews; i = i + 400) {
 //      // Fire off requests for reviews 400 at a time
-//      [[BizDataCenter defaultCenter] fetchYelpReviewsForBiz:[_place objectForKey:@"biz"] start:i rpp:400];
+//      [[BizDataCenter defaultCenter] fetchReviewsForAlias:[_place objectForKey:@"alias"] start:i rpp:400];
 //    }
 //  }
 }

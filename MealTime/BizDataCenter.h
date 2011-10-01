@@ -22,7 +22,6 @@
 - (void)requestForPhotosForPlace:(NSMutableDictionary *)place;
 - (void)requestForBizForPlace:(NSMutableDictionary *)place;
 
-
-- (void)fetchYelpReviewsForBiz:(NSString *)biz start:(NSInteger)start rpp:(NSInteger)rpp;
+- (void)fetchReviewsForAlias:(NSString *)alias start:(NSInteger)start rpp:(NSInteger)rpp;
 
 @end

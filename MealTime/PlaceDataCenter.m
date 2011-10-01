@@ -69,13 +69,13 @@ static NSLock *_placesToRemoveLock = nil;
   NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sort_by=%@", sortby] : @"sort_by=";
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : @"radius=";
   NSString *queryParam = query ? [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]] : @"cflt=restaurants";
-  NSString *locationParam = location ? [NSString stringWithFormat:@"find_loc=%@", [location stringByURLEncoding]] : [NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]];
+//  NSString *locationParam = location ? [NSString stringWithFormat:@"find_loc=%@", [location stringByURLEncoding]] : [NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]];
   
   NSString *startParam = [NSString stringWithFormat:@"start=%d", start];
   NSString *rppParam = [NSString stringWithFormat:@"rpp=%d", rpp];
   
   // Construct URL
-  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/search?%@&%@&%@&%@&%@&%@", sortbyParam, radiusParam, queryParam, locationParam, startParam, rppParam];
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/search?%@&%@&%@&%@&%@&%@", sortbyParam, radiusParam, queryParam, location, startParam, rppParam];
   NSURL *url = [NSURL URLWithString:urlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];

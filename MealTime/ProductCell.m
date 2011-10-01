@@ -85,7 +85,8 @@
 }
 
 - (void)setShouldAnimate:(NSNumber *)shouldAnimate {
-  _photoView.shouldAnimate = [shouldAnimate boolValue];
+  [super setShouldAnimate:shouldAnimate];
+  _photoView.shouldAnimate = _cellShouldAnimate && isMultitaskingSupported();
 }
 
 #pragma mark - Layout
@@ -140,7 +141,7 @@
   _nameLabel.top = MARGIN_Y;
   
   // Adjust caption Size
-  _captionView.frame = CGRectMake(0, _photoView.bottom - desiredSize.height - (MARGIN_Y * 2), self.contentView.width, desiredSize.height + (MARGIN_Y * 2));
+  _captionView.frame = CGRectMake(0, _photoView.bottom - fmaxf(desiredSize.height, 21.0) - (MARGIN_Y * 2), self.contentView.width, fmaxf(desiredSize.height, 21.0) + (MARGIN_Y * 2));
   
 //  desiredSize = [UILabel sizeForText:_descriptionLabel.text width:textWidth font:_descriptionLabel.font numberOfLines:_descriptionLabel.numberOfLines lineBreakMode:_descriptionLabel.lineBreakMode];
 //  _descriptionLabel.width = desiredSize.width;

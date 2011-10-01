@@ -131,7 +131,8 @@
 }
 
 - (void)setShouldAnimate:(NSNumber *)shouldAnimate {
-  _photoView.shouldAnimate = [shouldAnimate boolValue];
+  [super setShouldAnimate:shouldAnimate];
+  _photoView.shouldAnimate = _cellShouldAnimate && isMultitaskingSupported();
 }
 
 #pragma mark - Layout

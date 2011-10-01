@@ -61,6 +61,7 @@
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
+    _location = nil;
     
     _isSearchActive = NO;
     
@@ -105,6 +106,7 @@
   
   _reverseGeocoder.delegate = nil;
   
+  RELEASE_SAFELY(_location);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_filterButton);
@@ -204,7 +206,7 @@
     [self restoreDataSource];
   } else {
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#load"];
-    [self loadDataSource];
+    [self findMyLocation];
   }
 }
 
@@ -405,9 +407,13 @@
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  
   if (isReload) {    
     // Update distance button label
     [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
+    
+    // Update location param
+    _location = self.whereQuery ? [[NSString stringWithFormat:@"find_loc=%@", [self.whereQuery stringByURLEncoding]] retain] : [[NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]] retain];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -419,7 +425,7 @@
                                   @"pagingStart",
                                   [NSString stringWithFormat:@"%d", _pagingCount],
                                   @"pagingCount",
-                                  [[PSLocationCenter defaultCenter] locationString],
+                                  _location,
                                   @"location",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
@@ -429,7 +435,7 @@
   // 4828 - 3mi
 
   NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:@"4828" sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
 }
 
 #pragma mark - State Machine
@@ -516,16 +522,7 @@
 
 #pragma mark - Actions
 - (void)locationAcquired:(NSNotification *)notification {
-  // 10330 N Wolfe Rd Cupertino, CA 95014
-#if USE_FIXTURES
-  
-  // fetch Yelp Places
-  _pagingStart = 0; // reset paging
-  self.whereQuery = [_currentAddress componentsJoinedByString:@" "];
-  [self fetchDataSource];
-#else
-  [self reverseGeocode];
-#endif
+  [self loadDataSource];
 }
 
 - (void)reverseGeocode {

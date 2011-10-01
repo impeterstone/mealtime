@@ -67,6 +67,13 @@ static const NSInteger kGANDispatchPeriodSec = 10;
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownListOverlay"];
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownSavedOverlay"];
 #endif
+        
+//#define SHOULD_RESET_USER_DEFAULTS
+#ifdef SHOULD_RESET_USER_DEFAULTS
+        // Clear all user defaults
+        [[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
+#endif
+        
         [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
         [[NSUserDefaults standardUserDefaults] synchronize];
       }

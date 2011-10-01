@@ -22,6 +22,7 @@
   UIButton *_filterButton;
 //  UILabel *_statusLabel;
 //  UILabel *_distanceLabel;
+  NSString *_location;
   
   NSArray *_currentAddress;
   

@@ -92,7 +92,6 @@
     _ribbonLabel.frame = _ribbonView.bounds;
     [_ribbonView addSubview:ribbonImageView];
     [_ribbonView addSubview:_ribbonLabel];
-    _ribbonView.alpha = 0.0;
     
     _scoreView = [[UIView alloc] initWithFrame:CGRectZero];
     UIImageView *scoreImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"bg_pill.png" withLeftCapWidth:12 topCapWidth:0]] autorelease];
@@ -148,7 +147,6 @@
   _photoView.image = nil;
   _photoView.urlPath = nil;
   _place = nil;
-  _ribbonView.alpha = 0.0;
 }
 
 - (void)layoutSubviews

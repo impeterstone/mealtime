@@ -334,7 +334,7 @@
 
 - (void)call {
   if ([[_place objectForKey:@"phone"] notNil]) {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phoneString"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"formattedPhone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
     av.tag = kAlertCall;
     [av show];
   } else {
@@ -398,7 +398,7 @@
   
   [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"biz"], [_place objectForKey:@"name"]];
   [body appendFormat:@"%@<br/>", [[_place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
-  if ([[_place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"phone"]];
+  if ([[_place objectForKey:@"formattedPhone"] notNil]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"formattedPhone"]];
   [body appendFormat:@"Price: %@, Score: %@", [_place objectForKey:@"price"], score];
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }

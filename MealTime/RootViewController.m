@@ -32,7 +32,7 @@
 
 - (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
 
-- (void)changeDistance;
+- (void)filter;
 - (void)showLists;
 - (void)showInfo;
 - (void)searchNearby;
@@ -63,8 +63,6 @@
     _numResults = 0;
     
     _isSearchActive = NO;
-    
-    _distance = 3.0;
     
     _scrollCount = 0;
   }
@@ -221,25 +219,6 @@
   bg.frame = _headerView.bounds;
   [_headerView addSubview:bg];
   
-  // Input Toolbar
-//  UIToolbar *tb = [[[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44)] autorelease];
-//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Cancel" withTarget:self action:@selector(dismissSearch) width:60 height:30 buttonType:BarButtonTypeNormal]];
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  // Status Label
-//  _distanceLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tb.width - 80, tb.height)];
-//  _distanceLabel.backgroundColor = [UIColor clearColor];
-//  _distanceLabel.textAlignment = UITextAlignmentCenter;
-//  _distanceLabel.font = [PSStyleSheet fontForStyle:@"distanceLabel"];
-//  _distanceLabel.textColor = [PSStyleSheet textColorForStyle:@"distanceLabel"];
-//  _distanceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"distanceLabel"];
-//  _distanceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"distanceLabel"];
-//  _distanceLabel.text = [NSString stringWithFormat:@"Range: %.1f miles", _distance];
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithCustomView:_distanceLabel] autorelease]];
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  [toolbarItems addObject:[UIBarButtonItem barButtonWithTitle:@"Range" withTarget:self action:@selector(distance) width:60 height:30 buttonType:BarButtonTypeBlue]];
-//  [tb setItems:toolbarItems];
-  
   // Search Bar
   CGFloat searchWidth = _headerView.width - 20;
   
@@ -303,7 +282,7 @@
   [_tabView addSubview:star];
   
   // Center
-  _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(changeDistance)] retain];
+  _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
   [_filterButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
   [_tabView addSubview:_filterButton];
@@ -384,62 +363,13 @@
   [inc release];
 }
 
-- (void)changeDistance {
-  CGFloat distance = _distance;
-  NSInteger ind = 0;
-  if (distance == 0.2) {
-    ind = 0;
-  } else if (distance == 0.5) {
-    ind = 1;
-  } else if (distance == 1.0) {
-    ind = 2;
-  } else if (distance == 3.0) {
-    ind = 3;
-  } else if (distance == 5.0) {
-    ind = 4;
-  }
-  
-  NSArray *data = [NSArray arrayWithObjects:@"1/4 mile", @"1/2 mile", @"1 mile", @"3 miles", @"5 miles", nil];
-  [ActionSheetPicker displayActionPickerWithView:self.view data:data selectedIndex:ind target:self action:@selector(distanceSelectedWithIndex:inView:) title:@"Search Radius"];
-}
-
-- (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view {
-  CGFloat distance = 0.0;
-  switch ([selectedIndex integerValue]) {
-    case 0:
-      distance = 0.2;
-      break;
-    case 1:
-      distance = 0.5;
-      break;
-    case 2:
-      distance = 1.0;
-      break;
-    case 3:
-      distance = 3.0;
-      break;
-    case 4:
-      distance = 5.0;
-      break;
-    default:
-      distance = 0.5;
-      break;
-  }
-  
-  if (_distance == distance) return; // Distance didn't change
-  
-  _distance = distance;
-  RELEASE_SAFELY(_radius);
-  _radius = [[NSString stringWithFormat:@"%.0f", distance * 1609] retain];
+- (void)filter {
+  return;
   
   // Update Distance Label
-  [_filterButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
+  [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
   
-  NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  [NSString stringWithFormat:@"%.1f", distance],
-                                  @"distance",
-                                  nil];
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter" attributes:localyticsDict];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter"];
   
   // Fire a refetch
   _pagingStart = 0;
@@ -457,9 +387,9 @@
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   NSString *distanceTitle = nil;
   if (_numResults > 0) {
-    distanceTitle = [NSString stringWithFormat:@"%d Places within %.1f mi", _numResults, _distance];
+    distanceTitle = [NSString stringWithFormat:@"Found %d Places", _numResults];
   } else {
-    distanceTitle = [NSString stringWithFormat:@"No Places within %.1f mi", _distance];
+    distanceTitle = [NSString stringWithFormat:@"No Places Found"];
   }
   [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
 }
@@ -477,7 +407,7 @@
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {    
     // Update distance button label
-    [_filterButton setTitle:[NSString stringWithFormat:@"Searching within %.1f mi", _distance] forState:UIControlStateNormal];
+    [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -485,8 +415,6 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [NSNumber numberWithFloat:_distance],
-                                  @"distance",
                                   [NSString stringWithFormat:@"%d", _pagingStart],
                                   @"pagingStart",
                                   [NSString stringWithFormat:@"%d", _pagingCount],
@@ -495,9 +423,13 @@
                                   @"location",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
+  
+  // 1608m/mi
+  // 8046 - 5mi
+  // 4828 - 3mi
 
   NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:_radius sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:location radius:@"4828" sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
 }
 
 #pragma mark - State Machine
@@ -732,20 +664,11 @@
     self.whereQuery = nil;
   }
   
-  // Smart distance
-  if ([_whereField.text length] > 0) {
-    _distance = 5.0;
-  } else {
-    _distance = 3.0;
-  }
-  
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   self.whatQuery ? self.whatQuery : @"",
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [NSNumber numberWithFloat:_distance],
-                                  @"distance",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];
 

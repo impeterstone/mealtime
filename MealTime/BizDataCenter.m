@@ -77,22 +77,20 @@ static NSLock *_placeLock = nil;
     [self requestForPhotosForPlace:place];
     
     // Check to see if we actually got photos and bizDetails
-    BOOL success = ([place objectForKey:@"photos"] && [place objectForKey:@"biz"]) ? YES : NO;
+    BOOL success = ([[place objectForKey:@"biz"] notNil]) ? YES : NO;
     
     // Write this place to the local DB
-    if (success) {
-      NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-      NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
-      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
-      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (alias, biz, data, latitude, longitude, score, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"alias"], [place objectForKey:@"biz"], placeData, [place objectForKey:@"latitude"], [place objectForKey:@"longitude"], [place objectForKey:@"score"], timestamp, nil]];
-      
-      // Save callhome entry
-      NSString *requestType = @"biz";
-      NSString *requestData = [place JSONString];
-      [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
-      
-      [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
-    }
+    NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+    NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:place];
+    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (alias, biz, data, latitude, longitude, score, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[place objectForKey:@"alias"], [place objectForKey:@"biz"], placeData, [place objectForKey:@"latitude"], [place objectForKey:@"longitude"], [place objectForKey:@"score"], timestamp, nil]];
+    
+    // Save callhome entry
+    NSString *requestType = @"biz";
+    NSString *requestData = [place JSONString];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (biz, type, data) VALUES (?, ?, ?)", [place objectForKey:@"biz"], requestType, requestData, nil];
+    
+    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
     
     dispatch_async(dispatch_get_main_queue(), ^{      
       if (success) {
@@ -109,8 +107,23 @@ static NSLock *_placeLock = nil;
 }
 
 - (void)requestForPhotosForPlace:(NSMutableDictionary *)place {
-  // Make sure there is a bizId
-  if (![place objectForKey:@"biz"]) return;
+  // Make sure there is a biz
+  // If there is no biz, that also means no photos
+  if (![[place objectForKey:@"biz"] notNil]) {
+    [_placeLock lock];
+    @try {
+      // Update place object
+        [place setObject:[NSArray array] forKey:@"photos"];
+      
+      // Update numPhotos
+      [place setObject:[NSNumber numberWithInt:0] forKey:@"numPhotos"];
+    }
+    @finally {
+      [_placeLock unlock];
+    }
+    
+    return;
+  }
   
   // Construct URL
   NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz_photos/%@?rpp=-1", [place objectForKey:@"biz"]];
@@ -171,8 +184,8 @@ static NSLock *_placeLock = nil;
       }
       
       // Phone
-      if ([response objectForKey:@"phoneString"]) {
-        [place setObject:[response objectForKey:@"phoneString"] forKey:@"phoneString"];
+      if ([response objectForKey:@"formattedPhone"]) {
+        [place setObject:[response objectForKey:@"formattedPhone"] forKey:@"formattedPhone"];
       }
       if ([response objectForKey:@"phone"]) {
         [place setObject:[response objectForKey:@"phone"] forKey:@"phone"];
@@ -184,6 +197,11 @@ static NSLock *_placeLock = nil;
       }
       if ([response objectForKey:@"formattedAddress"]) {
         [place setObject:[response objectForKey:@"formattedAddress"] forKey:@"formattedAddress"];
+      }
+      
+      // Attrs (metadata)
+      if ([response objectForKey:@"attrs"]) {
+        [place setObject:[response objectForKey:@"attrs"] forKey:@"attrs"];
       }
     }
     @finally {

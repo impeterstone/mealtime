@@ -34,13 +34,10 @@
   
   MKReverseGeocoder *_reverseGeocoder;
   
-  NSString *_radius;
   NSString *_sortBy;
   NSString *_whatQuery;
   NSString *_whereQuery;
   NSInteger _numResults;
-  
-  CGFloat _distance;
   
   BOOL _isSearchActive;
 }

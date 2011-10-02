@@ -52,7 +52,7 @@ static NSLock *_placesToRemoveLock = nil;
 
 
 #pragma mark - Remote Fetch
-- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow start:(NSInteger)start rpp:(NSInteger)rpp {
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow price:(NSInteger)price start:(NSInteger)start rpp:(NSInteger)rpp {
   
   // sortby options
   // best_match
@@ -66,16 +66,42 @@ static NSLock *_placesToRemoveLock = nil;
   // If location is empty, use current location
   
   // Params
-  NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sort_by=%@", sortby] : @"sort_by=";
-  NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : @"radius=";
-  NSString *queryParam = query ? [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]] : @"cflt=restaurants";
-//  NSString *locationParam = location ? [NSString stringWithFormat:@"find_loc=%@", [location stringByURLEncoding]] : [NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]];
   
   NSString *startParam = [NSString stringWithFormat:@"start=%d", start];
   NSString *rppParam = [NSString stringWithFormat:@"rpp=%d", rpp];
   
+  NSString *openNowParam = openNow ? [NSString stringWithFormat:@"open_now=%d", [NSDate minutesSinceBeginningOfWeek]] : nil;
+  NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
+  NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
+  NSString *queryParam = query ? [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]] : @"cflt=restaurants";
+  
+  NSString *priceParam = (price == 0) ? nil : [NSString stringWithFormat:@"attrs=RestaurantsPriceRange2.%d", price];
+  
   // Construct URL
-  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/search?%@&%@&%@&%@&%@&%@", sortbyParam, radiusParam, queryParam, location, startParam, rppParam];
+  NSMutableString *urlString = [NSMutableString string];
+  [urlString appendString:@"http://m.yelp.com/search?"];
+  [urlString appendString:startParam];
+  [urlString appendString:@"&"];
+  [urlString appendString:rppParam];
+  [urlString appendString:@"&"];
+  [urlString appendString:queryParam];
+  if (sortbyParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:sortbyParam];
+  }
+  if (radiusParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:radiusParam];
+  }
+  if (openNowParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:openNowParam];
+  }
+  if (priceParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:priceParam];
+  }
+  
   NSURL *url = [NSURL URLWithString:urlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];

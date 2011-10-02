@@ -40,6 +40,8 @@
 
 - (void)locationAcquired:(NSNotification *)notification;
 
+- (void)configureSortBy;
+
 @end
 
 @implementation RootViewController
@@ -54,10 +56,12 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
-    _sortBy = [@"popularity" retain];
+    [self configureSortBy];
+    _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+    
     _pagingStart = 0;
-    _pagingCount = 10;
-    _pagingTotal = 10;
+    _pagingCount = 50;
+    _pagingTotal = 50;
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
@@ -287,6 +291,9 @@
   _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
   [_filterButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
+//  _filterButton.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+//  _filterButton.titleLabel.textAlignment = UITextAlignmentCenter;
+//  _filterButton.titleLabel.numberOfLines = 2;
   [_tabView addSubview:_filterButton];
   
   UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
@@ -366,16 +373,19 @@
 }
 
 - (void)filter {
+  FilterViewController *fvc = [[FilterViewController alloc] initWithOptions:nil];
+  fvc.delegate = self;
+  fvc.modalTransitionStyle = UIModalTransitionStylePartialCurl;
+  [self presentModalViewController:fvc animated:YES];
+  [fvc release];
+  
   return;
   
-  // Update Distance Label
-  [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
+  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Search" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Smart", @"Distance", @"Rating", nil] autorelease];
+  as.tag = kActionSheetFilter;
+  [as showInView:self.view];
   
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter"];
-  
-  // Fire a refetch
-  _pagingStart = 0;
-  [self loadDataSource];
 }
 
 - (void)searchNearby {
@@ -394,14 +404,6 @@
     distanceTitle = [NSString stringWithFormat:@"No Places Found"];
   }
   [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
-}
-
-#pragma mark - Sort
-- (void)sortResults {
-  NSArray *results = [self.items objectAtIndex:0];
-  NSArray *sortedResults = [results sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:YES]]];
-  [self.items replaceObjectAtIndex:0 withObject:sortedResults];
-  [self.tableView reloadData];
 }
 
 #pragma mark - Fetching Data
@@ -433,9 +435,10 @@
   // 1608m/mi
   // 8046 - 5mi
   // 4828 - 3mi
+  
+  NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  NSString *location = ([_whereField.text length] > 0) ? _whereField.text : nil;
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:@"best_match" openNow:NO start:_pagingStart rpp:10];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -803,6 +806,65 @@
     [self loadDataSource];
   }
   
+}
+
+#pragma mark - UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+  if (buttonIndex == actionSheet.cancelButtonIndex) return;
+  
+  if (actionSheet.tag == kActionSheetFilter) {
+    // best_match, distance, rating
+    RELEASE_SAFELY(_sortBy);
+    switch (buttonIndex) {
+      case 0: // smart
+        _sortBy = [@"best_match" retain];
+        break;
+      case 1: // distance
+        _sortBy = [@"distance" retain];
+        break;
+      case 2: // rating
+        _sortBy = [@"rating" retain];
+        break;
+      default:
+        _sortBy = [@"best_match" retain];
+        break;
+    }
+    
+    // Fire a refetch
+    _pagingStart = 0;
+    [self loadDataSource];
+  }
+}
+
+- (void)configureSortBy {
+  RELEASE_SAFELY(_sortBy);
+  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
+  switch (sortByIndex) {
+    case 0: // smart
+      _sortBy = [@"best_match" retain];
+      break;
+    case 1: // distance
+      _sortBy = [@"distance" retain];
+      break;
+    case 2: // rating
+      _sortBy = [@"rating" retain];
+      break;
+    default:
+      _sortBy = [@"best_match" retain];
+      break;
+  }
+}
+
+- (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender {
+  [self configureSortBy];
+  
+  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
+  
+  _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+  
+  // Fire a refetch
+  _pagingStart = 0;
+  [self loadDataSource];
 }
 
 @end

@@ -10,11 +10,12 @@
 #import <MapKit/MapKit.h>
 #import "PSTableViewController.h"
 #import "SearchTermDelegate.h"
+#import "FilterViewController.h"
 
 @class SearchTermController;
 @class PSSearchField;
 
-@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate> {
+@interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate, UIActionSheetDelegate, FilterViewControllerDelegate> {
   UIView *_headerView;
   UIView *_tabView;
   PSSearchField *_whatField;
@@ -41,6 +42,7 @@
   NSInteger _numResults;
   
   BOOL _isSearchActive;
+  BOOL _openNow;
 }
 
 @property (nonatomic, retain) NSString *whatQuery;

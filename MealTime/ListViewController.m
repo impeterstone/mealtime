@@ -37,6 +37,10 @@
   return self;
 }
 
+- (void)viewDidUnload {
+  [super viewDidUnload];
+}
+
 - (void)dealloc {
   RELEASE_SAFELY(_biz);
   RELEASE_SAFELY(_selectedLists);
@@ -95,6 +99,7 @@
     }];
   }
 }
+
 - (void)loadView {
   [super loadView];
   

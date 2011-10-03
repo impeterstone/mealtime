@@ -36,11 +36,10 @@
 - (void)showLists;
 - (void)showInfo;
 - (void)searchNearby;
-- (void)sortResults;
 
 - (void)locationAcquired:(NSNotification *)notification;
 
-- (void)configureSortBy;
+- (void)configureFilters;
 
 @end
 
@@ -56,12 +55,12 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
-    [self configureSortBy];
+    [self configureFilters];
     _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
     
     _pagingStart = 0;
-    _pagingCount = 500;
-    _pagingTotal = 500;
+    _pagingCount = 1000;
+    _pagingTotal = 1000;
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
@@ -122,6 +121,8 @@
   RELEASE_SAFELY(_whatQuery);
   RELEASE_SAFELY(_whereQuery);
   RELEASE_SAFELY(_sortBy);
+  RELEASE_SAFELY(_filterPrice);
+  RELEASE_SAFELY(_cachedItems);
   [super dealloc];
 }
 
@@ -433,12 +434,12 @@
   
   NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:nil openNow:_openNow price:0 start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
-  return YES;
+  return NO;
 }
 
 - (void)loadMore {
@@ -485,6 +486,10 @@
   }
 }
 
+- (void)dataSourceDidLoadMore {
+  [super dataSourceDidLoadMore];
+}
+
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
@@ -502,13 +507,26 @@
   _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
   [self updateNumResults];
   
-  NSArray *places = [response objectForKey:@"places"];
+  NSMutableArray *places = [response objectForKey:@"places"];
+  
+  // Let's get rid of all places with empty photos
+  
+  RELEASE_SAFELY(_cachedItems);
+  _cachedItems = [[NSMutableArray alloc] initWithArray:places];
+  
+  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
+  
+  // Sort places based on filter
+  if (_sortBy) {
+    BOOL ascending = [_sortBy isEqualToString:@"distance"];
+    [_cachedItems sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:ascending]]];
+  }
   
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
-    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:places] shouldAnimate:YES];
+    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:_cachedItems] shouldAnimate:NO];
   } else {
-    [self dataSourceShouldLoadMoreObjects:places forSection:0 shouldAnimate:YES];
+    [self dataSourceShouldLoadMoreObjects:_cachedItems forSection:0 shouldAnimate:YES];
   }
   
 }
@@ -803,7 +821,7 @@
   
 }
 
-- (void)configureSortBy {
+- (void)configureFilters {
   RELEASE_SAFELY(_sortBy);
   NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
   switch (sortByIndex) {
@@ -811,25 +829,65 @@
       _sortBy = [@"distance" retain];
       break;
     case 1: // rating
-      _sortBy = [@"rating" retain];
+      _sortBy = [@"score" retain];
       break;
     case 2: // everything
-      _sortBy = [@"best_match" retain];
+      _sortBy = nil;
       break;
     default:
       _sortBy = [@"distance" retain];
       break;
   }
+  
+  RELEASE_SAFELY(_filterPrice);
+  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
+  switch (priceIndex) {
+    case 0:
+      _filterPrice = nil;
+      break;
+    case 1:
+      _filterPrice = @"$";
+      break;
+    case 2:
+      _filterPrice = @"$$";
+      break;
+    case 3:
+      _filterPrice = @"$$$";
+      break;
+    case 4:
+      _filterPrice = @"$$$$";
+      break;
+    default:
+      _filterPrice = nil;
+      break;
+  }
 }
 
 - (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender {
-  [self configureSortBy];
+  [self configureFilters];
+
+  if (_openNow != [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"]) {
+    _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+    // Fire a refetch if openNow was toggled to ON
+    _pagingStart = 0;
+    [self loadDataSource];
+    return;
+  }
   
-  _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+  NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
-  // Fire a refetch
-  _pagingStart = 0;
-  [self loadDataSource];
+  // Price filter
+  if (_filterPrice) {
+    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:@"price like %@", _filterPrice]];
+  }
+  
+  // Sort places based on filter
+  if (_sortBy) {
+    BOOL ascending = [_sortBy isEqualToString:@"distance"];
+    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:ascending]]];
+  }
+  
+  [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
 }
 
 @end

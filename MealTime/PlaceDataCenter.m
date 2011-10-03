@@ -74,7 +74,7 @@ static NSLock *_placesToRemoveLock = nil;
   NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
   if (query) {
-    query = [NSString stringWithFormat:@"%@", query];
+    query = [NSString stringWithFormat:@"Restaurants %@", query];
   } else {
     query = @"Restaurants";
   }
@@ -92,10 +92,6 @@ static NSLock *_placesToRemoveLock = nil;
   [urlString appendString:rppParam];
   [urlString appendString:@"&"];
   [urlString appendString:queryParam];
-//  if (sortbyParam) {
-//    [urlString appendString:@"&"];
-//    [urlString appendString:sortbyParam];
-//  }
   if (radiusParam) {
     [urlString appendString:@"&"];
     [urlString appendString:radiusParam];
@@ -104,10 +100,14 @@ static NSLock *_placesToRemoveLock = nil;
     [urlString appendString:@"&"];
     [urlString appendString:openNowParam];
   }
-  if (priceParam) {
-    [urlString appendString:@"&"];
-    [urlString appendString:priceParam];
-  }
+//  if (priceParam) {
+//    [urlString appendString:@"&"];
+//    [urlString appendString:priceParam];
+//  }
+//  if (sortbyParam) {
+//    [urlString appendString:@"&"];
+//    [urlString appendString:sortbyParam];
+//  }
   
   NSURL *url = [NSURL URLWithString:urlString];
   

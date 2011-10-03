@@ -27,6 +27,8 @@
   
   NSArray *_currentAddress;
   
+  NSMutableArray *_cachedItems;
+  
   SearchTermController *_whatTermController;
   SearchTermController *_whereTermController;
   
@@ -36,6 +38,7 @@
   
   MKReverseGeocoder *_reverseGeocoder;
   
+  NSString *_filterPrice;
   NSString *_sortBy;
   NSString *_whatQuery;
   NSString *_whereQuery;

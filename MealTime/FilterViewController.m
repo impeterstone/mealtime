@@ -44,7 +44,7 @@
   [super loadView];
   
   // Sortby
-  UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Smart", @"Distance", @"Rating", nil]] autorelease];
+  UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Distance", @"Rating", nil]] autorelease];
   sortby.segmentedControlStyle = UISegmentedControlStyleBordered;
   [sortby addTarget:self action:@selector(sortbyChanged:) forControlEvents:UIControlEventValueChanged];
   sortby.frame = CGRectMake(0, 0, 300, 44);

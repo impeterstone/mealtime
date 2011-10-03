@@ -73,13 +73,20 @@ static NSLock *_placesToRemoveLock = nil;
   NSString *openNowParam = openNow ? [NSString stringWithFormat:@"open_now=%d", [NSDate minutesSinceBeginningOfWeek]] : nil;
   NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
-  NSString *queryParam = query ? [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]] : @"cflt=restaurants";
+  if (query) {
+    query = [NSString stringWithFormat:@"Restaurants %@", query];
+  } else {
+    query = @"Restaurants";
+  }
+  NSString *queryParam = [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]];
   
   NSString *priceParam = (price == 0) ? nil : [NSString stringWithFormat:@"attrs=RestaurantsPriceRange2.%d", price];
   
   // Construct URL
   NSMutableString *urlString = [NSMutableString string];
   [urlString appendString:@"http://m.yelp.com/search?"];
+  [urlString appendString:location];
+  [urlString appendString:@"&"];
   [urlString appendString:startParam];
   [urlString appendString:@"&"];
   [urlString appendString:rppParam];

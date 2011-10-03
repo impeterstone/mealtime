@@ -438,7 +438,7 @@
   
   NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"8046" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine

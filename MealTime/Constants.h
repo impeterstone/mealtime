@@ -22,10 +22,10 @@
 
 //#define USE_FIXTURES 1
 //#define SHOULD_RESET_SQLITE
-#define SCHEMA_VERSION @"14"
+#define SCHEMA_VERSION @"15"
 
 // Core Data (From PSConstants.h)
-#define CORE_DATA_SQL_FILE @"spotlight.sqlite"
+#define CORE_DATA_SQL_FILE @"mealtime.sqlite"
 #define CORE_DATA_MOM @"MealTime"
 
 // User Agent

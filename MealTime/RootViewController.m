@@ -60,8 +60,8 @@
     _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
     
     _pagingStart = 0;
-    _pagingCount = 50;
-    _pagingTotal = 50;
+    _pagingCount = 500;
+    _pagingTotal = 500;
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
@@ -379,13 +379,8 @@
   [self presentModalViewController:fvc animated:YES];
   [fvc release];
   
-  return;
-  
-  UIActionSheet *as = [[[UIActionSheet alloc] initWithTitle:@"Sort Search" delegate:self cancelButtonTitle:@"Cancel" destructiveButtonTitle:nil otherButtonTitles:@"Smart", @"Distance", @"Rating", nil] autorelease];
-  as.tag = kActionSheetFilter;
-  [as showInView:self.view];
-  
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter"];
+  return;
 }
 
 - (void)searchNearby {
@@ -438,7 +433,7 @@
   
   NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"8046" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"4828" sortby:_sortBy openNow:_openNow price:price start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -808,57 +803,27 @@
   
 }
 
-#pragma mark - UIActionSheetDelegate
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-  if (buttonIndex == actionSheet.cancelButtonIndex) return;
-  
-  if (actionSheet.tag == kActionSheetFilter) {
-    // best_match, distance, rating
-    RELEASE_SAFELY(_sortBy);
-    switch (buttonIndex) {
-      case 0: // smart
-        _sortBy = [@"best_match" retain];
-        break;
-      case 1: // distance
-        _sortBy = [@"distance" retain];
-        break;
-      case 2: // rating
-        _sortBy = [@"rating" retain];
-        break;
-      default:
-        _sortBy = [@"best_match" retain];
-        break;
-    }
-    
-    // Fire a refetch
-    _pagingStart = 0;
-    [self loadDataSource];
-  }
-}
-
 - (void)configureSortBy {
   RELEASE_SAFELY(_sortBy);
   NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
   switch (sortByIndex) {
-    case 0: // smart
-      _sortBy = [@"best_match" retain];
-      break;
-    case 1: // distance
+    case 0: // distance
       _sortBy = [@"distance" retain];
       break;
-    case 2: // rating
+    case 1: // rating
       _sortBy = [@"rating" retain];
       break;
-    default:
+    case 2: // everything
       _sortBy = [@"best_match" retain];
+      break;
+    default:
+      _sortBy = [@"distance" retain];
       break;
   }
 }
 
 - (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender {
   [self configureSortBy];
-  
-  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
   
   _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
   

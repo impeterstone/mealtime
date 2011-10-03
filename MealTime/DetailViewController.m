@@ -109,18 +109,6 @@
   [super viewWillAppear:animated];
   
   [self.navigationController setNavigationBarHidden:NO animated:animated];
-  
-  // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -182,9 +170,9 @@
   // Map
   CGFloat mapHeight = 0.0;
   if (isDeviceIPad()) {
-    mapHeight = 320.0;
+    mapHeight = 360.0;
   } else {
-    mapHeight = 160.0;
+    mapHeight = 180.0;
   }
   
   // Table Header View
@@ -505,6 +493,18 @@
   [UIView animateWithDuration:0.4 animations:^{
     _footerView.top -= _footerView.height;
   }];
+  
+  // NUX
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
+    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
+    nuxView.alpha = 0.0;
+    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+    [UIView animateWithDuration:0.4 animations:^{
+      nuxView.alpha = 1.0;
+    }];
+  }
   
   [super dataSourceDidLoad];
 }

@@ -74,7 +74,7 @@ static NSLock *_placesToRemoveLock = nil;
   NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
   if (query) {
-    query = [NSString stringWithFormat:@"Restaurants %@", query];
+    query = [NSString stringWithFormat:@"%@", query];
   } else {
     query = @"Restaurants";
   }
@@ -92,10 +92,10 @@ static NSLock *_placesToRemoveLock = nil;
   [urlString appendString:rppParam];
   [urlString appendString:@"&"];
   [urlString appendString:queryParam];
-  if (sortbyParam) {
-    [urlString appendString:@"&"];
-    [urlString appendString:sortbyParam];
-  }
+//  if (sortbyParam) {
+//    [urlString appendString:@"&"];
+//    [urlString appendString:sortbyParam];
+//  }
   if (radiusParam) {
     [urlString appendString:@"&"];
     [urlString appendString:radiusParam];

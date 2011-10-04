@@ -55,8 +55,9 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
-    [self configureFilters];
     _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+    _highlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
+    [self configureFilters];
     
     _pagingStart = 0;
     _pagingCount = 1000;
@@ -395,7 +396,7 @@
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   NSString *distanceTitle = nil;
   if (_numResults > 0) {
-    distanceTitle = [NSString stringWithFormat:@"Found %d Places", _numResults];
+    distanceTitle = [NSString stringWithFormat:@"Showing %d Places", _numResults];
   } else {
     distanceTitle = [NSString stringWithFormat:@"No Places Found"];
   }
@@ -515,18 +516,46 @@
   _cachedItems = [[NSMutableArray alloc] initWithArray:places];
   
   [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
+    
+  NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
+  
+  // Price filter
+  NSMutableString *predFmt = [NSMutableString string];
+  
+  if (_filterPrice) {
+    [predFmt appendFormat:@"price like %@", _filterPrice];
+  }
+  
+  // Highly Rated filter
+  if (_highlyRated) {
+    NSString *and = _filterPrice ? @" AND " : @"";
+    [predFmt appendFormat:@"%@numReviews > %d", and, HIGHLY_RATED_LIMIT];
+  }
+  
+  if ([predFmt length] > 0) {
+    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predFmt]];
+  }
   
   // Sort places based on filter
   if (_sortBy) {
     BOOL ascending = [_sortBy isEqualToString:@"distance"];
-    [_cachedItems sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:ascending]]];
+    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:ascending]]];
   }
+  
+  // Calculate number of places shown
+  NSString *numPlaces = nil;
+  if ([filteredPlaces count] > 0) {
+    numPlaces = [NSString stringWithFormat:@"Showing %d Places", [filteredPlaces count]];
+  } else {
+    numPlaces = [NSString stringWithFormat:@"No Places Found"];
+  }
+  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
   
   BOOL isReload = (_pagingStart == 0) ? YES : NO;
   if (isReload) {
-    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:_cachedItems] shouldAnimate:NO];
+    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
   } else {
-    [self dataSourceShouldLoadMoreObjects:_cachedItems forSection:0 shouldAnimate:YES];
+    [self dataSourceShouldLoadMoreObjects:filteredPlaces forSection:0 shouldAnimate:YES];
   }
   
 }
@@ -825,17 +854,17 @@
   RELEASE_SAFELY(_sortBy);
   NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
   switch (sortByIndex) {
-    case 0: // distance
-      _sortBy = [@"distance" retain];
-      break;
-    case 1: // rating
-      _sortBy = [@"score" retain];
-      break;
-    case 2: // everything
+    case 0: // best_match
       _sortBy = nil;
       break;
-    default:
+    case 1: // distance
       _sortBy = [@"distance" retain];
+      break;
+    case 2: // rating
+      _sortBy = [@"score" retain];
+      break;
+    default:
+      _sortBy = nil;
       break;
   }
   
@@ -865,6 +894,8 @@
 
 - (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender {
   [self configureFilters];
+  
+  _highlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
 
   if (_openNow != [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"]) {
     _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
@@ -877,8 +908,19 @@
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
   // Price filter
+  NSMutableString *predFmt = [NSMutableString string];
+  
   if (_filterPrice) {
-    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:@"price like %@", _filterPrice]];
+    [predFmt appendFormat:@"price like '%@'", _filterPrice];
+  }
+  
+  if (_highlyRated) {
+    NSString *and = _filterPrice ? @" AND " : @"";
+    [predFmt appendFormat:@"%@numReviews > %d", and, HIGHLY_RATED_LIMIT];
+  }
+
+  if ([predFmt length] > 0) {
+    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predFmt]];
   }
   
   // Sort places based on filter
@@ -886,6 +928,15 @@
     BOOL ascending = [_sortBy isEqualToString:@"distance"];
     [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:_sortBy ascending:ascending]]];
   }
+  
+  // Calculate number of places shown
+  NSString *numPlaces = nil;
+  if ([filteredPlaces count] > 0) {
+    numPlaces = [NSString stringWithFormat:@"Showing %d Places", [filteredPlaces count]];
+  } else {
+    numPlaces = [NSString stringWithFormat:@"No Places Found"];
+  }
+  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
   
   [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
 }

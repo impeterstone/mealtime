@@ -46,6 +46,7 @@
   
   BOOL _isSearchActive;
   BOOL _openNow;
+  BOOL _highlyRated;
 }
 
 @property (nonatomic, retain) NSString *whatQuery;

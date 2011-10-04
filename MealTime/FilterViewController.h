@@ -16,7 +16,7 @@
 
 @end
 
-@interface FilterViewController : PSBaseViewController {
+@interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate> {
   BOOL _filterChanged;
   id <FilterViewControllerDelegate> _delegate;
 }

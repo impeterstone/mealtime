@@ -123,6 +123,24 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 {
 //  NSLog(@"fonts: %@",[UIFont familyNames]);
   
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isFirstLaunch"]) {
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"isFirstLaunch"];
+    NSDictionary *cookieProperty = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithInt:339434502],
+                                    @"Created",
+                                    @"m.yelp.com",
+                                    @"Domain",
+                                    @"np",
+                                    @"Name",
+                                    @"/biz",
+                                    @"Path",
+                                    @"x",
+                                    @"Value",
+                                    nil];
+    NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:cookieProperty];
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookie:cookie];
+  }
+  
   [PSReachabilityCenter defaultCenter];
   
   _isBackgrounded = NO;

@@ -675,16 +675,20 @@
                                     @"biz",
                                     nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#yelp" attributes:localyticsDict];
+
+    // Always load Yelp's mobile site
+    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://m.yelp.com/biz/%@", [_place objectForKey:@"alias"]]];
+    [self.navigationController pushViewController:wvc animated:YES];
+    [wvc release];
     
-    if (isYelpInstalled()) {
-      // yelp:///biz/the-sentinel-san-francisco
-      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
-    } else {
-      WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://lite.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
-      [self.navigationController pushViewController:wvc animated:YES];
-      [wvc release];
-    }
-    
+//    if (isYelpInstalled()) {
+//      // yelp:///biz/the-sentinel-san-francisco
+//      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[NSString stringWithFormat:@"yelp:///biz/%@", [_place objectForKey:@"biz"]]]];
+//    } else {
+//      WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://m.yelp.com/biz/%@", [_place objectForKey:@"biz"]]];
+//      [self.navigationController pushViewController:wvc animated:YES];
+//      [wvc release];
+//    }
   } else if (alertView.tag == kAlertDirections) {
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],

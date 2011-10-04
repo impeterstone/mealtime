@@ -222,7 +222,8 @@
   
   _ribbonLabel.text = [[place objectForKey:@"numReviews"] notNil] ? [NSString stringWithFormat:@"%@ mentions", [_place objectForKey:@"numReviews"]] : @"No Mentions";
   
-  if ([[place objectForKey:@"numReviews"] notNil] && [[place objectForKey:@"numReviews"] integerValue] > HIGHLY_RATED_LIMIT) {
+  // Show highly rated ribbon
+  if ([[place objectForKey:@"numReviews"] integerValue] > HIGHLY_RATED_REVIEWS && [[place objectForKey:@"score"] integerValue] > HIGHLY_RATED_SCORE) {
     _ribbonLabel.text = @"Highly Rated";
     _ribbonView.alpha = 1.0;
   } else {

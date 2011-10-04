@@ -529,7 +529,7 @@
   // Highly Rated filter
   if (_highlyRated) {
     NSString *and = _filterPrice ? @" AND " : @"";
-    [predFmt appendFormat:@"%@numReviews > %d", and, HIGHLY_RATED_LIMIT];
+    [predFmt appendFormat:@"%@numReviews > %d AND score > %d", and, HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE];
   }
   
   if ([predFmt length] > 0) {
@@ -916,7 +916,7 @@
   
   if (_highlyRated) {
     NSString *and = _filterPrice ? @" AND " : @"";
-    [predFmt appendFormat:@"%@numReviews > %d", and, HIGHLY_RATED_LIMIT];
+    [predFmt appendFormat:@"%@numReviews > %d AND score > %d", and, HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE];
   }
 
   if ([predFmt length] > 0) {

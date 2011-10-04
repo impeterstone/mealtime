@@ -938,6 +938,7 @@
   }
   [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
   
+  [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
   [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
 }
 

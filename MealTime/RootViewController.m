@@ -523,7 +523,7 @@
   NSMutableString *predFmt = [NSMutableString string];
   
   if (_filterPrice) {
-    [predFmt appendFormat:@"price like %@", _filterPrice];
+    [predFmt appendFormat:@"price like '%@'", _filterPrice];
   }
   
   // Highly Rated filter

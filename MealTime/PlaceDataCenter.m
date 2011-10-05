@@ -73,12 +73,15 @@ static NSLock *_placesToRemoveLock = nil;
   NSString *openNowParam = openNow ? [NSString stringWithFormat:@"open_now=%d", [NSDate minutesSinceBeginningOfWeek]] : nil;
   NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
-  if (query) {
-    query = [NSString stringWithFormat:@"Restaurants %@", query];
-  } else {
-    query = @"Restaurants";
-  }
-  NSString *queryParam = [NSString stringWithFormat:@"find_desc=%@", [query stringByURLEncoding]];
+//  if (query) {
+//    query = [NSString stringWithFormat:@"find_desc=%@", query];
+//  } else {
+//    query = @"cflt=restaurants";
+//  }
+  
+  query = @"cflt=restaurants";
+  
+  NSString *queryParam = [NSString stringWithFormat:@"%@", [query stringByURLEncoding]];
   
   NSString *priceParam = (price == 0) ? nil : [NSString stringWithFormat:@"attrs=RestaurantsPriceRange2.%d", price];
   

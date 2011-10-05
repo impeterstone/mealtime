@@ -124,14 +124,14 @@
   //
   // Layout subviews
   //
-  CGFloat top = 110;
-  CGFloat left = MARGIN_X;
+  CGFloat top = isDeviceIPad() ? 330 : 110;
+  CGFloat left = isDeviceIPad() ? 234 : MARGIN_X;
   
   // Sort By Section
   UILabel *sbl = [UILabel labelWithText:@"Sort By" style:@"filterSectionLabel"];
   sbl.top = top;
-  sbl.left = left * 2;
-  sbl.width = self.view.width - left * 4;
+  sbl.left = left + 10;
+  sbl.width = 300;
   sbl.height = 30.0;
   [self.view addSubview:sbl];
   
@@ -145,8 +145,8 @@
   // Price Section
   UILabel *pl = [UILabel labelWithText:@"Price" style:@"filterSectionLabel"];
   pl.top = top;
-  pl.left = left * 2;
-  pl.width = self.view.width - left * 4;
+  pl.left = left + 10;
+  pl.width = 300;
   pl.height = 30.0;
   [self.view addSubview:pl];
   

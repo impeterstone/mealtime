@@ -10,6 +10,8 @@
 #import "PSCell.h"
 #import "PSURLCacheImageView.h"
 
+@class PSStarView;
+
 @interface PlaceCell : PSCell <PSImageViewDelegate> {
   PSURLCacheImageView *_photoView;
   UIImageView *_disclosureView;
@@ -22,6 +24,8 @@
   UILabel *_distanceLabel;
   UILabel *_categoryLabel;
   UILabel *_priceLabel;
+  
+  PSStarView *_starView;
   
   UIView *_scoreView;
   UILabel *_scoreLabel;

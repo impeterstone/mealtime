@@ -12,6 +12,7 @@
 #import "PSNetworkQueue.h"
 #import "PSDataCenter.h"
 #import "PSDatabaseCenter.h"
+#import "PSStarView.h"
 
 @implementation PlaceCell
 
@@ -103,6 +104,8 @@
     _scoreLabel.frame = _scoreView.bounds;
     [_scoreView addSubview:_scoreLabel];
     
+    _starView = [[PSStarView alloc] initWithFrame:CGRectZero];
+    
     // Add subviews
     [self.contentView addSubview:_photoView];
     [self.contentView addSubview:_disclosureView];
@@ -110,14 +113,16 @@
     [self.contentView addSubview:_distanceLabel];
     [self.contentView addSubview:_categoryLabel];
     [self.contentView addSubview:_priceLabel];
-    [self.contentView addSubview:_scoreView];
     [self.contentView addSubview:_ribbonView];
+    [self.contentView addSubview:_starView];
+//    [self.contentView addSubview:_scoreView];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  RELEASE_SAFELY(_starView);
   RELEASE_SAFELY(_ribbonView);
   RELEASE_SAFELY(_ribbonLabel);
   RELEASE_SAFELY(_scoreView);
@@ -150,6 +155,7 @@
   _photoView.urlPath = nil;
   _place = nil;
   _ribbonView.alpha = 0.0;
+  [_starView setRating:0.0];
 }
 
 - (void)layoutSubviews
@@ -159,10 +165,11 @@
   // Set Frames
   _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
   _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
-  _ribbonView.frame = CGRectMake(self.contentView.width - 85, MARGIN_Y * 2, 85, 24);
+  _ribbonView.frame = CGRectMake(self.contentView.width - 90, MARGIN_Y * 2, 90, 24);
   _ribbonLabel.frame = CGRectMake(0, 0, _ribbonView.width - MARGIN_X, _ribbonView.height);
   
-  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 42, 24);
+//  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 42, 24);
+  _starView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height);
   
   // Labels
   CGFloat top = self.contentView.height - 40 - MARGIN_Y;
@@ -200,7 +207,27 @@
 ;
   
   // Add Gradient Overlay
-  [_photoView addGradientLayer];
+//  [_photoView addGradientLayer];
+  [_photoView addGradientLayerWithColors:[NSArray arrayWithObjects:
+                                          (id)[RGBACOLOR(0, 0, 0, 0.70) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.40) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.15) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.10) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.20) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.40) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 0.80) CGColor],
+                                          (id)[RGBACOLOR(0, 0, 0, 1.00) CGColor],
+                                          nil]
+                            andLocations:[NSArray arrayWithObjects:
+                                          [NSNumber numberWithFloat:0.0],
+                                          [NSNumber numberWithFloat:0.15],
+                                          [NSNumber numberWithFloat:0.3],
+                                          [NSNumber numberWithFloat:0.45],
+                                          [NSNumber numberWithFloat:0.7],
+                                          [NSNumber numberWithFloat:0.80],
+                                          [NSNumber numberWithFloat:0.99],
+                                          [NSNumber numberWithFloat:1.0],
+                                          nil]];
 }
 
 #pragma mark - Fill and Height
@@ -220,7 +247,7 @@
   _photoView.urlPath = [place objectForKey:@"coverPhoto"];
   [_photoView loadImageAndDownload:YES];
   
-  _ribbonLabel.text = [[place objectForKey:@"numReviews"] notNil] ? [NSString stringWithFormat:@"%@ mentions", [_place objectForKey:@"numReviews"]] : @"No Mentions";
+//  _ribbonLabel.text = [[place objectForKey:@"numReviews"] notNil] ? [NSString stringWithFormat:@"%@ mentions", [_place objectForKey:@"numReviews"]] : @"No Mentions";
   
   // Show highly rated ribbon
 //  DLog(@"score: %g", [[place objectForKey:@"score"] doubleValue]);
@@ -276,6 +303,8 @@
   }
   
   _scoreLabel.text = score;
+  
+  [_starView setRating:[[place objectForKey:@"rating"] floatValue]];
   
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];

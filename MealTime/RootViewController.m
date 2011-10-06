@@ -52,8 +52,6 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
-    _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
-    
     _pagingStart = 0;
     _pagingCount = 1000;
     _pagingTotal = 1000;
@@ -381,8 +379,10 @@
   // 4828 - 3mi
   
 //  NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
+  
+  BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:nil location:_location radius:@"4828" sortby:nil openNow:_openNow price:0 start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:nil location:_location radius:@"4828" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -453,6 +453,7 @@
   // Num results
   _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
   [self updateNumResults];
+  DLog(@"Yelp got %d results", _numResults);
   
   NSMutableArray *places = [response objectForKey:@"places"];
   
@@ -670,6 +671,13 @@
 }
 
 - (void)executeSearch {
+  // Reset Filters
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
+  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
+  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
+  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
+  
   [self dismissSearch];
   
   // Where
@@ -711,6 +719,7 @@
 }
 
 - (void)searchCancelled {
+  _whereField.text = _whereQuery;
   [self dismissSearch];
 }
 
@@ -794,9 +803,8 @@
   
 }
 
-- (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender {
-  if (_openNow != [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"]) {
-    _openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+- (void)filter:(id)sender didSelectWithOptions:(NSDictionary *)options reload:(BOOL)reload {
+  if (reload) {
     // Fire a refetch if openNow was toggled to ON
     _pagingStart = 0;
     [self loadDataSource];

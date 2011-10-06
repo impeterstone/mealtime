@@ -14,7 +14,7 @@
 @protocol FilterViewControllerDelegate <NSObject>
 
 @optional
-- (void)filterDidSelectWithOptions:(NSDictionary *)options sender:(id)sender;
+- (void)filter:(id)sender didSelectWithOptions:(NSDictionary *)options reload:(BOOL)reload;
 
 @end
 
@@ -22,6 +22,7 @@
   PSSearchField *_whatField; // just a pointer
   
   BOOL _filterChanged;
+  BOOL _openNowChanged;
   id <FilterViewControllerDelegate> _delegate;
 }
 

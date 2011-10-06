@@ -39,7 +39,6 @@
   NSInteger _numResults;
   
   BOOL _isSearchActive;
-  BOOL _openNow;
 }
 
 @property (nonatomic, retain) NSString *whereQuery;

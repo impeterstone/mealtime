@@ -79,7 +79,7 @@ static NSLock *_placesToRemoveLock = nil;
 //    query = @"cflt=restaurants";
 //  }
   
-  query = @"cflt=restaurants";
+  query = @"find_desc=Restaurants";
   
   NSString *queryParam = [NSString stringWithFormat:@"%@", [query stringByURLEncoding]];
   
@@ -103,13 +103,13 @@ static NSLock *_placesToRemoveLock = nil;
     [urlString appendString:@"&"];
     [urlString appendString:openNowParam];
   }
-//  if (priceParam) {
-//    [urlString appendString:@"&"];
-//    [urlString appendString:priceParam];
-//  }
 //  if (sortbyParam) {
 //    [urlString appendString:@"&"];
 //    [urlString appendString:sortbyParam];
+//  }
+//  if (priceParam) {
+//    [urlString appendString:@"&"];
+//    [urlString appendString:priceParam];
 //  }
   
   NSURL *url = [NSURL URLWithString:urlString];

@@ -128,7 +128,7 @@
   
   // Done Button
   UIButton *doneButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 300, 44) andStyle:@"filterDoneButton" target:self action:@selector(done)];
-  [doneButton setBackgroundImage:[UIImage stretchableImageNamed:@"grouped_full_cell_highlighted.png" withLeftCapWidth:6 topCapWidth:6] forState:UIControlStateNormal];
+  [doneButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_round_blue.png" withLeftCapWidth:16 topCapWidth:22] forState:UIControlStateNormal];
   [doneButton setTitle:@"Apply Filters" forState:UIControlStateNormal];
   [self.view addSubview:doneButton];
   
@@ -192,8 +192,8 @@
 
 - (void)done {
   // tell delegate
-  if (_filterChanged && self.delegate && [self.delegate respondsToSelector:@selector(filterDidSelectWithOptions:sender:)]) {
-    [self.delegate filterDidSelectWithOptions:nil sender:self];
+  if ((_filterChanged || _openNowChanged) && self.delegate && [self.delegate respondsToSelector:@selector(filter:didSelectWithOptions:reload:)]) {
+    [self.delegate filter:self didSelectWithOptions:nil reload:_openNowChanged];
   }
   [self dismissModalViewControllerAnimated:YES];
 }
@@ -229,7 +229,9 @@
   BOOL currentValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
   if (currentValue != aSwitch.on) {
     [[NSUserDefaults standardUserDefaults] setBool:aSwitch.on forKey:@"filterOpenNow"];
-    _filterChanged = YES;
+    _openNowChanged = YES;
+  } else {
+    _openNowChanged = NO;
   }
 }
 

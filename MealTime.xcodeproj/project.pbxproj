@@ -308,6 +308,11 @@
 		28BCC98414280E2700C70AEF /* nux_overlay_detail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28BCC98214280E2700C70AEF /* nux_overlay_detail@2x.png */; };
 		28C252BA143D992F00FB6DA6 /* icon_star_half.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C252B8143D992F00FB6DA6 /* icon_star_half.png */; };
 		28C252BB143D992F00FB6DA6 /* icon_star_half@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C252B9143D992F00FB6DA6 /* icon_star_half@2x.png */; };
+		28C252BE143DAD7400FB6DA6 /* PSTutorialView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C252BD143DAD7400FB6DA6 /* PSTutorialView.m */; };
+		28C252C1143DAEE100FB6DA6 /* walkthrough.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C252BF143DAEE100FB6DA6 /* walkthrough.png */; };
+		28C252C2143DAEE100FB6DA6 /* walkthrough@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C252C0143DAEE100FB6DA6 /* walkthrough@2x.png */; };
+		28C403DF143DB1BE001BB99B /* walkthrough_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 28C403DE143DB1BE001BB99B /* walkthrough_pad.png */; };
+		28C403E2143DB5A0001BB99B /* PSTutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C403E1143DB5A0001BB99B /* PSTutorialViewController.m */; };
 		28CEDB591422C5660020E4B7 /* 7ml_logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDB581422C5660020E4B7 /* 7ml_logo@2x.png */; };
 		28CEDCBA14356D88008F827A /* nux_overlay_saved_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB714356D88008F827A /* nux_overlay_saved_pad.png */; };
 		28CEDCBB14356D88008F827A /* nux_overlay_saved.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB814356D88008F827A /* nux_overlay_saved.png */; };
@@ -866,6 +871,13 @@
 		28BCC98214280E2700C70AEF /* nux_overlay_detail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nux_overlay_detail@2x.png"; sourceTree = "<group>"; };
 		28C252B8143D992F00FB6DA6 /* icon_star_half.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_star_half.png; sourceTree = "<group>"; };
 		28C252B9143D992F00FB6DA6 /* icon_star_half@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_star_half@2x.png"; sourceTree = "<group>"; };
+		28C252BC143DAD7400FB6DA6 /* PSTutorialView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTutorialView.h; sourceTree = "<group>"; };
+		28C252BD143DAD7400FB6DA6 /* PSTutorialView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTutorialView.m; sourceTree = "<group>"; };
+		28C252BF143DAEE100FB6DA6 /* walkthrough.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = walkthrough.png; sourceTree = "<group>"; };
+		28C252C0143DAEE100FB6DA6 /* walkthrough@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "walkthrough@2x.png"; sourceTree = "<group>"; };
+		28C403DE143DB1BE001BB99B /* walkthrough_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = walkthrough_pad.png; sourceTree = "<group>"; };
+		28C403E0143DB5A0001BB99B /* PSTutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSTutorialViewController.h; sourceTree = "<group>"; };
+		28C403E1143DB5A0001BB99B /* PSTutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSTutorialViewController.m; sourceTree = "<group>"; };
 		28CEDB581422C5660020E4B7 /* 7ml_logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "7ml_logo@2x.png"; sourceTree = "<group>"; };
 		28CEDCB714356D88008F827A /* nux_overlay_saved_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved_pad.png; sourceTree = "<group>"; };
 		28CEDCB814356D88008F827A /* nux_overlay_saved.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nux_overlay_saved.png; sourceTree = "<group>"; };
@@ -1220,6 +1232,8 @@
 				2814E38613F1F01400D7A85A /* PSView.m */,
 				2814E38713F1F01400D7A85A /* PSWelcomeView.h */,
 				2814E38813F1F01400D7A85A /* PSWelcomeView.m */,
+				28C252BC143DAD7400FB6DA6 /* PSTutorialView.h */,
+				28C252BD143DAD7400FB6DA6 /* PSTutorialView.m */,
 				2814E38913F1F01400D7A85A /* PSZoomView.h */,
 				2814E38A13F1F01400D7A85A /* PSZoomView.m */,
 				28BCC975142808D800C70AEF /* PSOverlayImageView.h */,
@@ -1693,6 +1707,8 @@
 				285570C4140C7949004D34EF /* PSFacebookCenter.m */,
 				2819F8F11428A07B008382DD /* PSMailCenter.h */,
 				2819F8F21428A07B008382DD /* PSMailCenter.m */,
+				28C403E0143DB5A0001BB99B /* PSTutorialViewController.h */,
+				28C403E1143DB5A0001BB99B /* PSTutorialViewController.m */,
 				2814E34013F1F01400D7A85A /* Vendor */,
 				2814E37413F1F01400D7A85A /* Views */,
 			);
@@ -1989,6 +2005,9 @@
 		28F7492213F209840056D111 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				28C403DE143DB1BE001BB99B /* walkthrough_pad.png */,
+				28C252BF143DAEE100FB6DA6 /* walkthrough.png */,
+				28C252C0143DAEE100FB6DA6 /* walkthrough@2x.png */,
 				283BF133142D51D0006BB231 /* tabbar */,
 				28BCC9781428097D00C70AEF /* nux */,
 				28E423481424046200F593CE /* table */,
@@ -2405,6 +2424,9 @@
 				28D386CD143D93C500046C92 /* icon_star_silver@2x.png in Resources */,
 				28C252BA143D992F00FB6DA6 /* icon_star_half.png in Resources */,
 				28C252BB143D992F00FB6DA6 /* icon_star_half@2x.png in Resources */,
+				28C252C1143DAEE100FB6DA6 /* walkthrough.png in Resources */,
+				28C252C2143DAEE100FB6DA6 /* walkthrough@2x.png in Resources */,
+				28C403DF143DB1BE001BB99B /* walkthrough_pad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2539,6 +2561,8 @@
 				28CEDCBF14357FF6008F827A /* PSReachabilityCenter.m in Sources */,
 				28FC5727143775A600B61C2B /* FilterViewController.m in Sources */,
 				28D386D0143D93EA00046C92 /* PSStarView.m in Sources */,
+				28C252BE143DAD7400FB6DA6 /* PSTutorialView.m in Sources */,
+				28C403E2143DB5A0001BB99B /* PSTutorialViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

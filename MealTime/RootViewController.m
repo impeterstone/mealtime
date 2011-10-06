@@ -17,8 +17,8 @@
 #import "ListViewController.h"
 #import "InfoViewController.h"
 #import "PSSearchField.h"
-#import "PSOverlayImageView.h"
 #import "PSReachabilityCenter.h"
+#import "PSTutorialViewController.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -133,13 +133,10 @@
   // NUX
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
+    PSTutorialViewController *tvc = [[PSTutorialViewController alloc] initWithNibName:nil bundle:nil];
+    tvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentModalViewController:tvc animated:NO];
+    [tvc release];
   }
 }
 

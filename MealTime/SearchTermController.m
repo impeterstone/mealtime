@@ -169,6 +169,8 @@
   cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
   if (cell == nil) {
     cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
+    cell.textLabel.font = [PSStyleSheet fontForStyle:@"searchTermLabel"];
+    cell.textLabel.textColor = [PSStyleSheet textColorForStyle:@"searchTermLabel"];
   }
   
   NSString *term = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];

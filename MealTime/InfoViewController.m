@@ -13,6 +13,7 @@
 #import "PSMailCenter.h"
 #import "UIDevice-Hardware.h"
 #import "Crittercism.h"
+#import "PSTutorialViewController.h"
 
 @interface InfoViewController (Private)
 
@@ -128,10 +129,17 @@
   NSDictionary *aboutsml = [NSDictionary dictionaryWithObjectsAndKeys:@"About Seven Minute Labs", @"title", @"http://sevenminutelabs.com/about", @"link", nil];
   NSDictionary *terms = [NSDictionary dictionaryWithObjectsAndKeys:@"Terms & Conditions", @"title", @"http://sevenminutelabs.com/terms", @"link", nil];
   NSDictionary *privacy = [NSDictionary dictionaryWithObjectsAndKeys:@"Privacy Policy", @"title", @"http://sevenminutelabs.com/privacy", @"link", nil];
+  
   [second addObject:aboutsml];
   [second addObject:terms];
   [second addObject:privacy];
   [self.items addObject:second];
+  
+  // Third Section
+  NSMutableArray *third = [NSMutableArray array];
+  NSDictionary *howtouse = [NSDictionary dictionaryWithObjectsAndKeys:@"How to use MealTime", @"title", nil];
+  [third addObject:howtouse];
+  [self.items addObject:third];
   
   [self.tableView reloadData];
 }
@@ -242,6 +250,14 @@
   // Links
   if (indexPath.section == 1) {
     [self openLink:[object objectForKey:@"link"]];
+  }
+  
+  // How to use
+  if (indexPath.section == 2) {
+    PSTutorialViewController *tvc = [[PSTutorialViewController alloc] initWithNibName:nil bundle:nil];
+    tvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    [self presentModalViewController:tvc animated:YES];
+    [tvc release];
   }
 }
 

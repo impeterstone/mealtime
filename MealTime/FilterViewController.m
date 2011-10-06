@@ -7,6 +7,7 @@
 //
 
 #import "FilterViewController.h"
+#import "PSSearchField.h"
 
 #define MARGIN_X 10.0
 #define MARGIN_Y 10.0
@@ -46,6 +47,22 @@
   UITapGestureRecognizer *gr = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(done)] autorelease];
   gr.delegate = self;
   [self.view addGestureRecognizer:gr];
+  
+  // Filter What?
+  _whatField = [[[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, 300, 44) style:PSSearchFieldStyleCell] autorelease];
+  _whatField.delegate = self;
+  _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
+  _whatField.returnKeyType = UIReturnKeyDone;
+  _whatField.placeholder = @"Filter by Name or Cuisine";
+  
+  // Left/Right View
+  _whatField.leftViewMode = UITextFieldViewModeAlways;
+  UIImageView *what = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+  what.contentMode = UIViewContentModeCenter;
+  _whatField.leftView = what;
+  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  
+  [self.view addSubview:_whatField];
   
   // Sortby
   UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Smart", @"Distance", @"Rating", nil]] autorelease];
@@ -120,15 +137,16 @@
   price.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
   openNowSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
   hrSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
+  _whatField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
   
   //
   // Layout subviews
   //
-  CGFloat top = isDeviceIPad() ? 330 : 110;
+  CGFloat top = isDeviceIPad() ? 280 : 55;
   CGFloat left = isDeviceIPad() ? 234 : MARGIN_X;
   
   // Sort By Section
-  UILabel *sbl = [UILabel labelWithText:@"Sort By" style:@"filterSectionLabel"];
+  UILabel *sbl = [UILabel labelWithText:@"Filter and Sort Results" style:@"filterSectionLabel"];
   sbl.top = top;
   sbl.left = left + 10;
   sbl.width = 300;
@@ -137,25 +155,11 @@
   
   top += sbl.height;
   
-  sortby.top = top;
-  sortby.left = left;
+  // Fields
+  _whatField.top = top;
+  _whatField.left = left;
   
-  top += sortby.height;
-  
-  // Price Section
-  UILabel *pl = [UILabel labelWithText:@"Price" style:@"filterSectionLabel"];
-  pl.top = top;
-  pl.left = left + 10;
-  pl.width = 300;
-  pl.height = 30.0;
-  [self.view addSubview:pl];
-  
-  top += pl.height;
-  
-  price.top = top;
-  price.left = left;
-
-  top += price.height + MARGIN_Y * 2;
+  top += _whatField.height + MARGIN_Y * 2;
   
   // Open Now
   openNowView.top = top;
@@ -168,6 +172,16 @@
   hrView.left = left;
   
   top += hrView.height + MARGIN_Y * 2;
+  
+  sortby.top = top;
+  sortby.left = left;
+  
+  top += sortby.height + MARGIN_Y * 2;
+  
+  price.top = top;
+  price.left = left;
+
+  top += price.height + MARGIN_Y * 2;
   
   // Done Button
   doneButton.top = top;
@@ -185,6 +199,8 @@
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+  if ([_whatField isFirstResponder]) return NO;
+  
   if ([touch.view isEqual:self.view]) {
     return YES;
   } else {
@@ -223,6 +239,24 @@
     [[NSUserDefaults standardUserDefaults] setBool:aSwitch.on forKey:@"filterHighlyRated"];
     _filterChanged = YES;
   }
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+  [textField resignFirstResponder];
+  if (![textField isEditing]) {
+    [textField becomeFirstResponder];
+  }
+  
+  // Update What filter
+  if (![textField.text isEqualToString:[[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"]]) {
+      [[NSUserDefaults standardUserDefaults] setObject:textField.text forKey:@"filterWhat"];
+    _filterChanged = YES;
+  }
+  
+  [textField resignFirstResponder];
+  
+  return YES;
 }
 
 #pragma mark - State Machine

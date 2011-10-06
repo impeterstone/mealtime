@@ -311,6 +311,8 @@
 		28CEDCBB14356D88008F827A /* nux_overlay_saved.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB814356D88008F827A /* nux_overlay_saved.png */; };
 		28CEDCBC14356D88008F827A /* nux_overlay_saved@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28CEDCB914356D88008F827A /* nux_overlay_saved@2x.png */; };
 		28CEDCBF14357FF6008F827A /* PSReachabilityCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CEDCBE14357FF6008F827A /* PSReachabilityCenter.m */; };
+		28D386C4143D3C6100046C92 /* bg_searchfield_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28D386C2143D3C6100046C92 /* bg_searchfield_white@2x.png */; };
+		28D386C5143D3C6100046C92 /* bg_searchfield_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 28D386C3143D3C6100046C92 /* bg_searchfield_white.png */; };
 		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
@@ -861,6 +863,8 @@
 		28CEDCB914356D88008F827A /* nux_overlay_saved@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nux_overlay_saved@2x.png"; sourceTree = "<group>"; };
 		28CEDCBD14357FF6008F827A /* PSReachabilityCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSReachabilityCenter.h; sourceTree = "<group>"; };
 		28CEDCBE14357FF6008F827A /* PSReachabilityCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSReachabilityCenter.m; sourceTree = "<group>"; };
+		28D386C2143D3C6100046C92 /* bg_searchfield_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_searchfield_white@2x.png"; sourceTree = "<group>"; };
+		28D386C3143D3C6100046C92 /* bg_searchfield_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_searchfield_white.png; sourceTree = "<group>"; };
 		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
@@ -1718,6 +1722,8 @@
 				28B589F01408781400F0EDB6 /* bg_actionbar.png */,
 				28B589F11408781400F0EDB6 /* bg_actionbar@2x.png */,
 				28A9FB6613F341AA00EFB191 /* bg_caption.png */,
+				28D386C2143D3C6100046C92 /* bg_searchfield_white@2x.png */,
+				28D386C3143D3C6100046C92 /* bg_searchfield_white.png */,
 				2896F3161420C5B00075EF21 /* bg_searchfield.png */,
 				2896F3171420C5B00075EF21 /* bg_searchfield@2x.png */,
 			);
@@ -2368,6 +2374,8 @@
 				28CEDCBA14356D88008F827A /* nux_overlay_saved_pad.png in Resources */,
 				28CEDCBB14356D88008F827A /* nux_overlay_saved.png in Resources */,
 				28CEDCBC14356D88008F827A /* nux_overlay_saved@2x.png in Resources */,
+				28D386C4143D3C6100046C92 /* bg_searchfield_white@2x.png in Resources */,
+				28D386C5143D3C6100046C92 /* bg_searchfield_white.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

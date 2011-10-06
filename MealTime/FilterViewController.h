@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "PSBaseViewController.h"
 
+@class PSSearchField;
+
 @protocol FilterViewControllerDelegate <NSObject>
 
 @optional
@@ -16,7 +18,9 @@
 
 @end
 
-@interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate> {
+@interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate, UITextFieldDelegate> {
+  PSSearchField *_whatField; // just a pointer
+  
   BOOL _filterChanged;
   id <FilterViewControllerDelegate> _delegate;
 }

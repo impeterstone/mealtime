@@ -301,7 +301,8 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#showLists"];
   
   ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeView];
-  UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
+  UINavigationController *lnc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  lnc.viewControllers = [NSArray arrayWithObject:lvc];
   [self presentModalViewController:lnc animated:YES];
   [lvc release];
   [lnc release];
@@ -311,7 +312,8 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#info"];
   
   InfoViewController *ivc = [[InfoViewController alloc] initWithNibName:nil bundle:nil];
-  UINavigationController *inc = [[UINavigationController alloc] initWithRootViewController:ivc];
+  UINavigationController *inc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  inc.viewControllers = [NSArray arrayWithObject:ivc];
   inc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
   [self presentModalViewController:inc animated:YES];
   [ivc release];

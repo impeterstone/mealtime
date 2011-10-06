@@ -11,8 +11,6 @@
 #import "NetworkConstants.h"
 #import "GANTracker.h"
 #import "LocalyticsSession.h"
-#import "UINavigationBar+Custom.h"
-#import "UIToolbar+Custom.h"
 
 #ifndef NDEBUG
 #define kLocalyticsKey @"9acaa48fe346d8d9aac0b09-c65cd5a8-d033-11e0-093d-007f58cb3154"

@@ -18,6 +18,8 @@
 		2804B582140857A100AE996A /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2804B580140857A100AE996A /* Icon@2x.png */; };
 		2804B587140857B300AE996A /* bg_darkwood.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2804B583140857B300AE996A /* bg_darkwood.jpg */; };
 		2804B588140857B300AE996A /* bg_darkwood@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2804B584140857B300AE996A /* bg_darkwood@2x.jpg */; };
+		2804B68F143DDC3A00E5147F /* PSNavigationController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2804B68E143DDC3A00E5147F /* PSNavigationController.xib */; };
+		2804B692143DDC8F00E5147F /* PSNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 2804B691143DDC8E00E5147F /* PSNavigationBar.m */; };
 		2808DF171410737800C7E652 /* icon_searchfield.png in Resources */ = {isa = PBXBuildFile; fileRef = 2808DF151410737800C7E652 /* icon_searchfield.png */; };
 		2808DF181410737800C7E652 /* icon_searchfield@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2808DF161410737800C7E652 /* icon_searchfield@2x.png */; };
 		28094CFE142D62C0005678AC /* tab_btn_center_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 28094CFC142D62C0005678AC /* tab_btn_center_selected.png */; };
@@ -76,7 +78,6 @@
 		2814E3C713F1F01400D7A85A /* PSView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38613F1F01400D7A85A /* PSView.m */; };
 		2814E3C813F1F01400D7A85A /* PSWelcomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38813F1F01400D7A85A /* PSWelcomeView.m */; };
 		2814E3C913F1F01400D7A85A /* PSZoomView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2814E38A13F1F01400D7A85A /* PSZoomView.m */; };
-		28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 28173C4F1407255200EF628E /* UINavigationBar+Custom.m */; };
 		2819F8F31428A07C008382DD /* PSMailCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2819F8F21428A07B008382DD /* PSMailCenter.m */; };
 		282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 282CC6881420532E007F0AF8 /* SavedViewController.m */; };
 		282CC6921420580E007F0AF8 /* navbar_green_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 282CC68E1420580E007F0AF8 /* navbar_green_button.png */; };
@@ -210,7 +211,6 @@
 		285570C1140C7827004D34EF /* FBLoginDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BB140C7827004D34EF /* FBLoginDialog.m */; };
 		285570C2140C7827004D34EF /* FBRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570BD140C7827004D34EF /* FBRequest.m */; };
 		285570C5140C794A004D34EF /* PSFacebookCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 285570C4140C7949004D34EF /* PSFacebookCenter.m */; };
-		2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */ = {isa = PBXBuildFile; fileRef = 2863B8C5140720820021946C /* UIToolbar+Custom.m */; };
 		2863B8CA140721C30021946C /* bg_toolbar.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C8140721C30021946C /* bg_toolbar.png */; };
 		2863B8CB140721C30021946C /* bg_toolbar@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 2863B8C9140721C30021946C /* bg_toolbar@2x.png */; };
 		286A57851410B614001D9490 /* JSONKit.m in Sources */ = {isa = PBXBuildFile; fileRef = 286A57841410B614001D9490 /* JSONKit.m */; };
@@ -470,6 +470,9 @@
 		2804B580140857A100AE996A /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		2804B583140857B300AE996A /* bg_darkwood.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bg_darkwood.jpg; sourceTree = "<group>"; };
 		2804B584140857B300AE996A /* bg_darkwood@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "bg_darkwood@2x.jpg"; sourceTree = "<group>"; };
+		2804B68E143DDC3A00E5147F /* PSNavigationController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PSNavigationController.xib; sourceTree = "<group>"; };
+		2804B690143DDC8E00E5147F /* PSNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSNavigationBar.h; sourceTree = "<group>"; };
+		2804B691143DDC8E00E5147F /* PSNavigationBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSNavigationBar.m; sourceTree = "<group>"; };
 		2808DF151410737800C7E652 /* icon_searchfield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_searchfield.png; sourceTree = "<group>"; };
 		2808DF161410737800C7E652 /* icon_searchfield@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_searchfield@2x.png"; sourceTree = "<group>"; };
 		28094CFC142D62C0005678AC /* tab_btn_center_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = tab_btn_center_selected.png; sourceTree = "<group>"; };
@@ -589,8 +592,6 @@
 		2814E38813F1F01400D7A85A /* PSWelcomeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSWelcomeView.m; sourceTree = "<group>"; };
 		2814E38913F1F01400D7A85A /* PSZoomView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSZoomView.h; sourceTree = "<group>"; };
 		2814E38A13F1F01400D7A85A /* PSZoomView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSZoomView.m; sourceTree = "<group>"; };
-		28173C4E1407255200EF628E /* UINavigationBar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationBar+Custom.h"; sourceTree = "<group>"; };
-		28173C4F1407255200EF628E /* UINavigationBar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationBar+Custom.m"; sourceTree = "<group>"; };
 		2819F8F11428A07B008382DD /* PSMailCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSMailCenter.h; sourceTree = "<group>"; };
 		2819F8F21428A07B008382DD /* PSMailCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSMailCenter.m; sourceTree = "<group>"; };
 		282CC6871420532E007F0AF8 /* SavedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedViewController.h; sourceTree = "<group>"; };
@@ -748,8 +749,6 @@
 		285570BD140C7827004D34EF /* FBRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBRequest.m; sourceTree = "<group>"; };
 		285570C3140C7949004D34EF /* PSFacebookCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSFacebookCenter.h; sourceTree = "<group>"; };
 		285570C4140C7949004D34EF /* PSFacebookCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSFacebookCenter.m; sourceTree = "<group>"; };
-		2863B8C4140720820021946C /* UIToolbar+Custom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIToolbar+Custom.h"; sourceTree = "<group>"; };
-		2863B8C5140720820021946C /* UIToolbar+Custom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIToolbar+Custom.m"; sourceTree = "<group>"; };
 		2863B8C8140721C30021946C /* bg_toolbar.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_toolbar.png; sourceTree = "<group>"; };
 		2863B8C9140721C30021946C /* bg_toolbar@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_toolbar@2x.png"; sourceTree = "<group>"; };
 		286A57831410B614001D9490 /* JSONKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSONKit.h; sourceTree = "<group>"; };
@@ -1240,6 +1239,8 @@
 				28BCC976142808D800C70AEF /* PSOverlayImageView.m */,
 				28D386CE143D93EA00046C92 /* PSStarView.h */,
 				28D386CF143D93EA00046C92 /* PSStarView.m */,
+				2804B690143DDC8E00E5147F /* PSNavigationBar.h */,
+				2804B691143DDC8E00E5147F /* PSNavigationBar.m */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1578,6 +1579,7 @@
 				28A1B28313F1CFB000EB971E /* MealTime-Prefix.pch */,
 				28A1B28713F1CFB000EB971E /* MainWindow.xib */,
 				28A87F1D141A392D001ACC62 /* Settings.bundle */,
+				2804B68E143DDC3A00E5147F /* PSNavigationController.xib */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1994,10 +1996,6 @@
 		28F7491E13F209510056D111 /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				2863B8C4140720820021946C /* UIToolbar+Custom.h */,
-				2863B8C5140720820021946C /* UIToolbar+Custom.m */,
-				28173C4E1407255200EF628E /* UINavigationBar+Custom.h */,
-				28173C4F1407255200EF628E /* UINavigationBar+Custom.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -2081,7 +2079,7 @@
 		28A1B26813F1CFAF00EB971E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0410;
+				LastUpgradeCheck = 0420;
 			};
 			buildConfigurationList = 28A1B26B13F1CFAF00EB971E /* Build configuration list for PBXProject "MealTime" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -2427,6 +2425,7 @@
 				28C252C1143DAEE100FB6DA6 /* walkthrough.png in Resources */,
 				28C252C2143DAEE100FB6DA6 /* walkthrough@2x.png in Resources */,
 				28C403DF143DB1BE001BB99B /* walkthrough_pad.png in Resources */,
+				2804B68F143DDC3A00E5147F /* PSNavigationController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2520,8 +2519,6 @@
 				28E9BCD51405D2B700A0F3BA /* PSScrapeCenter.m in Sources */,
 				28E9BD021405F49100A0F3BA /* ZoomViewController.m in Sources */,
 				28417ECF14060A4A0050C04D /* PSLocationCenter.m in Sources */,
-				2863B8C6140720820021946C /* UIToolbar+Custom.m in Sources */,
-				28173C501407255200EF628E /* UINavigationBar+Custom.m in Sources */,
 				28B589EE140871D600F0EDB6 /* MapViewController.m in Sources */,
 				28B58A4A140881AD00F0EDB6 /* WebViewController.m in Sources */,
 				28B58A4E140889A700F0EDB6 /* RegexKitLite.m in Sources */,
@@ -2563,6 +2560,7 @@
 				28D386D0143D93EA00046C92 /* PSStarView.m in Sources */,
 				28C252BE143DAD7400FB6DA6 /* PSTutorialView.m in Sources */,
 				28C403E2143DB5A0001BB99B /* PSTutorialViewController.m in Sources */,
+				2804B692143DDC8F00E5147F /* PSNavigationBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2603,7 +2601,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -2621,7 +2619,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -2639,6 +2637,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;
@@ -2663,6 +2662,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "MealTime/MealTime-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.1;

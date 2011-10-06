@@ -169,8 +169,18 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   
   // Initialize RootViewController
   RootViewController *rvc = [[[RootViewController alloc] init] autorelease];
-  _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];
-  _navigationController.navigationBar.tintColor = RGBACOLOR(80, 80, 80, 1.0);
+  
+  _navigationController = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  _navigationController.viewControllers = [NSArray arrayWithObject:rvc];
+  
+//  _navigationController = [[UINavigationController alloc] initWithRootViewController:rvc];
+//  if([_navigationController.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)] ) {
+//    //iOS 5 new UINavigationBar custom background
+//    [_navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"bg_navbar.png"] forBarMetrics:UIBarMetricsDefault];
+//  } else {
+//    UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_navbar.png"]] autorelease];
+//    [_navigationController.navigationBar insertSubview:bg atIndex:0];
+//  }
   
   [self.window addSubview:_navigationController.view];
   [self.window makeKeyAndVisible];

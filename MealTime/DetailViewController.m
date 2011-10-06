@@ -295,7 +295,8 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
   
   ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
-  UINavigationController *lnc = [[UINavigationController alloc] initWithRootViewController:lvc];
+  UINavigationController *lnc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  lnc.viewControllers = [NSArray arrayWithObject:lvc];
   [self presentModalViewController:lnc animated:YES];
   [lvc release];
   [lnc release];

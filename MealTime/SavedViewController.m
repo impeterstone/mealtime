@@ -193,7 +193,8 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"saved#showNotes"];
   
   NoteViewController *nvc = [[NoteViewController alloc] initWithListSid:_sid];
-  UINavigationController *nnc = [[UINavigationController alloc] initWithRootViewController:nvc];
+  UINavigationController *nnc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  nnc.viewControllers = [NSArray arrayWithObject:nvc];
   [self presentModalViewController:nnc animated:YES];
   [nvc release];
   [nnc release];

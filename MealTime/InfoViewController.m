@@ -13,7 +13,7 @@
 #import "PSMailCenter.h"
 #import "UIDevice-Hardware.h"
 #import "Crittercism.h"
-#import "PSTutorialViewController.h"
+#import "TutorialViewController.h"
 
 @interface InfoViewController (Private)
 
@@ -254,7 +254,7 @@
   
   // How to use
   if (indexPath.section == 2) {
-    PSTutorialViewController *tvc = [[PSTutorialViewController alloc] initWithNibName:nil bundle:nil];
+    TutorialViewController *tvc = [[TutorialViewController alloc] initWithNibName:nil bundle:nil];
     tvc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentModalViewController:tvc animated:YES];
     [tvc release];

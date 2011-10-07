@@ -18,7 +18,7 @@
 #import "InfoViewController.h"
 #import "PSSearchField.h"
 #import "PSReachabilityCenter.h"
-#import "PSTutorialViewController.h"
+#import "TutorialViewController.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -133,7 +133,7 @@
   // NUX
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-    PSTutorialViewController *tvc = [[PSTutorialViewController alloc] initWithNibName:nil bundle:nil];
+    TutorialViewController *tvc = [[TutorialViewController alloc] initWithNibName:nil bundle:nil];
     tvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentModalViewController:tvc animated:NO];
     [tvc release];

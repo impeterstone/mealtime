@@ -2052,9 +2052,6 @@
 		28F7492213F209840056D111 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				28C403DE143DB1BE001BB99B /* walkthrough_pad.png */,
-				28C252BF143DAEE100FB6DA6 /* walkthrough.png */,
-				28C252C0143DAEE100FB6DA6 /* walkthrough@2x.png */,
 				283BF133142D51D0006BB231 /* tabbar */,
 				28BCC9781428097D00C70AEF /* nux */,
 				28E423481424046200F593CE /* table */,
@@ -2062,6 +2059,9 @@
 				28417EC4140609970050C04D /* icons */,
 				28417E4E1406040B0050C04D /* buttons */,
 				28A9FB6513F3419E00EFB191 /* bg */,
+				28C403DE143DB1BE001BB99B /* walkthrough_pad.png */,
+				28C252BF143DAEE100FB6DA6 /* walkthrough.png */,
+				28C252C0143DAEE100FB6DA6 /* walkthrough@2x.png */,
 				28A9FAC913F2891F00EFB191 /* ribbon.png */,
 				28A9FACA13F2891F00EFB191 /* ribbon@2x.png */,
 				2830D06C1420D56F0003DD3F /* 7ml_logo.png */,

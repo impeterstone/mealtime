@@ -8,6 +8,7 @@
 
 #import "MealTimeAppDelegate.h"
 #import "PSConstants.h"
+#import "PSStyleSheet.h"
 #import "RootViewController.h"
 #import "PSFacebookCenter.h"
 #import "PSDatabaseCenter.h"

@@ -222,6 +222,7 @@
 		287ABA0F140CBE3C0003CACC /* bg_pill@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 287ABA0D140CBE3C0003CACC /* bg_pill@2x.png */; };
 		288A1E5614203F3E00ABC840 /* bg_navbar_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 288A1E5514203F3E00ABC840 /* bg_navbar_pad.png */; };
 		288A1E5814203F7A00ABC840 /* bg_toolbar_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 288A1E5714203F7A00ABC840 /* bg_toolbar_pad.png */; };
+		288A72AE143F8C9B00CC48A2 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A72AD143F8C9B00CC48A2 /* libxml2.dylib */; };
 		289050D4142EF077006632F8 /* nullview_error_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 289050D3142EF077006632F8 /* nullview_error_pad.png */; };
 		289050D8142EF9CD006632F8 /* nullview_noresults_pad.png in Resources */ = {isa = PBXBuildFile; fileRef = 289050D5142EF9CD006632F8 /* nullview_noresults_pad.png */; };
 		289050D9142EF9CD006632F8 /* nullview_noresults.png in Resources */ = {isa = PBXBuildFile; fileRef = 289050D6142EF9CD006632F8 /* nullview_noresults.png */; };
@@ -325,7 +326,6 @@
 		28D386CC143D93C500046C92 /* icon_star_silver.png in Resources */ = {isa = PBXBuildFile; fileRef = 28D386C8143D93C400046C92 /* icon_star_silver.png */; };
 		28D386CD143D93C500046C92 /* icon_star_silver@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28D386C9143D93C500046C92 /* icon_star_silver@2x.png */; };
 		28D386D0143D93EA00046C92 /* PSStarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 28D386CF143D93EA00046C92 /* PSStarView.m */; };
-		28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65A0140586BD00B42F20 /* libxml2.2.dylib */; };
 		28DD65A91405889500B42F20 /* yelpphotos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A71405889500B42F20 /* yelpphotos.html */; };
 		28DD65AA1405889500B42F20 /* yelpplaces.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65A81405889500B42F20 /* yelpplaces.html */; };
 		28DD65BA1405944600B42F20 /* yelpplaces50.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65B91405944600B42F20 /* yelpplaces50.html */; };
@@ -612,7 +612,6 @@
 		282F928E140B5BD3006F5132 /* EGODatabaseResult.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabaseResult.m; sourceTree = "<group>"; };
 		282F928F140B5BD3006F5132 /* EGODatabaseRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EGODatabaseRow.h; sourceTree = "<group>"; };
 		282F9290140B5BD3006F5132 /* EGODatabaseRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EGODatabaseRow.m; sourceTree = "<group>"; };
-		282F92D4140B5C4C006F5132 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		282F92D6140B5CF9006F5132 /* PSDatabaseCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSDatabaseCenter.h; sourceTree = "<group>"; };
 		282F92D7140B5CF9006F5132 /* PSDatabaseCenter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSDatabaseCenter.m; sourceTree = "<group>"; };
 		282F92D9140B5E8C006F5132 /* sml.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = sml.sqlite; sourceTree = "<group>"; };
@@ -761,6 +760,7 @@
 		287ABA0D140CBE3C0003CACC /* bg_pill@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bg_pill@2x.png"; sourceTree = "<group>"; };
 		288A1E5514203F3E00ABC840 /* bg_navbar_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_navbar_pad.png; sourceTree = "<group>"; };
 		288A1E5714203F7A00ABC840 /* bg_toolbar_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bg_toolbar_pad.png; sourceTree = "<group>"; };
+		288A72AD143F8C9B00CC48A2 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		289050D3142EF077006632F8 /* nullview_error_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_error_pad.png; sourceTree = "<group>"; };
 		289050D5142EF9CD006632F8 /* nullview_noresults_pad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_noresults_pad.png; sourceTree = "<group>"; };
 		289050D6142EF9CD006632F8 /* nullview_noresults.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_noresults.png; sourceTree = "<group>"; };
@@ -891,7 +891,6 @@
 		28D386C9143D93C500046C92 /* icon_star_silver@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon_star_silver@2x.png"; sourceTree = "<group>"; };
 		28D386CE143D93EA00046C92 /* PSStarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PSStarView.h; sourceTree = "<group>"; };
 		28D386CF143D93EA00046C92 /* PSStarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PSStarView.m; sourceTree = "<group>"; };
-		28DD65A0140586BD00B42F20 /* libxml2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.2.dylib; path = usr/lib/libxml2.2.dylib; sourceTree = SDKROOT; };
 		28DD65A71405889500B42F20 /* yelpphotos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpphotos.html; sourceTree = "<group>"; };
 		28DD65A81405889500B42F20 /* yelpplaces.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces.html; sourceTree = "<group>"; };
 		28DD65B91405944600B42F20 /* yelpplaces50.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces50.html; sourceTree = "<group>"; };
@@ -1056,9 +1055,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				288A72AE143F8C9B00CC48A2 /* libxml2.dylib in Frameworks */,
 				28DD65BF140599B800B42F20 /* CoreLocation.framework in Frameworks */,
 				28DD65BD140597E900B42F20 /* MapKit.framework in Frameworks */,
-				28DD65A1140586BD00B42F20 /* libxml2.2.dylib in Frameworks */,
 				28B0EF8B13F1DF74004813B2 /* MobileCoreServices.framework in Frameworks */,
 				28B0EF8913F1DF5B004813B2 /* libz.dylib in Frameworks */,
 				28B0EF8713F1DF35004813B2 /* CFNetwork.framework in Frameworks */,
@@ -1529,8 +1528,7 @@
 		28A1B27413F1CFB000EB971E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				282F92D4140B5C4C006F5132 /* libsqlite3.dylib */,
-				28DD65A0140586BD00B42F20 /* libxml2.2.dylib */,
+				288A72AD143F8C9B00CC48A2 /* libxml2.dylib */,
 				28B0EF8413F1DF29004813B2 /* libsqlite3.dylib */,
 				28B0EF8813F1DF5A004813B2 /* libz.dylib */,
 				28B58A4F14088C4200F0EDB6 /* libicucore.A.dylib */,

@@ -485,7 +485,7 @@
 //  }
 }
 
-- (void)dataSourceDidLoad {  
+- (void)dataSourceDidLoad {
   [self loadDetails];
   [self loadMap];
   

@@ -812,13 +812,13 @@
   
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
-  // Predicate Array
-  NSMutableArray *predArray = [NSMutableArray array];
+  // Predicate array
+  NSMutableArray *predicateArray = [NSMutableArray arrayWithCapacity:3];
   
   // What
   NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
   if ([filterWhat length] > 0) {
-    [predArray addObject:[NSString stringWithFormat:@"(name CONTAINS[cd] '%@' OR category CONTAINS[cd] '%@')", filterWhat, filterWhat]];
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@ OR category CONTAINS[cd] %@)", filterWhat, filterWhat]];
   }
   
   // Price
@@ -845,18 +845,18 @@
       break;
   }
   if (filterPrice) {
-      [predArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(price like %@)", filterPrice]];
   }
   
   // Highly Rated
   BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
   if (filterHighlyRated) {
-    [predArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
   }
   
-  if ([predArray count] > 0) {
-    NSString *predString = [predArray componentsJoinedByString:@" AND "];
-    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predString]];
+  // Compound Predicate
+  if ([predicateArray count] > 0) {
+    [filteredPlaces filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:predicateArray]];
   }
   
   // Sort places based on filter

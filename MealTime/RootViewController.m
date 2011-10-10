@@ -381,7 +381,7 @@
   
   BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:nil location:_location radius:@"4828" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:nil location:_location radius:@"8046" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine

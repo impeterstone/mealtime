@@ -304,7 +304,12 @@
   
   _scoreLabel.text = score;
   
-  [_starView setRating:[[place objectForKey:@"rating"] floatValue]];
+  // This is a fix for rating sometimes not being a number
+  if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {
+    [_starView setRating:[[place objectForKey:@"rating"] floatValue]];
+  } else {
+    [_starView setRating:0.0];
+  }
   
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];

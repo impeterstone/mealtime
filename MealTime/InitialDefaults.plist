@@ -22,10 +22,12 @@
 	<integer>0</integer>
 	<key>filterPrice</key>
 	<integer>0</integer>
+	<key>filterRadius</key>
+	<integer>0</integer>
 	<key>filterOpenNow</key>
 	<false/>
 	<key>filterHighlyRated</key>
-	<true/>
+	<false/>
 	<key>filterWhat</key>
 	<string></string>
 </dict>

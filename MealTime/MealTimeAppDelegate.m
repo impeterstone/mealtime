@@ -127,6 +127,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   // Reset Filters
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
   [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];

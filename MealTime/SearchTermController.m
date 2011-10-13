@@ -7,11 +7,21 @@
 //
 
 #import "SearchTermController.h"
-#import "PSSearchCenter.h"
+//#import "PSSearchCenter.h"
+
+static NSMutableDictionary *_containers = nil;
 
 @implementation SearchTermController
 
 @synthesize delegate = _delegate;
+
++ (void)initialize {
+  _containers = [[NSMutableDictionary alloc] initWithCapacity:2];
+  NSSet *what = [NSSet setWithArray:[CATEGORIES componentsSeparatedByString:@"|"]];
+  NSSet *where = [NSSet setWithArray:[LOCATIONS componentsSeparatedByString:@"|"]];
+  [_containers setObject:what forKey:@"what"];
+  [_containers setObject:where forKey:@"where"];
+}
 
 - (id)initWithContainer:(NSString *)container {
   self = [super init];
@@ -120,12 +130,12 @@
 
 #pragma mark - Search
 - (void)searchWithTerm:(NSString *)term {
-  NSArray *filteredArray = [[PSSearchCenter defaultCenter] searchResultsForTerm:term inContainer:_container];
+  NSArray *filteredArray = [[[_containers objectForKey:_container] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"SELF CONTAINS[cd] %@", term]] sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:nil ascending:YES]]];
 
   [self.items removeAllObjects];
   [self.items addObject:filteredArray];
   [self dataSourceDidLoad];
-}
+}	
 
 #pragma mark - Table
 //- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {

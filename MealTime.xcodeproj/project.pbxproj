@@ -351,7 +351,6 @@
 		28A1B28213F1CFB000EB971E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28113F1CFB000EB971E /* main.m */; };
 		28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */; };
 		28A1B28913F1CFB000EB971E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28A1B28713F1CFB000EB971E /* MainWindow.xib */; };
-		28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */; };
 		28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 28A87F1D141A392D001ACC62 /* Settings.bundle */; };
 		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
 		28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */; };
@@ -925,8 +924,6 @@
 		28A1B28413F1CFB000EB971E /* MealTimeAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MealTimeAppDelegate.h; sourceTree = "<group>"; };
 		28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MealTimeAppDelegate.m; sourceTree = "<group>"; };
 		28A1B28813F1CFB000EB971E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
-		28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionSheetPicker.h; sourceTree = "<group>"; };
-		28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionSheetPicker.m; sourceTree = "<group>"; };
 		28A87F1D141A392D001ACC62 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 		28A9FAB513F26FA200EFB191 /* PlaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceCell.h; sourceTree = "<group>"; };
 		28A9FAB613F26FA200EFB191 /* PlaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceCell.m; sourceTree = "<group>"; };
@@ -1912,7 +1909,6 @@
 				28F8B720142C094B000F5FEE /* Localytics */,
 				28F8B71C142BF9A7000F5FEE /* GAN */,
 				2831CD191427F12800FBAA0F /* Appirater */,
-				28A87F14141A2E3C001ACC62 /* ActionSheetPicker */,
 				285570B2140C7827004D34EF /* Facebook */,
 			);
 			path = Vendor;
@@ -1937,15 +1933,6 @@
 				288A7853143F95DD00CC48A2 /* Views */,
 			);
 			path = Submodules;
-			sourceTree = "<group>";
-		};
-		28A87F14141A2E3C001ACC62 /* ActionSheetPicker */ = {
-			isa = PBXGroup;
-			children = (
-				28A87F15141A2E3C001ACC62 /* ActionSheetPicker.h */,
-				28A87F16141A2E3C001ACC62 /* ActionSheetPicker.m */,
-			);
-			path = ActionSheetPicker;
 			sourceTree = "<group>";
 		};
 		28A9FABD13F27CD400EFB191 /* DataCenters */ = {
@@ -2520,7 +2507,6 @@
 				285570C0140C7827004D34EF /* FBDialog.m in Sources */,
 				285570C1140C7827004D34EF /* FBLoginDialog.m in Sources */,
 				285570C2140C7827004D34EF /* FBRequest.m in Sources */,
-				28A87F17141A2E3C001ACC62 /* ActionSheetPicker.m in Sources */,
 				282CC6891420532E007F0AF8 /* SavedViewController.m in Sources */,
 				2830D06B1420D3020003DD3F /* InfoViewController.m in Sources */,
 				28E42341142396DF00F593CE /* InfoCell.m in Sources */,
@@ -2664,6 +2650,7 @@
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Debug;
 		};
@@ -2689,6 +2676,7 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv6 armv7";
 			};
 			name = Release;
 		};
@@ -2717,6 +2705,7 @@
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2746,6 +2735,7 @@
 				PRODUCT_NAME = MealTime;
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv6 armv7";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

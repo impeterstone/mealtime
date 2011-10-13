@@ -44,9 +44,11 @@
 - (void)loadView {
   [super loadView];
   
+  _curlView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 80)] autorelease];
   UITapGestureRecognizer *gr = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(done)] autorelease];
   gr.delegate = self;
-  [self.view addGestureRecognizer:gr];
+  [_curlView addGestureRecognizer:gr];
+  [self.view addSubview:_curlView];
   
   // Filter What?
 //  _whatField = [[[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, 300, 44) style:PSSearchFieldStyleCell] autorelease];
@@ -142,7 +144,7 @@
   //
   // Layout subviews
   //
-  CGFloat top = isDeviceIPad() ? 310 : 85;
+  CGFloat top = isDeviceIPad() ? 320 : 90;
   CGFloat left = isDeviceIPad() ? 234 : MARGIN_X;
   
   // Sort By Section
@@ -201,7 +203,7 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
 //  if ([_whatField isFirstResponder]) return NO;
   
-  if ([touch.view isEqual:self.view]) {
+  if ([touch.view isEqual:_curlView]) {
     return YES;
   } else {
     return NO;

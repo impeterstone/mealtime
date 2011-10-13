@@ -13,7 +13,6 @@
 #import "SearchTermController.h"
 #import "PSLocationCenter.h"
 #import "PSSearchCenter.h"
-#import "ActionSheetPicker.h"
 #import "ListViewController.h"
 #import "InfoViewController.h"
 #import "PSSearchField.h"
@@ -225,7 +224,7 @@
   //  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.delegate = self;
   _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
-  _whatField.placeholder = @"Find: e.g. pizza, patxi's";
+  _whatField.placeholder = @"Find: e.g. pizza, Tony's Burgers";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
   
   //  _whatField.inputAccessoryView = tb;
@@ -721,6 +720,7 @@
   // Reset Filters
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
 //  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
@@ -785,12 +785,15 @@
 
 #pragma mark - SearchTermDelegate
 - (void)searchTermSelected:(NSString *)searchTerm inContainer:(NSString *)container {
-  if ([container isEqualToString:@"where"]) {
+  if ([container isEqualToString:@"what"]) {
+    _whatField.text = searchTerm;
+  } else {
     _whereField.text = searchTerm;
   }
 }
 
 - (void)searchCancelled {
+  _whatField.text = _whatQuery;
   _whereField.text = _whereQuery;
   [self dismissSearch];
 }

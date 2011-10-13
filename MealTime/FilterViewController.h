@@ -20,6 +20,7 @@
 
 @interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate, UITextFieldDelegate> {
 //  PSSearchField *_whatField; // just a pointer
+  UIView *_curlView; // just a pointer
   
   BOOL _filterChanged;
   BOOL _openNowChanged;

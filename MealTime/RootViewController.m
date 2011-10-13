@@ -18,7 +18,7 @@
 #import "InfoViewController.h"
 #import "PSSearchField.h"
 #import "PSReachabilityCenter.h"
-#import "TutorialViewController.h"
+#import "PSOverlayImageView.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -43,6 +43,7 @@
 
 @implementation RootViewController
 
+@synthesize whatQuery = _whatQuery;
 @synthesize whereQuery = _whereQuery;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -55,6 +56,7 @@
     _pagingStart = 0;
     _pagingCount = 1000;
     _pagingTotal = 1000;
+    _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
     _location = nil;
@@ -69,14 +71,18 @@
 - (void)viewDidUnload {
   [super viewDidUnload];
   
+  _whatField.delegate = nil;
   _whereField.delegate = nil;
+  _whatTermController.delegate = nil;
   _whereTermController.delegate = nil;
   
   RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_filterButton);
+  RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
+  RELEASE_SAFELY(_whatTermController);
   RELEASE_SAFELY(_whereTermController);
 }
 
@@ -88,9 +94,12 @@
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self name:kLocationAcquired object:nil];
   [[PlaceDataCenter defaultCenter] setDelegate:nil];
+  [_whatField removeFromSuperview];
   [_whereField removeFromSuperview];
   
+  _whatField.delegate = nil;
   _whereField.delegate = nil;
+  _whatTermController.delegate = nil;
   _whereTermController.delegate = nil;
   
   _reverseGeocoder.delegate = nil;
@@ -99,9 +108,12 @@
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
   RELEASE_SAFELY(_filterButton);
+  RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
+  RELEASE_SAFELY(_whatTermController);
   RELEASE_SAFELY(_whereTermController);
   
+  RELEASE_SAFELY(_whatQuery);
   RELEASE_SAFELY(_whereQuery);
   RELEASE_SAFELY(_sortBy);
   RELEASE_SAFELY(_cachedItems);
@@ -133,10 +145,13 @@
   // NUX
   if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-    TutorialViewController *tvc = [[TutorialViewController alloc] initWithNibName:nil bundle:nil];
-    tvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    [self presentModalViewController:tvc animated:NO];
-    [tvc release];
+    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
+    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
+    nuxView.alpha = 0.0;
+    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+    [UIView animateWithDuration:0.4 animations:^{
+      nuxView.alpha = 1.0;
+    }];
   }
 }
 
@@ -206,6 +221,22 @@
   // Search Bar
   CGFloat searchWidth = _headerView.width - 20;
   
+  _whatField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
+  //  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _whatField.delegate = self;
+  _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
+  _whatField.placeholder = @"Find: e.g. pizza, patxi's";
+  [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
+  
+  //  _whatField.inputAccessoryView = tb;
+  
+  // Left/Right View
+  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+  _whatField.leftViewMode = UITextFieldViewModeAlways;
+  UIImageView *mag = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+  mag.contentMode = UIViewContentModeCenter;
+  _whatField.leftView = mag;
+  
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
   _whereField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -227,6 +258,7 @@
   _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   
   [_headerView addSubview:_whereField];
+  [_headerView addSubview:_whatField];
   
   [self setupHeaderWithView:_headerView];
 }
@@ -278,6 +310,14 @@
 }
 
 - (void)setupSearchTermController {
+  _whatTermController = [[SearchTermController alloc] initWithContainer:@"what"];
+  _whatTermController.delegate = self;
+  //  _whatTermController.view.frame = self.view.bounds;
+  _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
+  _whatTermController.view.alpha = 0.0;
+  [self.view insertSubview:_whatTermController.view aboveSubview:_headerView];
+  //  [self.view addSubview:_whatTermController.view];
+  
   _whereTermController = [[SearchTermController alloc] initWithContainer:@"where"];
   _whereTermController.delegate = self;
 //  _whereTermController.view.frame = self.view.bounds;
@@ -362,6 +402,8 @@
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  self.whatQuery ? self.whatQuery : @"",
+                                  @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
                                   [NSString stringWithFormat:@"%d", _pagingStart],
@@ -376,12 +418,13 @@
   // 1608m/mi
   // 8046 - 5mi
   // 4828 - 3mi
+  // 3218 - 2mi
   
 //  NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
   
   BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:nil location:_location radius:@"8046" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"3218" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -401,6 +444,7 @@
   [super restoreDataSource];
   
   [self updateNumResults];
+  _whatField.text = _whatQuery;
   _whereField.text = _whereQuery;
 }
 
@@ -456,23 +500,25 @@
   
   NSMutableArray *places = [response objectForKey:@"places"];
   
-  // Let's get rid of all places with empty photos
-  
   RELEASE_SAFELY(_cachedItems);
   _cachedItems = [[NSMutableArray alloc] initWithArray:places];
+
+  // Let's get rid of all places with empty photos
+//  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
   
-  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
-    
+  // Now let's get rid of all places that aren't part of a food category
+//  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
+  
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
   // Predicate Array
   NSMutableArray *predArray = [NSMutableArray array];
   
   // What
-  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
-  if ([filterWhat length] > 0) {
-    [predArray addObject:[NSString stringWithFormat:@"(name CONTAINS[cd] '%@' OR category CONTAINS[cd] '%@')", filterWhat, filterWhat]];
-  }
+//  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
+//  if ([filterWhat length] > 0) {
+//    [predArray addObject:[NSString stringWithFormat:@"(name CONTAINS[cd] '%@' OR category CONTAINS[cd] '%@')", filterWhat, filterWhat]];
+//  }
   
   // Price
   NSString *filterPrice = nil;
@@ -664,7 +710,9 @@
 
 #pragma mark - Search
 - (void)searchTermChanged:(UITextField *)textField {
-  if ([textField isEqual:_whereField]) {
+  if ([textField isEqual:_whatField]) {
+    [_whatTermController searchWithTerm:textField.text];
+  } else {
     [_whereTermController searchWithTerm:textField.text];
   }
 }
@@ -675,9 +723,19 @@
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
-  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
+//  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
   
   [self dismissSearch];
+  
+  // What
+  if ([_whatField.text length] > 0) {
+    // Store search term
+    [[PSSearchCenter defaultCenter] addTerm:_whatField.text inContainer:@"what"];
+    
+    self.whatQuery = _whatField.text;
+  } else {
+    self.whatQuery = nil;
+  }
   
   // Where
   if ([_whereField.text isEqualToString:@"Current Location"]) {
@@ -694,6 +752,8 @@
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  self.whatQuery ? self.whatQuery : @"",
+                                  @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
                                   nil];
@@ -707,6 +767,19 @@
 - (void)dismissSearch {
   _isSearchActive = NO;
   
+  // Animate Search Fields
+  [UIView animateWithDuration:0.4
+                   animations:^{
+                     _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
+                     _whereTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
+                     _headerView.height = 44;
+                     _nullView.frame = CGRectMake(0, 44, _nullView.width, _nullView.height + 36);
+                     _whereField.top = 7;
+                   }
+                   completion:^(BOOL finished) {
+                   }];
+  
+  [_whatField resignFirstResponder];
   [_whereField resignFirstResponder];
 }
 
@@ -735,19 +808,38 @@
   if (!_isSearchActive) {
     _isSearchActive = YES;
     
-    if ([textField isEqual:_whereField]) {
+    if ([textField isEqual:_whatField]) {
+      [_whatTermController searchWithTerm:textField.text];
+    } else {
       [_whereTermController searchWithTerm:textField.text];
     }
+    
+    // Animate Search Fields
+    [UIView animateWithDuration:0.4
+                     animations:^{
+                       _whatTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
+                       _whereTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
+                       _headerView.height = 80;
+                       _nullView.frame = CGRectMake(0, 80, _nullView.width, _nullView.height - 36);
+                       _whereField.top = 42;
+                     }
+                     completion:^(BOOL finished) {
+                     }];
   }
   
-  if ([textField isEqual:_whereField]) {
+  if ([textField isEqual:_whatField]) {
+    [self.view bringSubviewToFront:_whatTermController.view];
+    _whatTermController.view.alpha = 1.0;
+  } else {
     [self.view bringSubviewToFront:_whereTermController.view];
     _whereTermController.view.alpha = 1.0;
   }
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField {
-  if ([textField isEqual:_whereField]) {
+  if ([textField isEqual:_whatField]) {
+    _whatTermController.view.alpha = 0.0;
+  } else {
     _whereTermController.view.alpha = 0.0;
   }
 }
@@ -816,10 +908,10 @@
   NSMutableArray *predicateArray = [NSMutableArray arrayWithCapacity:3];
   
   // What
-  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
-  if ([filterWhat length] > 0) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@ OR category CONTAINS[cd] %@)", filterWhat, filterWhat]];
-  }
+//  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
+//  if ([filterWhat length] > 0) {
+//    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@ OR category CONTAINS[cd] %@)", filterWhat, filterWhat]];
+//  }
   
   // Price
   NSString *filterPrice = nil;

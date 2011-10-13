@@ -18,6 +18,7 @@
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate, UIActionSheetDelegate, FilterViewControllerDelegate> {
   UIView *_headerView;
   UIView *_tabView;
+  UITextField *_whatField;
   UITextField *_whereField;
   UIButton *_filterButton;
   NSString *_location;
@@ -26,6 +27,7 @@
   
   NSMutableArray *_cachedItems;
   
+  SearchTermController *_whatTermController;
   SearchTermController *_whereTermController;
   
   // This is used to reference cells
@@ -35,12 +37,14 @@
   MKReverseGeocoder *_reverseGeocoder;
   
   NSString *_sortBy;
+  NSString *_whatQuery;
   NSString *_whereQuery;
   NSInteger _numResults;
   
   BOOL _isSearchActive;
 }
 
+@property (nonatomic, retain) NSString *whatQuery;
 @property (nonatomic, retain) NSString *whereQuery;
 
 - (void)setupSearchTermController;

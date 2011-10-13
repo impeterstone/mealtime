@@ -49,20 +49,20 @@
   [self.view addGestureRecognizer:gr];
   
   // Filter What?
-  _whatField = [[[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, 300, 44) style:PSSearchFieldStyleCell] autorelease];
-  _whatField.delegate = self;
-  _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
-  _whatField.returnKeyType = UIReturnKeyDone;
-  _whatField.placeholder = @"Filter by Name or Cuisine";
-  
-  // Left/Right View
-  _whatField.leftViewMode = UITextFieldViewModeAlways;
-  UIImageView *what = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
-  what.contentMode = UIViewContentModeCenter;
-  _whatField.leftView = what;
-  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
-  
-  [self.view addSubview:_whatField];
+//  _whatField = [[[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, 300, 44) style:PSSearchFieldStyleCell] autorelease];
+//  _whatField.delegate = self;
+//  _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
+//  _whatField.returnKeyType = UIReturnKeyDone;
+//  _whatField.placeholder = @"Filter by Name or Cuisine";
+//  
+//  // Left/Right View
+//  _whatField.leftViewMode = UITextFieldViewModeAlways;
+//  UIImageView *what = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
+//  what.contentMode = UIViewContentModeCenter;
+//  _whatField.leftView = what;
+//  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
+//  
+//  [self.view addSubview:_whatField];
   
   // Sortby
   UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Smart", @"Distance", @"Rating", nil]] autorelease];
@@ -137,12 +137,12 @@
   price.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
   openNowSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
   hrSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-  _whatField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
+//  _whatField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
   
   //
   // Layout subviews
   //
-  CGFloat top = isDeviceIPad() ? 280 : 55;
+  CGFloat top = isDeviceIPad() ? 310 : 85;
   CGFloat left = isDeviceIPad() ? 234 : MARGIN_X;
   
   // Sort By Section
@@ -156,10 +156,10 @@
   top += sbl.height;
   
   // Fields
-  _whatField.top = top;
-  _whatField.left = left;
-  
-  top += _whatField.height + MARGIN_Y * 2;
+//  _whatField.top = top;
+//  _whatField.left = left;
+//  
+//  top += _whatField.height + MARGIN_Y * 2;
   
   // Open Now
   openNowView.top = top;
@@ -199,7 +199,7 @@
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-  if ([_whatField isFirstResponder]) return NO;
+//  if ([_whatField isFirstResponder]) return NO;
   
   if ([touch.view isEqual:self.view]) {
     return YES;

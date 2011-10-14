@@ -30,5 +30,7 @@
 	<false/>
 	<key>filterWhat</key>
 	<string></string>
+	<key>filterNumResults</key>
+	<integer>999</integer>
 </dict>
 </plist>

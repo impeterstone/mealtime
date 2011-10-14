@@ -52,9 +52,6 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
-    _pagingStart = 0;
-    _pagingCount = 1000;
-    _pagingTotal = 1000;
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
@@ -373,7 +370,6 @@
 - (void)searchNearby {
   _whereField.text = nil;
   self.whereQuery = nil;
-  _pagingStart = 0;
   [self loadDataSource];
 }
 
@@ -390,7 +386,7 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  BOOL isReload = YES;
   
   if (isReload) {    
     // Update distance button label
@@ -405,10 +401,8 @@
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [NSString stringWithFormat:@"%d", _pagingStart],
-                                  @"pagingStart",
-                                  [NSString stringWithFormat:@"%d", _pagingCount],
-                                  @"pagingCount",
+                                  [NSString stringWithFormat:@"%d", [[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumResults"]],
+                                  @"numResults",
                                   _location,
                                   @"location",
                                   nil];
@@ -423,20 +417,12 @@
   
   BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"3218" sortby:nil openNow:openNow price:0 start:_pagingStart rpp:_pagingCount];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"3218" sortby:nil openNow:openNow price:0 start:0 rpp:[[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumResults"]];
 }
 
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
   return NO;
-}
-
-- (void)loadMore {
-  [super loadMore];
-  _pagingTotal += _pagingCount;
-  _pagingStart += _pagingCount; // load another page
-  
-  [self fetchDataSource];
 }
 
 - (void)restoreDataSource {
@@ -449,12 +435,11 @@
 
 - (void)reloadDataSource {
   [super reloadDataSource];
-  _pagingStart = 0;
   [self loadDataSource];
 }
 
 - (void)loadDataSource {
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  BOOL isReload = YES;
   if (isReload) {
     _hasMore = NO;
     [self.items removeAllObjects];
@@ -466,7 +451,7 @@
 }
 
 - (void)dataSourceDidLoad {
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  BOOL isReload = YES;
   
   if (isReload) {
     [super dataSourceDidLoad];
@@ -588,7 +573,7 @@
   }
   [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
   
-  BOOL isReload = (_pagingStart == 0) ? YES : NO;
+  BOOL isReload = YES;
   if (isReload) {
     [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
   } else {
@@ -639,7 +624,6 @@
   _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
   
   // fetch Yelp Places
-  _pagingStart = 0; // reset paging
   [self fetchDataSource];
 }
 
@@ -760,7 +744,6 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];
 
   // Reload dataSource
-    _pagingStart = 0; // reset paging
   [self loadDataSource];
 }
 
@@ -900,7 +883,6 @@
 - (void)filter:(id)sender didSelectWithOptions:(NSDictionary *)options reload:(BOOL)reload {
   if (reload) {
     // Fire a refetch if openNow was toggled to ON
-    _pagingStart = 0;
     [self loadDataSource];
     return;
   }

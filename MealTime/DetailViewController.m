@@ -516,7 +516,11 @@
   if (![[userInfo objectForKey:@"place"] isEqual:_place]) return;
   
   NSArray *photos = [_place objectForKey:@"photos"];
-  [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
+  if (photos && [photos count] > 0) {
+    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
+  } else {
+    [self dataSourceDidError];
+  }
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {

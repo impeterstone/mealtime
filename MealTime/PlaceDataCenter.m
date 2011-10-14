@@ -115,23 +115,35 @@ static NSLock *_placesToRemoveLock = nil;
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.numberOfTimesToRetryOnTimeout = 1;
   [request setShouldContinueWhenAppEntersBackground:YES];
-  [request setUserAgent:USER_AGENT];
+//  [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
-    // GCD
-    [request retain];
-    NSString *responseString = [request.responseString copy];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-      NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
-      [responseString release];
+    // Check HTTP Status Code
+    int responseCode = [request responseStatusCode];
+    if (responseCode == 403) {
+      // we got a 403, probably because of parameters, try and fall back
+      [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"fetchPlaces403"];
+      [[NSUserDefaults standardUserDefaults] setInteger:99 forKey:@"filterNumResults"];
       
-      dispatch_async(dispatch_get_main_queue(), ^{
-        if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
-          [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
-        }
-        [request release];
+      if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
+        [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
+      }
+    } else {    
+      // GCD
+      [request retain];
+      NSString *responseString = [request.responseString copy];
+      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
+        [responseString release];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+          if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+            [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
+          }
+          [request release];
+        });
       });
-    });
+    }
   }];
   
   [request setFailedBlock:^{

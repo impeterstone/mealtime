@@ -10,7 +10,7 @@
 #import "PSDataCenter.h"
 
 @interface BizDataCenter : PSDataCenter {
-  
+  ASINetworkQueue *_bizQueue;
 }
 
 - (void)getPhotosFromFixturesForBiz:(NSString *)biz;
@@ -23,5 +23,7 @@
 - (void)requestForBizForPlace:(NSMutableDictionary *)place;
 
 - (void)fetchReviewsForAlias:(NSString *)alias start:(NSInteger)start rpp:(NSInteger)rpp;
+
+- (void)cancelRequests;
 
 @end

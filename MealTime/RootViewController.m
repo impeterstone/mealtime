@@ -386,9 +386,11 @@
 
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
+  [[PlaceDataCenter defaultCenter] cancelRequests];
+  
   BOOL isReload = YES;
   
-  if (isReload) {    
+  if (isReload) {
     // Update distance button label
     [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
     

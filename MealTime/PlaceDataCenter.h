@@ -10,11 +10,13 @@
 #import "PSDataCenter.h"
 
 @interface PlaceDataCenter : PSDataCenter {
-  
+  ASINetworkQueue *_placeQueue;
 }
 
 - (void)getPlacesFromFixtures;
 
 - (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow price:(NSInteger)price start:(NSInteger)start rpp:(NSInteger)rpp;
+
+- (void)cancelRequests;
 
 @end

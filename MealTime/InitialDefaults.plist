@@ -32,5 +32,7 @@
 	<string></string>
 	<key>filterNumResults</key>
 	<integer>999</integer>
+	<key>filterNumPhotos</key>
+	<integer>999</integer>
 </dict>
 </plist>

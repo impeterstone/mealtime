@@ -27,6 +27,15 @@ static NSLock *_placesToRemoveLock = nil;
   return defaultCenter;
 }
 
+- (id)init {
+  self = [super init];
+  if (self) {
+    _placeQueue = [[ASINetworkQueue alloc] init];
+    [_placeQueue setSuspended:NO];
+  }
+  return self;
+}
+
 - (void)getPlacesFromFixtures
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"html"];
@@ -128,7 +137,7 @@ static NSLock *_placesToRemoveLock = nil;
       if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
         [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
       }
-    } else {    
+    } else {
       // GCD
       [request retain];
       NSString *responseString = [request.responseString copy];
@@ -152,7 +161,12 @@ static NSLock *_placesToRemoveLock = nil;
     }
   }];
   
-  [[PSNetworkQueue sharedQueue] addOperation:request];
+  [_placeQueue addOperation:request];
+//  [[PSNetworkQueue sharedQueue] addOperation:request];
+}
+
+- (void)cancelRequests {
+  [_placeQueue cancelAllOperations];
 }
 
 @end

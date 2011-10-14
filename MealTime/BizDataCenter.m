@@ -26,6 +26,15 @@ static NSLock *_placeLock = nil;
   return defaultCenter;
 }
 
+- (id)init {
+  self = [super init];
+  if (self) {
+    _bizQueue = [[ASINetworkQueue alloc] init];
+    [_bizQueue setSuspended:NO];
+  }
+  return self;
+}
+
 - (void)getPhotosFromFixturesForBiz:(NSString *)biz
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"photos" ofType:@"html"];
@@ -77,7 +86,10 @@ static NSLock *_placeLock = nil;
     [self requestForPhotosForPlace:place];
     
     // Check to see if we actually got photos and bizDetails
-    BOOL success = ([place objectForKey:@"biz"]) ? YES : NO;
+    BOOL success = NO;
+    if ([place objectForKey:@"biz"] && [place objectForKey:@"photos"]) {
+      success = YES;
+    }
     
     // Write this place to the local DB
     NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -126,7 +138,7 @@ static NSLock *_placeLock = nil;
   }
   
   // Construct URL
-  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz_photos/%@?rpp=9999", [place objectForKey:@"biz"]];
+  NSString *urlString = [NSString stringWithFormat:@"http://m.yelp.com/biz_photos/%@?rpp=%d", [place objectForKey:@"biz"], [[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumPhotos"]];
   NSURL *url = [NSURL URLWithString:urlString];
   
   // Run this synchronously
@@ -135,23 +147,31 @@ static NSLock *_placeLock = nil;
   [request startSynchronous];
   NSError *error = [request error];
   if (!error) {
-    NSString *responseString = request.responseString;
-    
-    NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
-    
-    [_placeLock lock];
-    @try {
-      // Update place object
-      if ([response objectForKey:@"photos"]) {
-        [place setObject:[response objectForKey:@"photos"] forKey:@"photos"];
+    // Check HTTP Status Code
+    int responseCode = [request responseStatusCode];
+    if (responseCode == 403) {
+      // we got a 403, probably because of parameters, try and fall back
+      [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"fetchPhotos403"];
+      [[NSUserDefaults standardUserDefaults] setInteger:99 forKey:@"filterNumPhotos"];
+    } else {
+      NSString *responseString = request.responseString;
+      
+      NSDictionary *response = [[PSScrapeCenter defaultCenter] scrapePhotosWithHTMLString:responseString];
+      
+      [_placeLock lock];
+      @try {
+        // Update place object
+        if ([response objectForKey:@"photos"]) {
+          [place setObject:[response objectForKey:@"photos"] forKey:@"photos"];
+        }
+        // Update numPhotos
+        if ([response objectForKey:@"numPhotos"]) {
+          [place setObject:[response objectForKey:@"numPhotos"] forKey:@"numPhotos"];
+        }
       }
-      // Update numPhotos
-      if ([response objectForKey:@"numPhotos"]) {
-        [place setObject:[response objectForKey:@"numPhotos"] forKey:@"numPhotos"];
+      @finally {
+        [_placeLock unlock];
       }
-    }
-    @finally {
-      [_placeLock unlock];
     }
   }
 }
@@ -248,8 +268,12 @@ static NSLock *_placeLock = nil;
   }];
   
   request.queuePriority = NSOperationQueuePriorityVeryLow;
-  [[PSNetworkQueue sharedQueue] addOperation:request];
-//  [request startAsynchronous];
+  [_bizQueue addOperation:request];
+//  [[PSNetworkQueue sharedQueue] addOperation:request];
+}
+
+- (void)cancelRequests {
+  [_bizQueue cancelAllOperations];
 }
 
 @end

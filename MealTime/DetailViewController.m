@@ -21,6 +21,7 @@
 @interface DetailViewController (Private)
 
 - (NSMutableDictionary *)loadPlaceFromDatabaseWithAlias:(NSString *)alias;
+- (void)deletePlaceFromDatabaseWithAlias:(NSString *)alias;
 
 - (void)setupMap;
 - (void)setupToolbar;
@@ -436,6 +437,10 @@
   }
 }
 
+- (void)deletePlaceFromDatabaseWithAlias:(NSString *)alias {
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"DELETE FROM places WHERE alias = ?", alias, nil];
+}
+
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
   return NO;
@@ -465,9 +470,17 @@
     if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > WEEK_SECONDS) {
       [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
     }
+    
     NSArray *photos = [_place objectForKey:@"photos"];
     
-    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
+    if (photos && [photos count] > 0) {
+      [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
+    } else {
+//      _isCachedPlace = NO;
+//      [self deletePlaceFromDatabaseWithAlias:[_place objectForKey:@"alias"]];
+      _cachedTimestamp = [[NSDate distantFuture] retain];
+      [self dataSourceDidError];
+    }
   }
   
   // Get ALL reviews for this place

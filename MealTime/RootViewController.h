@@ -14,6 +14,7 @@
 
 @class SearchTermController;
 @class PSSearchField;
+@class ASIHTTPRequest;
 
 @interface RootViewController : PSTableViewController <MKReverseGeocoderDelegate, UITextFieldDelegate, SearchTermDelegate, UIActionSheetDelegate, FilterViewControllerDelegate> {
   UIView *_headerView;
@@ -40,6 +41,8 @@
   NSString *_whatQuery;
   NSString *_whereQuery;
   NSInteger _numResults;
+  
+  ASIHTTPRequest *_activeRequest;
   
   BOOL _isSearchActive;
 }

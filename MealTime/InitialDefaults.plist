@@ -18,6 +18,8 @@
 	<date>1970-01-01T08:00:00Z</date>
 	<key>facebookExtendedPermissions</key>
 	<array/>
+	<key>filterCategory</key>
+	<string>All Categories</string>
 	<key>filterSortBy</key>
 	<integer>0</integer>
 	<key>filterPrice</key>

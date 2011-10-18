@@ -125,6 +125,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 //  NSLog(@"fonts: %@",[UIFont familyNames]);
   
   // Reset Filters
+  [[NSUserDefaults standardUserDefaults] setObject:@"Filter by Category" forKey:@"filterCategory"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];

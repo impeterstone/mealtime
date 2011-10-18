@@ -113,6 +113,7 @@
   RELEASE_SAFELY(_whereQuery);
   RELEASE_SAFELY(_sortBy);
   RELEASE_SAFELY(_cachedItems);
+  RELEASE_SAFELY(_cachedCategories);
   [super dealloc];
 }
 
@@ -357,7 +358,10 @@
 }
 
 - (void)filter {
-  FilterViewController *fvc = [[FilterViewController alloc] initWithOptions:nil];
+  if (![self dataIsAvailable]) return;
+  
+  NSDictionary *options = [NSDictionary dictionaryWithObject:_cachedCategories forKey:@"categories"];
+  FilterViewController *fvc = [[FilterViewController alloc] initWithOptions:options];
   fvc.delegate = self;
   fvc.modalTransitionStyle = UIModalTransitionStylePartialCurl;
   [self presentModalViewController:fvc animated:YES];
@@ -488,23 +492,31 @@
   
   RELEASE_SAFELY(_cachedItems);
   _cachedItems = [[NSMutableArray alloc] initWithArray:places];
+  
+  RELEASE_SAFELY(_cachedCategories);
+  _cachedCategories = [[NSMutableSet alloc] init];
+  for (NSDictionary *place in _cachedItems) {
+    for (NSString *cat in [[place objectForKey:@"category"] componentsSeparatedByString:@", "]) {
+      [_cachedCategories addObject:cat];
+    }
+  }
 
-  // Let's get rid of all places with empty photos
-//  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
-  
-  // Now let's get rid of all places that aren't part of a food category
-//  [_cachedItems filterUsingPredicate:[NSPredicate predicateWithFormat:@"NOT coverPhoto CONTAINS[cd] 'blank'"]];
-  
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
   // Predicate Array
-  NSMutableArray *predArray = [NSMutableArray array];
+  NSMutableArray *predicateArray = [NSMutableArray array];
   
   // What
 //  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
 //  if ([filterWhat length] > 0) {
 //    [predArray addObject:[NSString stringWithFormat:@"(name CONTAINS[cd] '%@' OR category CONTAINS[cd] '%@')", filterWhat, filterWhat]];
 //  }
+  
+  // Category
+  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
+  if (filterCategory && ![filterCategory isEqualToString:@"Filter by Category"]) {
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
+  }
   
   // Price
   NSString *filterPrice = nil;
@@ -530,17 +542,17 @@
       break;
   }
   if (filterPrice) {
-    [predArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
+    [predicateArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
   }
   
   // Highly Rated
   BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
   if (filterHighlyRated) {
-    [predArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
+    [predicateArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
   }
   
-  if ([predArray count] > 0) {
-    NSString *predString = [predArray componentsJoinedByString:@" AND "];
+  if ([predicateArray count] > 0) {
+    NSString *predString = [predicateArray componentsJoinedByString:@" AND "];
     [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predString]];
   }
   
@@ -704,6 +716,7 @@
 
 - (void)executeSearch {
   // Reset Filters
+  [[NSUserDefaults standardUserDefaults] setObject:@"Filter by Category" forKey:@"filterCategory"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
@@ -931,6 +944,12 @@
   BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
   if (filterHighlyRated) {
     [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
+  }
+  
+  // Category
+  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
+  if (filterCategory && ![filterCategory isEqualToString:@"Filter by Category"]) {
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
   }
   
   // Compound Predicate

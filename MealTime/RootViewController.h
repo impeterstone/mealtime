@@ -27,6 +27,7 @@
   NSArray *_currentAddress;
   
   NSMutableArray *_cachedItems;
+  NSMutableSet *_cachedCategories;
   
   SearchTermController *_whatTermController;
   SearchTermController *_whereTermController;

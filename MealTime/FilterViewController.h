@@ -18,9 +18,11 @@
 
 @end
 
-@interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate, UITextFieldDelegate> {
+@interface FilterViewController : PSBaseViewController <UIGestureRecognizerDelegate, UITextFieldDelegate, UIActionSheetDelegate> {
 //  PSSearchField *_whatField; // just a pointer
+  NSDictionary *_options;
   UIView *_curlView; // just a pointer
+  UIButton *_categoryButton; // just a pointer
   
   BOOL _filterChanged;
   BOOL _openNowChanged;

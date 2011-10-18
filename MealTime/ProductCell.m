@@ -24,14 +24,14 @@
     _desiredHeight = 0.0;
     
     // Photo
-    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
+    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.width, self.contentView.width)];
     _photoView.shouldAnimate = isMultitaskingSupported();
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     
     // Caption
-    _captionView = [[UIView alloc] initWithFrame:CGRectZero];
+    _captionView = [[UIView alloc] initWithFrame:CGRectMake(0, _photoView.bottom - 21.0 - (MARGIN_Y * 2), self.contentView.width, 21.0 + (MARGIN_Y * 2))];
     _captionView.backgroundColor = [UIColor clearColor];
-    UIImageView *cbg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_caption.png"]] autorelease];
+    UIImageView *cbg = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"bg_caption.png" withLeftCapWidth:0 topCapWidth:22]] autorelease];
     cbg.frame = _captionView.bounds;
     cbg.autoresizingMask = ~UIViewAutoresizingNone;
     [_captionView addSubview:cbg];
@@ -104,9 +104,6 @@
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  
-  // Photo
-   _photoView.frame = CGRectMake(0, 0, self.contentView.width, self.contentView.width);
   
 //  if (_photoView.image) {
 //    NSLog(@"yes");

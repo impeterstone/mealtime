@@ -263,35 +263,10 @@
   
   // Interate thru places
   for (NSDictionary *place in [self.items objectAtIndex:0]) {
-    // Score
-    NSString *score = nil;
-    NSInteger metaScore = [[place objectForKey:@"score"] integerValue];
-    if (metaScore > 90) {
-      score = @"A+";
-    } else if (metaScore > 80) {
-      score = @"A";
-    } else if (metaScore > 70) {
-      score = @"A-";
-    } else if (metaScore > 60) {
-      score = @"B+";
-    } else if (metaScore > 50) {
-      score = @"B";
-    } else if (metaScore > 40) {
-      score = @"B-";
-    } else if (metaScore > 30) {
-      score = @"C+";
-    } else if (metaScore > 20) {
-      score = @"C";
-    } else if (metaScore >= 10) {
-      score = @"C-";
-    } else {
-      score = @"F";
-    }
-
     [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [place objectForKey:@"biz"], [place objectForKey:@"name"]];
     [body appendFormat:@"%@<br/>", [[place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
     if ([[place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [place objectForKey:@"phone"]];
-    [body appendFormat:@"Price: %@, Score: %@<br/>", [place objectForKey:@"price"], score];
+    [body appendFormat:@"Price: %@, Score: %@<br/>", [place objectForKey:@"price"], [place objectForKey:@"rating"]];
     [body appendString:@"<br/>"];
   }
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", _listName] andMessageBody:body];

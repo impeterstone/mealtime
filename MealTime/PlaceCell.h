@@ -27,9 +27,6 @@
   
   PSStarView *_starView;
   
-  UIView *_scoreView;
-  UILabel *_scoreLabel;
-  
   NSDictionary *_place;
 }
 

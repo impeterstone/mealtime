@@ -350,35 +350,10 @@
   //  Price: $
   NSMutableString *body = [NSMutableString string];
 
-  // Score
-  NSString *score = nil;
-  NSInteger metaScore = [[_place objectForKey:@"score"] integerValue];
-  if (metaScore > 90) {
-    score = @"A+";
-  } else if (metaScore > 80) {
-    score = @"A";
-  } else if (metaScore > 70) {
-    score = @"A-";
-  } else if (metaScore > 60) {
-    score = @"B+";
-  } else if (metaScore > 50) {
-    score = @"B";
-  } else if (metaScore > 40) {
-    score = @"B-";
-  } else if (metaScore > 30) {
-    score = @"C+";
-  } else if (metaScore > 20) {
-    score = @"C";
-  } else if (metaScore >= 10) {
-    score = @"C-";
-  } else {
-    score = @"F";
-  }
-  
   [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"biz"], [_place objectForKey:@"name"]];
   [body appendFormat:@"%@<br/>", [[_place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
   if ([_place objectForKey:@"formattedPhone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"formattedPhone"]];
-  [body appendFormat:@"Price: %@, Score: %@", [_place objectForKey:@"price"], score];
+  [body appendFormat:@"Price: %@, Rating: %@", [_place objectForKey:@"price"], [_place objectForKey:@"rating"]];
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }
 

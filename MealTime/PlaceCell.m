@@ -26,7 +26,7 @@
     _place = nil;
     
     // Photo
-    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectZero];
+    _photoView = [[PSURLCacheImageView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight])];
     _photoView.shouldAnimate = isMultitaskingSupported();
     _photoView.contentMode = UIViewContentModeScaleAspectFill;
     
@@ -34,6 +34,7 @@
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];
     _disclosureView.contentMode = UIViewContentModeCenter;
     _disclosureView.alpha = 0.8;
+    _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
     
     // Labels
     _nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -68,43 +69,27 @@
     _priceLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placePrice"];
     _priceLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placePrice"];
     
-    _scoreLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    _scoreLabel.backgroundColor = [UIColor clearColor];
-    _scoreLabel.textAlignment = UITextAlignmentCenter;
-    _scoreLabel.font = [PSStyleSheet fontForStyle:@"placeScore"];
-    _scoreLabel.textColor = [PSStyleSheet textColorForStyle:@"placeScore"];
-    _scoreLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeScore"];
-    _scoreLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeScore"];
+    // Ribbon    
+    _ribbonView = [[UIView alloc] initWithFrame:CGRectMake(self.contentView.width - 90, MARGIN_Y * 2, 90, 24)];
     
-    // Ribbon
-    _ribbonLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    UIImageView *ribbonImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"ribbon.png" withLeftCapWidth:34 topCapWidth:0]] autorelease];
+    ribbonImageView.autoresizingMask = ~UIViewAutoresizingNone;
+    ribbonImageView.frame = _ribbonView.bounds;
+    
+    _ribbonLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, _ribbonView.width - MARGIN_X, _ribbonView.height)];
     _ribbonLabel.backgroundColor = [UIColor clearColor];
     _ribbonLabel.textAlignment = UITextAlignmentRight;
     _ribbonLabel.font = [PSStyleSheet fontForStyle:@"placeRibbon"];
     _ribbonLabel.textColor = [PSStyleSheet textColorForStyle:@"placeRibbon"];
     _ribbonLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeRibbon"];
     _ribbonLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeRibbon"];
-    
-    _ribbonView = [[UIView alloc] initWithFrame:CGRectZero];
-    UIImageView *ribbonImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"ribbon.png" withLeftCapWidth:34 topCapWidth:0]] autorelease];
-    ribbonImageView.autoresizingMask = ~UIViewAutoresizingNone;
-    ribbonImageView.frame = _ribbonView.bounds;
     _ribbonLabel.autoresizingMask = ~UIViewAutoresizingNone;
-    _ribbonLabel.frame = _ribbonView.bounds;
+    
     [_ribbonView addSubview:ribbonImageView];
     [_ribbonView addSubview:_ribbonLabel];
     _ribbonView.alpha = 0.0;
     
-    _scoreView = [[UIView alloc] initWithFrame:CGRectZero];
-    UIImageView *scoreImageView = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"bg_pill.png" withLeftCapWidth:12 topCapWidth:0]] autorelease];
-    scoreImageView.autoresizingMask = ~UIViewAutoresizingNone;
-    scoreImageView.frame = _scoreView.bounds;
-    [_scoreView addSubview:scoreImageView];
-    _scoreLabel.autoresizingMask = ~UIViewAutoresizingNone;
-    _scoreLabel.frame = _scoreView.bounds;
-    [_scoreView addSubview:_scoreLabel];
-    
-    _starView = [[PSStarView alloc] initWithFrame:CGRectZero];
+    _starView = [[PSStarView alloc] initWithFrame:CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height)];
     
     // Add subviews
     [self.contentView addSubview:_photoView];
@@ -115,7 +100,6 @@
     [self.contentView addSubview:_priceLabel];
     [self.contentView addSubview:_ribbonView];
     [self.contentView addSubview:_starView];
-//    [self.contentView addSubview:_scoreView];
   }
   return self;
 }
@@ -125,8 +109,6 @@
   RELEASE_SAFELY(_starView);
   RELEASE_SAFELY(_ribbonView);
   RELEASE_SAFELY(_ribbonLabel);
-  RELEASE_SAFELY(_scoreView);
-  RELEASE_SAFELY(_scoreLabel);
   RELEASE_SAFELY(_categoryLabel);
   RELEASE_SAFELY(_priceLabel);
   RELEASE_SAFELY(_distanceLabel);
@@ -150,7 +132,6 @@
   _distanceLabel.text = nil;
   _categoryLabel.text = nil;
   _priceLabel.text = nil;
-  _scoreLabel.text = nil;
   _photoView.image = nil;
   _photoView.urlPath = nil;
   _place = nil;
@@ -161,15 +142,6 @@
 - (void)layoutSubviews
 {
   [super layoutSubviews];
-  
-  // Set Frames
-  _photoView.frame = CGRectMake(0, 0, self.contentView.width, [[self class] rowHeight]);
-  _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
-  _ribbonView.frame = CGRectMake(self.contentView.width - 90, MARGIN_Y * 2, 90, 24);
-  _ribbonLabel.frame = CGRectMake(0, 0, _ribbonView.width - MARGIN_X, _ribbonView.height);
-  
-//  _scoreView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, 42, 24);
-  _starView.frame = CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height);
   
   // Labels
   CGFloat top = self.contentView.height - 40 - MARGIN_Y;
@@ -301,8 +273,6 @@
   } else {
     score = @"F";
   }
-  
-  _scoreLabel.text = score;
   
   // This is a fix for rating sometimes not being a number
   if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {

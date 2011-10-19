@@ -61,10 +61,9 @@
 #define kOrientationChanged @"OrientationChangedNotification"
 
 // Facebook
-#define FB_APP_ID @"251612101539714"
-#define FB_APP_SECRET @"77686ad944e00b40cae96dbeb2b28fd6"
+#define FB_APP_ID @"262079367168011"
 #define FB_PERMISSIONS_PUBLISH @"publish_stream"
-#define FB_PARAMS @"id,first_name,last_name,name,gender,locale"
+#define FB_BASIC_PERMISISONS [NSArray arrayWithObjects:@"offline_access", nil]
 
 // ERROR STRINGS
 #define LOGOUT_ALERT @"Are you sure you want to logout?"

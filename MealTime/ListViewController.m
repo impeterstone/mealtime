@@ -11,10 +11,15 @@
 #import "ListCell.h"
 #import "SavedViewController.h"
 #import "PSOverlayImageView.h"
+#import "PSFacebookCenter.h"
 
 @interface ListViewController (Private)
 
+- (void)setupFooter;
+- (void)hideFooter;
+
 - (void)dismiss;
+- (void)syncLists;
 - (void)newList;
 - (void)editList;
 
@@ -33,6 +38,8 @@
     _numLists = 0;
     if (biz) _biz = [biz copy];
     _selectedLists = [[NSMutableSet alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideFooter) name:kPSFacebookCenterDialogDidSucceed object:nil];
   }
   return self;
 }
@@ -42,6 +49,8 @@
 }
 
 - (void)dealloc {
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:kPSFacebookCenterDialogDidSucceed object:nil];
+  
   RELEASE_SAFELY(_biz);
   RELEASE_SAFELY(_selectedLists);
   [super dealloc];
@@ -118,6 +127,10 @@
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
+  if (![[PSFacebookCenter defaultCenter] isLoggedIn]) {
+    [self setupFooter];
+  }
+  
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#load"];
 }
 
@@ -130,6 +143,15 @@
   [addButton setTitle:@"Create a New List" forState:UIControlStateNormal];
   [headerView addSubview:addButton];
   _tableView.tableHeaderView = headerView;
+}
+
+- (void)setupFooter {
+  UIButton *syncButton = [UIButton buttonWithFrame:CGRectMake(0, 0, self.view.width, 40) andStyle:@"listNewButton" target:self action:@selector(syncLists)];
+  [syncButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [syncButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateHighlighted];
+  [syncButton setTitle:@"Sync or Restore Your Lists" forState:UIControlStateNormal];
+  
+  [self setupFooterWithView:syncButton];
 }
 
 - (BOOL)dataIsAvailable {
@@ -194,9 +216,20 @@
   [super dataSourceDidLoad];
 }
 
+#pragma mark - Notifications
+- (void)hideFooter {
+  [UIView animateWithDuration:0.4 animations:^{
+    _footerView.top += _footerView.height;
+  }];
+}
+
 #pragma mark - Actions
 - (void)dismiss {
   [self dismissModalViewControllerAnimated:YES];
+}
+
+- (void)syncLists {
+  [[PSFacebookCenter defaultCenter] authorizeBasicPermissions];
 }
 
 - (void)editList {

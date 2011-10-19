@@ -120,6 +120,10 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   return [[PSFacebookCenter defaultCenter] handleOpenURL:url];
 }
 
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+  return [[PSFacebookCenter defaultCenter] handleOpenURL:url];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 //  NSLog(@"fonts: %@",[UIFont familyNames]);

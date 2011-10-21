@@ -514,7 +514,7 @@
   
   // Category
   NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
-  if (filterCategory && ![filterCategory isEqualToString:@"Filter by Category"]) {
+  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
     [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
   }
   
@@ -716,7 +716,7 @@
 
 - (void)executeSearch {
   // Reset Filters
-  [[NSUserDefaults standardUserDefaults] setObject:@"Filter by Category" forKey:@"filterCategory"];
+  [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
@@ -948,7 +948,7 @@
   
   // Category
   NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
-  if (filterCategory && ![filterCategory isEqualToString:@"Filter by Category"]) {
+  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
     [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
   }
   

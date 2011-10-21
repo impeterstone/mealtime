@@ -149,7 +149,7 @@
   UIButton *syncButton = [UIButton buttonWithFrame:CGRectMake(0, 0, self.view.width, 40) andStyle:@"listNewButton" target:self action:@selector(syncLists)];
   [syncButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
   [syncButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_single_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateHighlighted];
-  [syncButton setTitle:@"Sync or Restore Your Lists" forState:UIControlStateNormal];
+  [syncButton setTitle:@"Sync/Restore Your Lists" forState:UIControlStateNormal];
   
   [self setupFooterWithView:syncButton];
 }

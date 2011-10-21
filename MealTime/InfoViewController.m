@@ -136,10 +136,11 @@
   [self.items addObject:second];
   
   // Third Section
-  NSMutableArray *third = [NSMutableArray array];
-  NSDictionary *howtouse = [NSDictionary dictionaryWithObjectsAndKeys:@"How to use MealTime", @"title", nil];
-  [third addObject:howtouse];
-  [self.items addObject:third];
+#warning disable how to use
+//  NSMutableArray *third = [NSMutableArray array];
+//  NSDictionary *howtouse = [NSDictionary dictionaryWithObjectsAndKeys:@"How to use MealTime", @"title", nil];
+//  [third addObject:howtouse];
+//  [self.items addObject:third];
   
   [self.tableView reloadData];
 }

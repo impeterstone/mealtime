@@ -128,7 +128,7 @@
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStyleGrouped andSeparatorStyle:UITableViewCellSeparatorStyleNone];
   
   if (![[PSFacebookCenter defaultCenter] isLoggedIn]) {
-    [self setupFooter];
+//    [self setupFooter];
   }
   
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"list#load"];

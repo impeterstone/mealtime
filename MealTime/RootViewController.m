@@ -544,7 +544,7 @@
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
   // Predicate Array
-  NSMutableArray *predicateArray = [NSMutableArray array];
+//  NSMutableArray *predicateArray = [NSMutableArray array];
   
   // What
 //  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
@@ -553,70 +553,70 @@
 //  }
   
   // Category
-  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
-  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
-  }
+//  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
+//  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
+//    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
+//  }
   
   // Price
-  NSString *filterPrice = nil;
-  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
-  switch (priceIndex) {
-    case 0:
-      filterPrice = nil;
-      break;
-    case 1:
-      filterPrice = @"$";
-      break;
-    case 2:
-      filterPrice = @"$$";
-      break;
-    case 3:
-      filterPrice = @"$$$";
-      break;
-    case 4:
-      filterPrice = @"$$$$";
-      break;
-    default:
-      filterPrice = nil;
-      break;
-  }
-  if (filterPrice) {
-    [predicateArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
-  }
+//  NSString *filterPrice = nil;
+//  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
+//  switch (priceIndex) {
+//    case 0:
+//      filterPrice = nil;
+//      break;
+//    case 1:
+//      filterPrice = @"$";
+//      break;
+//    case 2:
+//      filterPrice = @"$$";
+//      break;
+//    case 3:
+//      filterPrice = @"$$$";
+//      break;
+//    case 4:
+//      filterPrice = @"$$$$";
+//      break;
+//    default:
+//      filterPrice = nil;
+//      break;
+//  }
+//  if (filterPrice) {
+//    [predicateArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
+//  }
   
   // Highly Rated
-  BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-  if (filterHighlyRated) {
-    [predicateArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
-  }
+//  BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
+//  if (filterHighlyRated) {
+//    [predicateArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
+//  }
   
-  if ([predicateArray count] > 0) {
-    NSString *predString = [predicateArray componentsJoinedByString:@" AND "];
-    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predString]];
-  }
+//  if ([predicateArray count] > 0) {
+//    NSString *predString = [predicateArray componentsJoinedByString:@" AND "];
+//    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predString]];
+//  }
   
   // Sort places based on filter
-  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
-  NSString *filterSortBy = nil;
-  switch (sortByIndex) {
-    case 0:
-      filterSortBy = nil;
-      break;
-    case 1:
-      filterSortBy = @"distance";
-      break;
-    case 2:
-      filterSortBy = @"score";
-      break;
-    default:
-      filterSortBy = nil;
-      break;
-  }
-  if (filterSortBy) {
-    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
-    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
-  }
+//  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
+//  NSString *filterSortBy = nil;
+//  switch (sortByIndex) {
+//    case 0:
+//      filterSortBy = nil;
+//      break;
+//    case 1:
+//      filterSortBy = @"distance";
+//      break;
+//    case 2:
+//      filterSortBy = @"score";
+//      break;
+//    default:
+//      filterSortBy = nil;
+//      break;
+//  }
+//  if (filterSortBy) {
+//    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
+//    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
+//  }
   
   // Calculate number of places shown
   NSString *numPlaces = nil;

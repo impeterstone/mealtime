@@ -132,10 +132,10 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
+  [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"filterRadius"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
-  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
+//  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
   
   if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isFirstLaunch"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"isFirstLaunch"];

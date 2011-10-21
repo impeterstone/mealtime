@@ -69,7 +69,7 @@
 //  [self.view addSubview:_whatField];
   
   // Sortby
-  UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Smart", @"Distance", @"Rating", nil]] autorelease];
+  UISegmentedControl *sortby = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Distance", @"Popularity", @"Rating", nil]] autorelease];
   sortby.segmentedControlStyle = UISegmentedControlStyleBordered;
   [sortby addTarget:self action:@selector(sortbyChanged:) forControlEvents:UIControlEventValueChanged];
   sortby.frame = CGRectMake(0, 0, 300, 44);
@@ -81,6 +81,13 @@
   [price addTarget:self action:@selector(priceChanged:) forControlEvents:UIControlEventValueChanged];
   price.frame = CGRectMake(0, 0, 300, 44);
   [self.view addSubview:price];
+  
+  // Radius
+  UISegmentedControl *radius = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]] autorelease];
+  radius.segmentedControlStyle = UISegmentedControlStyleBordered;
+  [radius addTarget:self action:@selector(radiusChanged:) forControlEvents:UIControlEventValueChanged];
+  radius.frame = CGRectMake(0, 0, 300, 44);
+  [self.view addSubview:radius];
   
   // Open Now
   UIView *openNowView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 44)] autorelease];
@@ -107,34 +114,34 @@
   [self.view addSubview:openNowView];
   
   // Highly Rated
-  UIView *hrView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 44)] autorelease];
-  // bg
-  UIImageView *hrbg = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"grouped_full_cell.png" withLeftCapWidth:6 topCapWidth:6]] autorelease];
-  hrbg.frame = hrView.bounds;
-  [hrView addSubview:hrbg];
-  
-  // Switch
-  UISwitch *hrSwitch = [[[UISwitch alloc] initWithFrame:CGRectZero] autorelease];
-  [hrSwitch addTarget:self action:@selector(highlyRatedChanged:) forControlEvents:UIControlEventValueChanged];
-  hrSwitch.left = hrView.width - hrSwitch.width - 10;
-  hrSwitch.top = 9;
-  [hrView addSubview:hrSwitch];
+//  UIView *hrView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 44)] autorelease];
+//  // bg
+//  UIImageView *hrbg = [[[UIImageView alloc] initWithImage:[UIImage stretchableImageNamed:@"grouped_full_cell.png" withLeftCapWidth:6 topCapWidth:6]] autorelease];
+//  hrbg.frame = hrView.bounds;
+//  [hrView addSubview:hrbg];
+//  
+//  // Switch
+//  UISwitch *hrSwitch = [[[UISwitch alloc] initWithFrame:CGRectZero] autorelease];
+//  [hrSwitch addTarget:self action:@selector(highlyRatedChanged:) forControlEvents:UIControlEventValueChanged];
+//  hrSwitch.left = hrView.width - hrSwitch.width - 10;
+//  hrSwitch.top = 9;
+//  [hrView addSubview:hrSwitch];
   
   // label
-  UILabel *hrLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-  hrLabel.frame = CGRectMake(10, 0, hrView.width - hrSwitch.width - 30, hrView.height);
-  hrLabel.backgroundColor = [UIColor clearColor];
-  hrLabel.font = [PSStyleSheet fontForStyle:@"highlyRatedLabel"];
-  hrLabel.textColor = [PSStyleSheet textColorForStyle:@"highlyRatedLabel"];
-  hrLabel.text = @"Only Show Highly Rated";
-  [hrView addSubview:hrLabel];
-  [self.view addSubview:hrView];
+//  UILabel *hrLabel = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+//  hrLabel.frame = CGRectMake(10, 0, hrView.width - hrSwitch.width - 30, hrView.height);
+//  hrLabel.backgroundColor = [UIColor clearColor];
+//  hrLabel.font = [PSStyleSheet fontForStyle:@"highlyRatedLabel"];
+//  hrLabel.textColor = [PSStyleSheet textColorForStyle:@"highlyRatedLabel"];
+//  hrLabel.text = @"Only Show Highly Rated";
+//  [hrView addSubview:hrLabel];
+//  [self.view addSubview:hrView];
   
   // Category
-  UIButton *categoryButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 300, 44) andStyle:@"filterDoneButton" target:self action:@selector(category)];
-  [categoryButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_round_green.png" withLeftCapWidth:11 topCapWidth:22] forState:UIControlStateNormal];
-  [self.view addSubview:categoryButton];
-  _categoryButton = categoryButton;
+//  UIButton *categoryButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 300, 44) andStyle:@"filterDoneButton" target:self action:@selector(category)];
+//  [categoryButton setBackgroundImage:[UIImage stretchableImageNamed:@"button_round_green.png" withLeftCapWidth:11 topCapWidth:22] forState:UIControlStateNormal];
+//  [self.view addSubview:categoryButton];
+//  _categoryButton = categoryButton;
   
   // Done Button
   UIButton *doneButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 300, 44) andStyle:@"filterDoneButton" target:self action:@selector(done)];
@@ -145,15 +152,16 @@
   // Setup Default Selections
   sortby.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
   price.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
+  radius.selectedSegmentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterRadius"];
   openNowSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
-  hrSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-  [categoryButton setTitle:[[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"] forState:UIControlStateNormal];
+//  hrSwitch.on = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
+//  [categoryButton setTitle:[[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"] forState:UIControlStateNormal];
 //  _whatField.text = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
   
   //
   // Layout subviews
   //
-  CGFloat top = isDeviceIPad() ? 290 : 50;
+  CGFloat top = isDeviceIPad() ? 330 : 90;
   CGFloat left = isDeviceIPad() ? 234 : MARGIN_X;
   
   // Sort By Section
@@ -179,26 +187,34 @@
   top += openNowView.height + MARGIN_Y * 2;
   
   // Highly Rated
-  hrView.top = top;
-  hrView.left = left;
-  
-  top += hrView.height + MARGIN_Y * 2;
-  
+//  hrView.top = top;
+//  hrView.left = left;
+//  
+//  top += hrView.height + MARGIN_Y * 2;
+
+  // Sort By
   sortby.top = top;
   sortby.left = left;
   
   top += sortby.height + MARGIN_Y * 2;
   
+  // Price
   price.top = top;
   price.left = left;
 
   top += price.height + MARGIN_Y * 2;
   
-  // Category Button
-  categoryButton.top = top;
-  categoryButton.left = left;
+  // Radius
+  radius.top = top;
+  radius.left = left;
   
-  top += categoryButton.height + MARGIN_Y * 2;
+  top += radius.height + MARGIN_Y * 2;
+  
+  // Category Button
+//  categoryButton.top = top;
+//  categoryButton.left = left;
+//  
+//  top += categoryButton.height + MARGIN_Y * 2;
   
   // Done Button
   doneButton.top = top;
@@ -207,26 +223,26 @@
   [self updateState];
 }
 
-- (void)category {
-  UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Filter by Category" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
-  NSSet *categories = [_options objectForKey:@"categories"];
-  if (categories && [categories count] > 0) {
-    for (NSString *cat in [categories sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:nil ascending:YES]]]) {
-      [as addButtonWithTitle:cat];
-    }
-    [as addButtonWithTitle:@"Cancel"];
-    [as setCancelButtonIndex:[categories count]];
-    [as showInView:self.view];
-    [as autorelease];
-  } else {
-    return;
-  }
-}
+//- (void)category {
+//  UIActionSheet *as = [[UIActionSheet alloc] initWithTitle:@"Filter by Category" delegate:self cancelButtonTitle:nil destructiveButtonTitle:nil otherButtonTitles:nil];
+//  NSSet *categories = [_options objectForKey:@"categories"];
+//  if (categories && [categories count] > 0) {
+//    for (NSString *cat in [categories sortedArrayUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:nil ascending:YES]]]) {
+//      [as addButtonWithTitle:cat];
+//    }
+//    [as addButtonWithTitle:@"Cancel"];
+//    [as setCancelButtonIndex:[categories count]];
+//    [as showInView:self.view];
+//    [as autorelease];
+//  } else {
+//    return;
+//  }
+//}
 
 - (void)done {
   // tell delegate
   if ((_filterChanged || _openNowChanged) && self.delegate && [self.delegate respondsToSelector:@selector(filter:didSelectWithOptions:reload:)]) {
-    [self.delegate filter:self didSelectWithOptions:nil reload:_openNowChanged];
+    [self.delegate filter:self didSelectWithOptions:nil reload:YES];
   }
   [self dismissModalViewControllerAnimated:YES];
 }
@@ -258,6 +274,14 @@
   }
 }
 
+- (void)radiusChanged:(UISegmentedControl *)segmentedControl {
+  NSInteger currentIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterRadius"];
+  if (currentIndex != segmentedControl.selectedSegmentIndex) {
+    [[NSUserDefaults standardUserDefaults] setInteger:segmentedControl.selectedSegmentIndex forKey:@"filterRadius"];
+    _filterChanged = YES;
+  }
+}
+
 - (void)openNowChanged:(UISwitch *)aSwitch {
   BOOL currentValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
   if (currentValue != aSwitch.on) {
@@ -268,13 +292,13 @@
   }
 }
 
-- (void)highlyRatedChanged:(UISwitch *)aSwitch {
-  BOOL currentValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-  if (currentValue != aSwitch.on) {
-    [[NSUserDefaults standardUserDefaults] setBool:aSwitch.on forKey:@"filterHighlyRated"];
-    _filterChanged = YES;
-  }
-}
+//- (void)highlyRatedChanged:(UISwitch *)aSwitch {
+//  BOOL currentValue = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
+//  if (currentValue != aSwitch.on) {
+//    [[NSUserDefaults standardUserDefaults] setBool:aSwitch.on forKey:@"filterHighlyRated"];
+//    _filterChanged = YES;
+//  }
+//}
 
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

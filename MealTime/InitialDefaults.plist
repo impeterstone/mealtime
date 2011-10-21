@@ -25,7 +25,7 @@
 	<key>filterPrice</key>
 	<integer>0</integer>
 	<key>filterRadius</key>
-	<integer>0</integer>
+	<integer>2</integer>
 	<key>filterOpenNow</key>
 	<false/>
 	<key>filterHighlyRated</key>

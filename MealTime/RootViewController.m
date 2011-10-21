@@ -358,9 +358,10 @@
 }
 
 - (void)filter {
-  if (![self dataIsAvailable]) return;
+  if ([self dataIsLoading]) return;
   
-  NSDictionary *options = [NSDictionary dictionaryWithObject:_cachedCategories forKey:@"categories"];
+  NSDictionary *options = nil;
+//  options = [NSDictionary dictionaryWithObject:_cachedCategories forKey:@"categories"];
   FilterViewController *fvc = [[FilterViewController alloc] initWithOptions:options];
   fvc.delegate = self;
   fvc.modalTransitionStyle = UIModalTransitionStylePartialCurl;
@@ -419,11 +420,50 @@
   // 4828 - 3mi
   // 3218 - 2mi
   
-//  NSInteger price = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
-  
   BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
+  
+  // Sort places based on filter
+  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
+  NSString *filterSortBy = nil;
+  switch (sortByIndex) {
+    case 0:
+      filterSortBy = @"distance";
+      break;
+    case 1:
+      filterSortBy = @"best_match";
+      break;
+    case 2:
+      filterSortBy = @"rating";
+      break;
+    default:
+      filterSortBy = nil;
+      break;
+  }
+  
+  // Radius
+  NSInteger radiusIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterRadius"];
+  NSString *filterRadius = nil;
+  switch (radiusIndex) {
+    case 0:
+      filterRadius = @"805";
+      break;
+    case 1:
+      filterRadius = @"1609";
+      break;
+    case 2:
+      filterRadius = @"3218";
+      break;
+    case 3:
+      filterRadius = @"8046";
+      break;
+    default:
+      filterRadius = @"3218";
+      break;
+  }
+  
+  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:@"3218" sortby:nil openNow:openNow price:0 start:0 rpp:[[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumResults"]];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:filterRadius sortby:filterSortBy openNow:openNow price:priceIndex start:0 rpp:40];
 }
 
 #pragma mark - State Machine
@@ -493,13 +533,13 @@
   RELEASE_SAFELY(_cachedItems);
   _cachedItems = [[NSMutableArray alloc] initWithArray:places];
   
-  RELEASE_SAFELY(_cachedCategories);
-  _cachedCategories = [[NSMutableSet alloc] init];
-  for (NSDictionary *place in _cachedItems) {
-    for (NSString *cat in [[place objectForKey:@"category"] componentsSeparatedByString:@", "]) {
-      [_cachedCategories addObject:cat];
-    }
-  }
+//  RELEASE_SAFELY(_cachedCategories);
+//  _cachedCategories = [[NSMutableSet alloc] init];
+//  for (NSDictionary *place in _cachedItems) {
+//    for (NSString *cat in [[place objectForKey:@"category"] componentsSeparatedByString:@", "]) {
+//      [_cachedCategories addObject:cat];
+//    }
+//  }
 
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
@@ -719,7 +759,7 @@
   [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterRadius"];
+  [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"filterRadius"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
 //  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
@@ -958,26 +998,26 @@
   }
   
   // Sort places based on filter
-  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
-  NSString *filterSortBy = nil;
-  switch (sortByIndex) {
-    case 0:
-      filterSortBy = nil;
-      break;
-    case 1:
-      filterSortBy = @"distance";
-      break;
-    case 2:
-      filterSortBy = @"score";
-      break;
-    default:
-      filterSortBy = nil;
-      break;
-  }
-  if (filterSortBy) {
-    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
-    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
-  }
+//  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
+//  NSString *filterSortBy = nil;
+//  switch (sortByIndex) {
+//    case 0:
+//      filterSortBy = nil;
+//      break;
+//    case 1:
+//      filterSortBy = @"distance";
+//      break;
+//    case 2:
+//      filterSortBy = @"score";
+//      break;
+//    default:
+//      filterSortBy = nil;
+//      break;
+//  }
+//  if (filterSortBy) {
+//    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
+//    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
+//  }
   
   // Calculate number of places shown
   NSString *numPlaces = nil;

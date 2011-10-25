@@ -2697,7 +2697,7 @@
 					armv6,
 					armv7,
 				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
@@ -2727,7 +2727,7 @@
 					armv6,
 					armv7,
 				);
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MealTime/MealTime-Prefix.pch";
 				GCC_VERSION = com.apple.compilers.llvmgcc42;

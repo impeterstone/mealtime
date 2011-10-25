@@ -755,9 +755,20 @@
 }
 
 - (void)executeSearch {
+  // Determine if this is a search around current location or a specific city
+  // If current location, sort by distance
+  // If specific location, sort by popularity
+  
+  if ([_whereField.text length] > 0) {
+    // Popularity
+    [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"filterSortBy"]; 
+  } else {
+    // Distance
+    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
+  }
+  
   // Reset Filters
   [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
   [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
   [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"filterRadius"];
   [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];

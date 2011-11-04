@@ -15,7 +15,7 @@
 
 - (void)getPlacesFromFixtures;
 
-- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow price:(NSInteger)price start:(NSInteger)start rpp:(NSInteger)rpp;
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius offset:(NSInteger)offset limit:(NSInteger)limit;
 
 - (void)cancelRequests;
 

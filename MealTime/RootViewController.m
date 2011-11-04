@@ -56,6 +56,10 @@
     _whereQuery = nil;
     _numResults = 0;
     _location = nil;
+
+    _pagingStart = 0;
+    _pagingCount = 20;
+    _pagingTotal = 20;
     
     _isSearchActive = NO;
     
@@ -140,16 +144,16 @@
   [self.navigationController setNavigationBarHidden:YES animated:animated];
   
   // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
+//  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
+//    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
+//    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
+//    nuxView.alpha = 0.0;
+//    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+//    [UIView animateWithDuration:0.4 animations:^{
+//      nuxView.alpha = 1.0;
+//    }];
+//  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -358,6 +362,9 @@
 }
 
 - (void)filter {
+#warning disable filters
+  return;
+  
   if ([self dataIsLoading]) return;
   
   NSDictionary *options = nil;
@@ -393,14 +400,14 @@
 - (void)fetchDataSource {
   [[PlaceDataCenter defaultCenter] cancelRequests];
   
-  BOOL isReload = YES;
+  BOOL isReload = (_pagingStart == 0);
   
   if (isReload) {
     // Update distance button label
     [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
     
     // Update location param
-    _location = self.whereQuery ? [[NSString stringWithFormat:@"find_loc=%@", [self.whereQuery stringByURLEncoding]] retain] : [[NSString stringWithFormat:@"l=a:%f,%f,%g", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]] retain];
+    _location = self.whereQuery ? [[NSString stringWithFormat:@"location=%@", [self.whereQuery stringByURLEncoding]] retain] : [[NSString stringWithFormat:@"ll=%f,%f", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]] retain];
   }
   
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -419,56 +426,20 @@
   // 8046 - 5mi
   // 4828 - 3mi
   // 3218 - 2mi
-  
-  BOOL openNow = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterOpenNow"];
-  
-  // Sort places based on filter
-  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
-  NSString *filterSortBy = nil;
-  switch (sortByIndex) {
-    case 0:
-      filterSortBy = @"distance";
-      break;
-    case 1:
-      filterSortBy = @"best_match";
-      break;
-    case 2:
-      filterSortBy = @"rating";
-      break;
-    default:
-      filterSortBy = nil;
-      break;
-  }
-  
-  // Radius
-  NSInteger radiusIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterRadius"];
-  NSString *filterRadius = nil;
-  switch (radiusIndex) {
-    case 0:
-      filterRadius = @"805";
-      break;
-    case 1:
-      filterRadius = @"1609";
-      break;
-    case 2:
-      filterRadius = @"3218";
-      break;
-    case 3:
-      filterRadius = @"8046";
-      break;
-    default:
-      filterRadius = @"3218";
-      break;
-  }
-  
-  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:filterRadius sortby:filterSortBy openNow:openNow price:priceIndex start:0 rpp:40];
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:nil offset:_pagingStart limit:_pagingCount];
 }
 
 #pragma mark - State Machine
 - (BOOL)shouldLoadMore {
-  return NO;
+  return YES;
+}
+
+- (void)loadMore {
+  [super loadMore];
+  _pagingStart += _pagingCount;
+  _pagingTotal += _pagingCount;
+  [self fetchDataSource];
 }
 
 - (void)restoreDataSource {
@@ -485,7 +456,7 @@
 }
 
 - (void)loadDataSource {
-  BOOL isReload = YES;
+  BOOL isReload = (_pagingStart == 0);
   if (isReload) {
     _hasMore = NO;
     [self.items removeAllObjects];
@@ -513,121 +484,26 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
-  // Check hasMore
-  NSDictionary *paging = [response objectForKey:@"paging"];
-  NSInteger currentPage = [[paging objectForKey:@"currentPage"] integerValue];
-  NSInteger numPages = [[paging objectForKey:@"numPages"] integerValue];
-  if (currentPage == (numPages - 1)) {
-    _hasMore = NO;
-  } else {
-    _hasMore = YES;
-  }
-  
   // Num results
-  _numResults = [response objectForKey:@"numResults"] ? [[response objectForKey:@"numResults"] integerValue] : 0;
+  _numResults = [response objectForKey:@"total"] ? [[response objectForKey:@"total"] integerValue] : 0;
   [self updateNumResults];
   DLog(@"Yelp got %d results", _numResults);
+  
+  // Check hasMore
+  if (_numResults > _pagingTotal) {
+    _hasMore = YES;
+  } else {
+    _hasMore = NO;
+  }
   
   NSMutableArray *places = [response objectForKey:@"places"];
   
   RELEASE_SAFELY(_cachedItems);
   _cachedItems = [[NSMutableArray alloc] initWithArray:places];
-  
-//  RELEASE_SAFELY(_cachedCategories);
-//  _cachedCategories = [[NSMutableSet alloc] init];
-//  for (NSDictionary *place in _cachedItems) {
-//    for (NSString *cat in [[place objectForKey:@"category"] componentsSeparatedByString:@", "]) {
-//      [_cachedCategories addObject:cat];
-//    }
-//  }
 
   NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
   
-  // Predicate Array
-//  NSMutableArray *predicateArray = [NSMutableArray array];
-  
-  // What
-//  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
-//  if ([filterWhat length] > 0) {
-//    [predArray addObject:[NSString stringWithFormat:@"(name CONTAINS[cd] '%@' OR category CONTAINS[cd] '%@')", filterWhat, filterWhat]];
-//  }
-  
-  // Category
-//  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
-//  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
-//    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
-//  }
-  
-  // Price
-//  NSString *filterPrice = nil;
-//  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
-//  switch (priceIndex) {
-//    case 0:
-//      filterPrice = nil;
-//      break;
-//    case 1:
-//      filterPrice = @"$";
-//      break;
-//    case 2:
-//      filterPrice = @"$$";
-//      break;
-//    case 3:
-//      filterPrice = @"$$$";
-//      break;
-//    case 4:
-//      filterPrice = @"$$$$";
-//      break;
-//    default:
-//      filterPrice = nil;
-//      break;
-//  }
-//  if (filterPrice) {
-//    [predicateArray addObject:[NSString stringWithFormat:@"(price like '%@')", filterPrice]];
-//  }
-  
-  // Highly Rated
-//  BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-//  if (filterHighlyRated) {
-//    [predicateArray addObject:[NSString stringWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
-//  }
-  
-//  if ([predicateArray count] > 0) {
-//    NSString *predString = [predicateArray componentsJoinedByString:@" AND "];
-//    [filteredPlaces filterUsingPredicate:[NSPredicate predicateWithFormat:predString]];
-//  }
-  
-  // Sort places based on filter
-//  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
-//  NSString *filterSortBy = nil;
-//  switch (sortByIndex) {
-//    case 0:
-//      filterSortBy = nil;
-//      break;
-//    case 1:
-//      filterSortBy = @"distance";
-//      break;
-//    case 2:
-//      filterSortBy = @"score";
-//      break;
-//    default:
-//      filterSortBy = nil;
-//      break;
-//  }
-//  if (filterSortBy) {
-//    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
-//    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
-//  }
-  
-  // Calculate number of places shown
-  NSString *numPlaces = nil;
-  if ([filteredPlaces count] > 0) {
-    numPlaces = [NSString stringWithFormat:@"Showing %d Places", [filteredPlaces count]];
-  } else {
-    numPlaces = [NSString stringWithFormat:@"No Places Found"];
-  }
-  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
-  
-  BOOL isReload = YES;
+  BOOL isReload = (_pagingStart == 0);
   if (isReload) {
     [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
   } else {
@@ -810,6 +686,8 @@
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];
 
   // Reload dataSource
+  _pagingStart = 0;
+  _pagingTotal = _pagingCount;
   [self loadDataSource];
 }
 
@@ -994,7 +872,7 @@
   // Highly Rated
   BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
   if (filterHighlyRated) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_SCORE]];
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_RATING]];
   }
   
   // Category

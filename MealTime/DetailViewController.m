@@ -42,7 +42,7 @@
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _cachedTimestamp = nil;
-    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithAlias:[place objectForKey:@"alias"]];
+    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithAlias:[place objectForKey:@"yid"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
       _place = [cachedPlace retain];
@@ -158,8 +158,8 @@
     [self restoreDataSource];
   } else {
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    [_place objectForKey:@"biz"],
-                                    @"biz",
+                                    [_place objectForKey:@"yid"],
+                                    @"yid",
                                     nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#load" attributes:localyticsDict];
     
@@ -312,8 +312,8 @@
 }
 
 - (void)call {
-  if ([_place objectForKey:@"phone"] && [_place objectForKey:@"formattedPhone"]) {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"formattedPhone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  if ([_place objectForKey:@"phone"]) {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
     av.tag = kAlertCall;
     [av show];
   } else {
@@ -335,7 +335,7 @@
 }
 
 - (void)share {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"star#export"];
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#share"];
   
   // Construct Body
   //  The Codmother Fish and Chips
@@ -350,10 +350,11 @@
   //  Price: $
   NSMutableString *body = [NSMutableString string];
 
-  [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"biz"], [_place objectForKey:@"name"]];
-  [body appendFormat:@"%@<br/>", [[_place objectForKey:@"address"] componentsJoinedByString:@"<br/>"]];
-  if ([_place objectForKey:@"formattedPhone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"formattedPhone"]];
-  [body appendFormat:@"Price: %@, Rating: %@", [_place objectForKey:@"price"], [_place objectForKey:@"rating"]];
+  [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"yid"], [_place objectForKey:@"name"]];
+  if ([_place objectForKey:@"address"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"address"]];
+  if ([_place objectForKey:@"city"] && [_place objectForKey:@"state_code"] && [_place objectForKey:@"postal_code"]) [body appendFormat:@"%@, %@ %@<br/>", [_place objectForKey:@"city"], [_place objectForKey:@"state_code"], [_place objectForKey:@"postal_code"]];
+  if ([_place objectForKey:@"phone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"phone"]];
+  [body appendFormat:@"Rating: %@", [_place objectForKey:@"rating"]];
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }
 
@@ -374,15 +375,15 @@
   PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
   [_mapView addAnnotation:placeAnnotation];
   [placeAnnotation release];
-}
-
-- (void)loadDetails {
-  if ([_place objectForKey:@"formattedAddress"]) {
-    _addressLabel.text = [_place objectForKey:@"formattedAddress"];
+  
+  if ([_place objectForKey:@"formatted_address"]) {
+    _addressLabel.text = [_place objectForKey:@"formatted_address"];
   } else {
     _addressLabel.text = @"No address listed";
   }
-  
+}
+
+- (void)loadDetails {  
   if ([_place objectForKey:@"hours"] && [[_place objectForKey:@"hours"] count] > 0) {
     _hoursLabel.text = [[_place objectForKey:@"hours"] componentsJoinedByString:@"\n"];
   } else {
@@ -438,12 +439,16 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
+  [self loadMap];
+  
   // Combined call
   if (!_isCachedPlace) {
-    [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
+    [[BizDataCenter defaultCenter] fetchBusinessForYid:[_place objectForKey:@"yid"]];
+    [[BizDataCenter defaultCenter] fetchPhotosForBiz:[_place objectForKey:@"biz"]];
   } else {
     if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > WEEK_SECONDS) {
-      [[BizDataCenter defaultCenter] fetchDetailsForPlace:_place];
+      [[BizDataCenter defaultCenter] fetchBusinessForYid:[_place objectForKey:@"yid"]];
+      [[BizDataCenter defaultCenter] fetchPhotosForBiz:[_place objectForKey:@"biz"]];
     }
     
     NSArray *photos = [_place objectForKey:@"photos"];
@@ -473,9 +478,18 @@
 //  }
 }
 
-- (void)dataSourceDidLoad {
-  [self loadDetails];
-  [self loadMap];
+- (void)dataSourceDidLoad {  
+//  // NUX
+//  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
+//    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
+//    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
+//    nuxView.alpha = 0.0;
+//    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
+//    [UIView animateWithDuration:0.4 animations:^{
+//      nuxView.alpha = 1.0;
+//    }];
+//  }
   
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
   
@@ -483,31 +497,27 @@
     _footerView.top -= _footerView.height;
   }];
   
-  // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
-  
   [super dataSourceDidLoad];
 }
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
   // Match place from request to current, make sure this request is still valid
-  if (![[userInfo objectForKey:@"place"] isEqual:_place]) return;
   
-  NSArray *photos = [_place objectForKey:@"photos"];
-  if (photos && [photos count] > 0) {
-    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
-  } else {
-    [self dataSourceDidError];
+  NSString *requestType = [userInfo objectForKey:@"requestType"];
+  
+  if ([requestType isEqualToString:@"photos"]) {
+    NSArray *photos = [response objectForKey:@"photos"];
+    if (photos && [photos count] > 0) {
+      [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
+    } else {
+      [self dataSourceDidError];
+    }
+  } else if ([requestType isEqualToString:@"business"]) {
+    // Load details of business
+    if ([response objectForKey:@"phone"]) {
+      [_place setObject:[response objectForKey:@"phone"] forKey:@"phone"];
+    }
   }
 }
 
@@ -670,7 +680,7 @@
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#yelp" attributes:localyticsDict];
 
     // Always load Yelp's mobile site
-    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://m.yelp.com/biz/%@", [_place objectForKey:@"alias"]]];
+    WebViewController *wvc = [[WebViewController alloc] initWithURLString:[NSString stringWithFormat:@"http://m.yelp.com/biz/%@", [_place objectForKey:@"yid"]]];
     [self.navigationController pushViewController:wvc animated:YES];
     [wvc release];
     
@@ -686,13 +696,13 @@
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                     [_place objectForKey:@"biz"],
                                     @"biz",
-                                    [_place objectForKey:@"address"],
-                                    @"address",
+                                    [_place objectForKey:@"formatted_address"],
+                                    @"formatted_address",
                                     nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#directions" attributes:localyticsDict];
     
     CLLocationCoordinate2D currentLocation = [[PSLocationCenter defaultCenter] locationCoordinate];
-    NSString *address = [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+    NSString *address = [_place objectForKey:@"formatted_address"];
     NSString *mapsUrl = [NSString stringWithFormat:@"http://maps.google.com/maps?saddr=%f,%f&daddr=%@", currentLocation.latitude, currentLocation.longitude, [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }

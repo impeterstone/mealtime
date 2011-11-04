@@ -13,6 +13,7 @@
 #import "PSDataCenter.h"
 #import "PSDatabaseCenter.h"
 #import "PSStarView.h"
+#import "PSLocationCenter.h"
 
 @implementation PlaceCell
 
@@ -34,7 +35,6 @@
     _disclosureView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"disclosure_indicator_white_bordered.png"]];
     _disclosureView.contentMode = UIViewContentModeCenter;
     _disclosureView.alpha = 0.8;
-    _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
     
     // Labels
     _nameLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -143,6 +143,8 @@
 {
   [super layoutSubviews];
   
+  _disclosureView.frame = CGRectMake(self.contentView.width - _disclosureView.width - MARGIN_X, 0, _disclosureView.width, self.contentView.height);
+  
   // Labels
   CGFloat top = self.contentView.height - 40 - MARGIN_Y;
   CGFloat left = MARGIN_X;
@@ -216,7 +218,7 @@
   NSMutableDictionary *place = (NSMutableDictionary *)object;
   _place = place;
   
-  _photoView.urlPath = [place objectForKey:@"coverPhoto"];
+  _photoView.urlPath = [place objectForKey:@"cover_photo"];
   [_photoView loadImageAndDownload:YES];
   
 //  _ribbonLabel.text = [[place objectForKey:@"numReviews"] notNil] ? [NSString stringWithFormat:@"%@ mentions", [_place objectForKey:@"numReviews"]] : @"No Mentions";
@@ -224,7 +226,7 @@
   // Show highly rated ribbon
 //  DLog(@"score: %g", [[place objectForKey:@"score"] doubleValue]);
 
-  if ([[place objectForKey:@"numReviews"] integerValue] > HIGHLY_RATED_REVIEWS && [[place objectForKey:@"score"] doubleValue] > HIGHLY_RATED_SCORE) {
+  if ([[place objectForKey:@"review_count"] integerValue] > HIGHLY_RATED_REVIEWS && [[place objectForKey:@"rating"] doubleValue] > HIGHLY_RATED_RATING) {
     _ribbonLabel.text = @"Highly Rated";
     _ribbonView.alpha = 1.0;
   } else {
@@ -233,46 +235,23 @@
   
   _nameLabel.text = [place objectForKey:@"name"];
   
-  if ([place objectForKey:@"cdistance"]) {
-    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"cdistance"]];
-  } else {
-    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
-  }
-  _categoryLabel.text = [[place objectForKey:@"category"] notNil] ? [place objectForKey:@"category"] : @"Unknown Category";
+//  if ([place objectForKey:@"cdistance"]) {
+//    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"cdistance"]];
+//  } else {
+//    _distanceLabel.text = [NSString stringWithFormat:@"%@ mi", [place objectForKey:@"distance"]];
+//  }
+  
+  _categoryLabel.text = [[place objectForKey:@"categories"] notNil] ? [place objectForKey:@"categories"] : @"Unknown Category";
   _priceLabel.text = [[place objectForKey:@"price"] notNil] ? [place objectForKey:@"price"] : nil;
   
-//  CGFloat lat = DEG2RAD([[place objectForKey:@"latitude"] floatValue]);
-//  CGFloat lng = DEG2RAD([[place objectForKey:@"longitude"] floatValue]);
-//  CGFloat curLat = DEG2RAD([[PSLocationCenter defaultCenter] latitude]);
-//  CGFloat curLng = DEG2RAD([[PSLocationCenter defaultCenter] longitude]);
-//  CGFloat distance = acos(sin(lat) * sin(curLat) + cos(lat) * cos(curLat) * cos(curLng - lng)) * 6378.1;
-//  
-//  _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", distance];
+  CGFloat lat = RADIANS([[place objectForKey:@"latitude"] floatValue]);
+  CGFloat lng = RADIANS([[place objectForKey:@"longitude"] floatValue]);
+  CGFloat curLat = RADIANS([[PSLocationCenter defaultCenter] latitude]);
+  CGFloat curLng = RADIANS([[PSLocationCenter defaultCenter] longitude]);
+  CGFloat distance = acos(sin(lat) * sin(curLat) + cos(lat) * cos(curLat) * cos(curLng - lng)) * 3959;
   
-  // Score
-  NSString *score = nil;
-  NSInteger metaScore = [[place objectForKey:@"score"] integerValue];
-  if (metaScore > 90) {
-    score = @"A+";
-  } else if (metaScore > 80) {
-    score = @"A";
-  } else if (metaScore > 70) {
-    score = @"A-";
-  } else if (metaScore > 60) {
-    score = @"B+";
-  } else if (metaScore > 50) {
-    score = @"B";
-  } else if (metaScore > 40) {
-    score = @"B-";
-  } else if (metaScore > 30) {
-    score = @"C+";
-  } else if (metaScore > 20) {
-    score = @"C";
-  } else if (metaScore >= 10) {
-    score = @"C-";
-  } else {
-    score = @"F";
-  }
+  _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", distance];
+  
   
   // This is a fix for rating sometimes not being a number
   if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {

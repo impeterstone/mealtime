@@ -61,7 +61,7 @@ static NSLock *_placesToRemoveLock = nil;
 
 
 #pragma mark - Remote Fetch
-- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius sortby:(NSString *)sortby openNow:(BOOL)openNow price:(NSInteger)price start:(NSInteger)start rpp:(NSInteger)rpp {
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius offset:(NSInteger)offset limit:(NSInteger)limit {
   
   // sortby options
   // best_match
@@ -76,54 +76,41 @@ static NSLock *_placesToRemoveLock = nil;
   
   // Params
   
-  NSString *startParam = [NSString stringWithFormat:@"start=%d", start];
-  NSString *rppParam = [NSString stringWithFormat:@"rpp=%d", rpp];
+  NSString *offsetParam = [NSString stringWithFormat:@"offset=%d", offset];
+  NSString *limitParam = [NSString stringWithFormat:@"limit=%d", limit];
   
-  NSString *openNowParam = openNow ? [NSString stringWithFormat:@"open_now=%d", [NSDate minutesSinceBeginningOfWeek]] : nil;
-  NSString *sortbyParam = sortby ? [NSString stringWithFormat:@"sortby=%@", sortby] : nil;
   NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
-  if (query) {
-    query = [NSString stringWithFormat:@"find_desc=%@", query];
-  } else {
-    query = @"find_desc=Restaurants";
-  }
-  
-  NSString *queryParam = [NSString stringWithFormat:@"%@", [query stringByURLEncoding]];
-  
-  NSString *priceParam = (price == 0) ? nil : [NSString stringWithFormat:@"attrs=RestaurantsPriceRange2.%d", price];
+  NSString *termParam = query ? [NSString stringWithFormat:@"term=%@", [query stringByURLEncoding]] : nil;  
   
   // Construct URL
   NSMutableString *urlString = [NSMutableString string];
-  [urlString appendString:@"http://m.yelp.com/search?"];
+  [urlString appendFormat:@"%@/search?", API_BASE_URL];
+//  [urlString appendString:@"http://m.yelp.com/search?"];
   [urlString appendString:location];
-  [urlString appendString:@"&"];
-  [urlString appendString:startParam];
-  [urlString appendString:@"&"];
-  [urlString appendString:rppParam];
-  [urlString appendString:@"&"];
-  [urlString appendString:queryParam];
+  if (termParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:termParam];
+  }
+  if (offsetParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:offsetParam];
+  }
+  if (limitParam) {
+    [urlString appendString:@"&"];
+    [urlString appendString:limitParam];
+  }
   if (radiusParam) {
     [urlString appendString:@"&"];
     [urlString appendString:radiusParam];
-  }
-  if (openNowParam) {
-    [urlString appendString:@"&"];
-    [urlString appendString:openNowParam];
-  }
-  if (sortbyParam) {
-    [urlString appendString:@"&"];
-    [urlString appendString:sortbyParam];
-  }
-  if (priceParam) {
-    [urlString appendString:@"&"];
-    [urlString appendString:priceParam];
   }
   
   NSURL *url = [NSURL URLWithString:urlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.numberOfTimesToRetryOnTimeout = 1;
-  [request setShouldContinueWhenAppEntersBackground:YES];
+//  [request setShouldContinueWhenAppEntersBackground:YES];
+  [request addRequestHeader:@"Accept" value:@"application/json"];
+  
 //  [request setUserAgent:USER_AGENT];
   
   [request setCompletionBlock:^{
@@ -138,20 +125,10 @@ static NSLock *_placesToRemoveLock = nil;
         [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
       }
     } else {
-      // GCD
-      [request retain];
-      NSString *responseString = [request.responseString copy];
-      dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
-        [responseString release];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-          if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
-            [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:request.userInfo];
-          }
-          [request release];
-        });
-      });
+      NSDictionary *response = [request.responseData objectFromJSONData];
+      if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
+        [self.delegate dataCenterDidFinishWithResponse:response andUserInfo:request.userInfo];
+      }
     }
   }];
   

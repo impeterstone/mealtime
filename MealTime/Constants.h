@@ -37,7 +37,7 @@
 #define APP_DELEGATE ((MealTimeAppDelegate *)[[UIApplication sharedApplication] delegate])
 
 #define HIGHLY_RATED_REVIEWS 99
-#define HIGHLY_RATED_SCORE 70
+#define HIGHLY_RATED_RATING 3.5
 
 // Tags
 #define kSortActionSheet 7070

@@ -16,6 +16,8 @@
 - (void)getPhotosFromFixturesForBiz:(NSString *)biz;
 - (void)getBizFromFixturesForBiz:(NSString *)biz;
 
+- (void)fetchBusinessForYid:(NSString *)yid;
+- (void)fetchPhotosForBiz:(NSString *)biz;
 
 - (void)fetchDetailsForPlace:(NSDictionary *)place;
 

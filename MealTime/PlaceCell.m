@@ -89,7 +89,12 @@
     [_ribbonView addSubview:_ribbonLabel];
     _ribbonView.alpha = 0.0;
     
-    _starView = [[PSStarView alloc] initWithFrame:CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height)];
+    _ratingView = [[PSURLCacheImageView alloc] initWithFrame:CGRectMake(MARGIN_X, MARGIN_Y * 2, 100, 20)];
+    _ratingView.shouldAnimate = NO;
+    _ratingView.contentMode = UIViewContentModeScaleAspectFit;
+    _ratingView.backgroundColor = [UIColor clearColor];
+    
+//    _starView = [[PSStarView alloc] initWithFrame:CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height)];
     
     // Add subviews
     [self.contentView addSubview:_photoView];
@@ -99,14 +104,16 @@
     [self.contentView addSubview:_categoryLabel];
     [self.contentView addSubview:_priceLabel];
     [self.contentView addSubview:_ribbonView];
-    [self.contentView addSubview:_starView];
+    [self.contentView addSubview:_ratingView];
+//    [self.contentView addSubview:_starView];
   }
   return self;
 }
 
 - (void)dealloc
 {
-  RELEASE_SAFELY(_starView);
+  RELEASE_SAFELY(_ratingView);
+//  RELEASE_SAFELY(_starView);
   RELEASE_SAFELY(_ribbonView);
   RELEASE_SAFELY(_ribbonLabel);
   RELEASE_SAFELY(_categoryLabel);
@@ -136,7 +143,9 @@
   _photoView.urlPath = nil;
   _place = nil;
   _ribbonView.alpha = 0.0;
-  [_starView setRating:0.0];
+  _ratingView.image = nil;
+  _ratingView.urlPath = nil;
+//  [_starView setRating:0.0];
 }
 
 - (void)layoutSubviews
@@ -252,13 +261,16 @@
   
   _distanceLabel.text = [NSString stringWithFormat:@"%.1f mi", distance];
   
+  // Set Rating
+  _ratingView.urlPath = [place objectForKey:@"rating_img_url"];
+  [_ratingView loadImageAndDownload:YES];
   
   // This is a fix for rating sometimes not being a number
-  if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {
-    [_starView setRating:[[place objectForKey:@"rating"] floatValue]];
-  } else {
-    [_starView setRating:0.0];
-  }
+//  if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {
+//    [_starView setRating:[[place objectForKey:@"rating"] floatValue]];
+//  } else {
+//    [_starView setRating:0.0];
+//  }
   
 //  _ribbonLabel.text = nil;
 //  _ribbonLabel.text = [NSString stringWithFormat:@"%@%% %@ ", [place objectForKey:@"score"], freshOrRotten];

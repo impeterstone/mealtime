@@ -55,6 +55,7 @@
     _whatQuery = nil;
     _whereQuery = nil;
     _numResults = 0;
+    _numShowing = 0;
     _location = nil;
 
     _pagingStart = 0;
@@ -388,8 +389,8 @@
 - (void)updateNumResults {
 //  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
   NSString *distanceTitle = nil;
-  if (_numResults > 0) {
-    distanceTitle = [NSString stringWithFormat:@"Showing %d Places", _numResults];
+  if (_numShowing > 0) {
+    distanceTitle = [NSString stringWithFormat:@"Showing %d Places", _numShowing];
   } else {
     distanceTitle = [NSString stringWithFormat:@"No Places Found"];
   }
@@ -484,10 +485,13 @@
 
 #pragma mark - PSDataCenterDelegate
 - (void)dataCenterDidFinishWithResponse:(id)response andUserInfo:(NSDictionary *)userInfo {
+  // Num showing
+  _numShowing = [response objectForKey:@"showing"] ? [[response objectForKey:@"showing"] integerValue] : 0;
+  
   // Num results
   _numResults = [response objectForKey:@"total"] ? [[response objectForKey:@"total"] integerValue] : 0;
   [self updateNumResults];
-  DLog(@"Yelp got %d results", _numResults);
+  DLog(@"Yelp got %d results, %d showibg", _numResults, _numShowing);
   
   // Check hasMore
   if (_numResults > _pagingTotal) {

@@ -25,7 +25,8 @@
   UILabel *_categoryLabel;
   UILabel *_priceLabel;
   
-  PSStarView *_starView;
+  PSURLCacheImageView *_ratingView;
+//  PSStarView *_starView;
   
   NSDictionary *_place;
 }

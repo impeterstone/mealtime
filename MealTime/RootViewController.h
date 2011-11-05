@@ -42,6 +42,7 @@
   NSString *_whatQuery;
   NSString *_whereQuery;
   NSInteger _numResults;
+  NSInteger _numShowing;
   
   ASIHTTPRequest *_activeRequest;
   

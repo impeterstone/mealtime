@@ -94,6 +94,14 @@
     _ratingView.contentMode = UIViewContentModeScaleAspectFit;
     _ratingView.backgroundColor = [UIColor clearColor];
     
+    _countLabel = [[UILabel alloc] initWithFrame:CGRectMake(self.contentView.width - 100 - MARGIN_X, MARGIN_Y * 2, 100, 20)];
+    _countLabel.backgroundColor = [UIColor clearColor];
+    _countLabel.textAlignment = UITextAlignmentRight;
+    _countLabel.font = [PSStyleSheet fontForStyle:@"placeCount"];
+    _countLabel.textColor = [PSStyleSheet textColorForStyle:@"placeCount"];
+    _countLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"placeCount"];
+    _countLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"placeCount"];
+    
 //    _starView = [[PSStarView alloc] initWithFrame:CGRectMake(MARGIN_X, MARGIN_Y * 2, _starView.width, _starView.height)];
     
     // Add subviews
@@ -105,6 +113,7 @@
     [self.contentView addSubview:_priceLabel];
     [self.contentView addSubview:_ribbonView];
     [self.contentView addSubview:_ratingView];
+    [self.contentView addSubview:_countLabel];
 //    [self.contentView addSubview:_starView];
   }
   return self;
@@ -118,6 +127,7 @@
   RELEASE_SAFELY(_ribbonLabel);
   RELEASE_SAFELY(_categoryLabel);
   RELEASE_SAFELY(_priceLabel);
+  RELEASE_SAFELY(_countLabel);
   RELEASE_SAFELY(_distanceLabel);
   RELEASE_SAFELY(_nameLabel);
   RELEASE_SAFELY(_disclosureView);
@@ -139,6 +149,7 @@
   _distanceLabel.text = nil;
   _categoryLabel.text = nil;
   _priceLabel.text = nil;
+  _countLabel.text = nil;
   _photoView.image = nil;
   _photoView.urlPath = nil;
   _place = nil;
@@ -234,13 +245,15 @@
   
   // Show highly rated ribbon
 //  DLog(@"score: %g", [[place objectForKey:@"score"] doubleValue]);
-
-  if ([[place objectForKey:@"review_count"] integerValue] > HIGHLY_RATED_REVIEWS && [[place objectForKey:@"rating"] doubleValue] > HIGHLY_RATED_RATING) {
-    _ribbonLabel.text = @"Highly Rated";
-    _ribbonView.alpha = 1.0;
-  } else {
-    _ribbonView.alpha = 0.0;
-  }
+//  if ([[place objectForKey:@"review_count"] integerValue] > HIGHLY_RATED_REVIEWS && [[place objectForKey:@"rating"] doubleValue] > HIGHLY_RATED_RATING) {
+//    _ribbonLabel.text = @"Highly Rated";
+//    _ribbonView.alpha = 1.0;
+//  } else {
+//    _ribbonView.alpha = 0.0;
+//  }
+  
+  _ribbonView.alpha = 1.0;
+  _ribbonLabel.text = [NSString stringWithFormat:@"%@ Reviews", [place objectForKey:@"review_count"]];
   
   _nameLabel.text = [place objectForKey:@"name"];
   
@@ -264,6 +277,8 @@
   // Set Rating
   _ratingView.urlPath = [place objectForKey:@"rating_img_url"];
   [_ratingView loadImageAndDownload:YES];
+  
+//  _countLabel.text = [NSString stringWithFormat:@"%@ Reviews", [place objectForKey:@"review_count"]];
   
   // This is a fix for rating sometimes not being a number
 //  if ([[place objectForKey:@"rating"] respondsToSelector:@selector(floatValue)]) {

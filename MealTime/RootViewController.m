@@ -278,7 +278,8 @@
   // Center
   _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
   [_filterButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
+  [_filterButton setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
+//  [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
 //  _filterButton.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
 //  _filterButton.titleLabel.textAlignment = UITextAlignmentCenter;
 //  _filterButton.titleLabel.numberOfLines = 2;
@@ -394,7 +395,7 @@
   } else {
     distanceTitle = [NSString stringWithFormat:@"No Places Found"];
   }
-  [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
+//  [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
 }
 
 #pragma mark - Fetching Data
@@ -405,7 +406,7 @@
   
   if (isReload) {
     // Update distance button label
-    [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
+//    [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
     
     // Update location param
     _location = self.whereQuery ? [[NSString stringWithFormat:@"location=%@", [self.whereQuery stringByURLEncoding]] retain] : [[NSString stringWithFormat:@"ll=%f,%f", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]] retain];
@@ -518,7 +519,7 @@
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
   [self dataSourceDidError];
-  [_filterButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
+//  [_filterButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
 }
 
 #pragma mark - Actions
@@ -919,7 +920,7 @@
   } else {
     numPlaces = [NSString stringWithFormat:@"No Places Found"];
   }
-  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
+//  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
   
   [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
   [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];

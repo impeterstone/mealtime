@@ -26,6 +26,7 @@
   UILabel *_priceLabel;
   
   PSURLCacheImageView *_ratingView;
+  UILabel *_countLabel;
 //  PSStarView *_starView;
   
   NSDictionary *_place;

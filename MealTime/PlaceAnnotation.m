@@ -41,7 +41,7 @@
 
 // optional
 - (NSString *)subtitle {
-  return [[_place objectForKey:@"address"] componentsJoinedByString:@" "];
+  return [_place objectForKey:@"formatted_address"];
 }
 
 @end

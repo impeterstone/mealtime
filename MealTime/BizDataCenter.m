@@ -124,7 +124,7 @@ static NSLock *_placeLock = nil;
 
 - (void)fetchPhotosForBiz:(NSString *)biz {
   NSMutableString *urlString = [NSMutableString string];
-  [urlString appendFormat:@"http://www.yelp.com/biz_photos/%@?rpp=9999", biz];
+  [urlString appendFormat:@"http://www.yelp.com/biz_photos/%@?rpp=999", biz];
   NSURL *url = [NSURL URLWithString:urlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];

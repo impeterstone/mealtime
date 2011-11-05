@@ -354,6 +354,7 @@
 		28A1B28213F1CFB000EB971E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28113F1CFB000EB971E /* main.m */; };
 		28A1B28613F1CFB000EB971E /* MealTimeAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */; };
 		28A1B28913F1CFB000EB971E /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28A1B28713F1CFB000EB971E /* MainWindow.xib */; };
+		28A78FA71465D96400456279 /* powered_by_yelp.png in Resources */ = {isa = PBXBuildFile; fileRef = 28A78FA61465D96400456279 /* powered_by_yelp.png */; };
 		28A87F1E141A392D001ACC62 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 28A87F1D141A392D001ACC62 /* Settings.bundle */; };
 		28A9FAB713F26FA200EFB191 /* PlaceCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FAB613F26FA200EFB191 /* PlaceCell.m */; };
 		28A9FAC013F27CFD00EFB191 /* PlaceDataCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 28A9FABF13F27CFD00EFB191 /* PlaceDataCenter.m */; };
@@ -929,6 +930,7 @@
 		28A1B28413F1CFB000EB971E /* MealTimeAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MealTimeAppDelegate.h; sourceTree = "<group>"; };
 		28A1B28513F1CFB000EB971E /* MealTimeAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MealTimeAppDelegate.m; sourceTree = "<group>"; };
 		28A1B28813F1CFB000EB971E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainWindow.xib; sourceTree = "<group>"; };
+		28A78FA61465D96400456279 /* powered_by_yelp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = powered_by_yelp.png; sourceTree = "<group>"; };
 		28A87F1D141A392D001ACC62 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = SOURCE_ROOT; };
 		28A9FAB513F26FA200EFB191 /* PlaceCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlaceCell.h; sourceTree = "<group>"; };
 		28A9FAB613F26FA200EFB191 /* PlaceCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlaceCell.m; sourceTree = "<group>"; };
@@ -2044,6 +2046,7 @@
 		28F7492213F209840056D111 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				28A78FA61465D96400456279 /* powered_by_yelp.png */,
 				283BF133142D51D0006BB231 /* tabbar */,
 				28BCC9781428097D00C70AEF /* nux */,
 				28E423481424046200F593CE /* table */,
@@ -2473,6 +2476,7 @@
 				28893E5C144F701000E1CD0F /* FBConnect.bundle in Resources */,
 				288B1BE0144F7B45000A8220 /* facebook-connect.png in Resources */,
 				288B1BE1144F7B45000A8220 /* facebook-connect@2x.png in Resources */,
+				28A78FA71465D96400456279 /* powered_by_yelp.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

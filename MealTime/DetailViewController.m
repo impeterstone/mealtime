@@ -222,6 +222,11 @@
   _addressLabel.frame = _addressView.bounds;
   [_addressView addSubview:_addressLabel];
   
+  // Powered by Yelp
+  UIImageView *pby = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"powered_by_yelp.png"]] autorelease];
+  pby.left = tableHeaderView.width - pby.width;
+  [tableHeaderView addSubview:pby];
+  
   // Hours
   _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
   _hoursView.userInteractionEnabled = NO;

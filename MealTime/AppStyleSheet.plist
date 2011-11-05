@@ -379,6 +379,19 @@
 		<key>shadowOffset</key>
 		<string>{0,-1}</string>
 	</dict>
+	<key>placeCount</key>
+	<dict>
+		<key>fontName</key>
+		<string>HelveticaNeue-Bold</string>
+		<key>fontSize</key>
+		<integer>14</integer>
+		<key>textColor</key>
+		<string>0xcdcdcd</string>
+		<key>shadowColor</key>
+		<string>0x000000</string>
+		<key>shadowOffset</key>
+		<string>{0,1}</string>
+	</dict>
 	<key>placeScore</key>
 	<dict>
 		<key>fontName</key>

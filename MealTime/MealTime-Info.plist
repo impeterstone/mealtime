@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBuildNumber</key>
-	<integer>1981</integer>
+	<integer>1989</integer>
 	<key>CFBuildVersion</key>
 	<string>1.4</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -42,7 +42,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.4.1981</string>
+	<string>1.4.1989</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSMainNibFile</key>

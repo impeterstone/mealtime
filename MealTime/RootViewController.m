@@ -578,19 +578,29 @@
 
 #pragma mark - TableView
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//  return [NSString stringWithFormat:@"%d places within %.1f mile(s)", _numResults, _distance];
+//  return [NSString stringWithFormat:@"Showing %d Places", _numShowing];
 //}
 
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 30)] autorelease];
-//  headerView.autoresizingMask = ~UIViewAutoresizingNone;
-//  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
-//  return headerView;
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-//  return 30.0;
-//}
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 23)] autorelease];
+  headerView.autoresizingMask = ~UIViewAutoresizingNone;
+  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
+  
+  UILabel *headerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(MARGIN_X, 0, headerView.width - MARGIN_X * 2, headerView.height)] autorelease];
+  headerLabel.backgroundColor = [UIColor clearColor];
+  headerLabel.text = [NSString stringWithFormat:@"Showing %d Results from Yelp", _numShowing];
+  headerLabel.font = [PSStyleSheet fontForStyle:@"rootSectionHeader"];
+  headerLabel.textColor = [PSStyleSheet textColorForStyle:@"rootSectionHeader"];
+  headerLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"rootSectionHeader"];
+  headerLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"rootSectionHeader"];
+  [headerView addSubview:headerLabel];
+  
+  return headerView;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+  return 23.0;
+}
 
 //- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 //  return [PlaceCell rowHeight];

@@ -124,7 +124,7 @@ static NSLock *_placeLock = nil;
 
 - (void)fetchPhotosForBiz:(NSString *)biz {
   NSMutableString *urlString = [NSMutableString string];
-  [urlString appendFormat:@"http://www.yelp.com/biz_photos/%@?rpp=999", biz];
+  [urlString appendFormat:@"http://www.yelp.com/biz_photos/%@?rpp=%d", biz, [[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumPhotos"]];
   NSURL *url = [NSURL URLWithString:urlString];
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
@@ -142,6 +142,7 @@ static NSLock *_placeLock = nil;
     if (responseCode == 403) {
       // we got a 403, probably because of parameters, try and fall back
       [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"fetchPhotos403"];
+      [[NSUserDefaults standardUserDefaults] setInteger:99 forKey:@"filterNumPhotos"];
       
       if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
         [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];

@@ -61,6 +61,11 @@ static const NSInteger kGANDispatchPeriodSec = 10;
       if (![appVersion isEqualToString:savedAppVersion]) {
         // App Version DOES NOT MATCH
         DLog(@"App Version CHANGED FROM OLD: %@ <---> TO NEW: %@", savedAppVersion, appVersion);
+        
+        // Reset how many filters we should try to scrape to 999.
+        // This eventually falls back to 99 if the server 403's
+        [[NSUserDefaults standardUserDefaults] setInteger:999 forKey:@"filterNumPhotos"];
+        
 #define SHOULD_RESET_NUX
 #ifdef SHOULD_RESET_NUX
         [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownRootOverlay"];

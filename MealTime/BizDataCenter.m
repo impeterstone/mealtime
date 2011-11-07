@@ -35,6 +35,12 @@ static NSLock *_placeLock = nil;
   return self;
 }
 
+- (void)dealloc {
+  [_bizQueue cancelAllOperations];
+  RELEASE_SAFELY(_bizQueue);
+  [super dealloc];
+}
+
 - (void)getPhotosFromFixturesForBiz:(NSString *)biz
 {
   NSString *filePath = [[NSBundle mainBundle] pathForResource:@"photos" ofType:@"html"];

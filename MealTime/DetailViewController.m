@@ -387,7 +387,7 @@
 - (void)loadDataSource {
   [super loadDataSource];
   
-  [self loadMap];
+  [[BizDataCenter defaultCenter] cancelRequests];
   
   // Combined call
   if (!_isCachedPlace) {
@@ -408,6 +408,9 @@
       [self dataSourceDidError];
     }
   }
+  
+  // Preload the map header
+  [self loadMap];
 }
 
 - (void)dataSourceDidLoad {

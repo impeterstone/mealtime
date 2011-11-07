@@ -11,13 +11,7 @@
 #import "PSDatabaseCenter.h"
 #import "PSLocationCenter.h"
 
-static NSLock *_placesToRemoveLock = nil;
-
 @implementation PlaceDataCenter
-
-+ (void)initialize {
-  _placesToRemoveLock = [[NSLock alloc] init];
-}
 
 + (id)defaultCenter {
   static id defaultCenter = nil;
@@ -36,29 +30,11 @@ static NSLock *_placesToRemoveLock = nil;
   return self;
 }
 
-- (void)getPlacesFromFixtures
-{
-  NSString *filePath = [[NSBundle mainBundle] pathForResource:@"places" ofType:@"html"];
-  NSData *fixtureData = [NSData dataWithContentsOfFile:filePath];
-  NSString *responseString = [[NSString alloc] initWithData:fixtureData encoding:NSUTF8StringEncoding];
-  
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    NSDictionary *response = [[[PSScrapeCenter defaultCenter] scrapePlacesWithHTMLString:responseString] retain];
-    [responseString release];
-    
-    // Save to DB
-//    NSString *requestType = @"places";
-//    NSString *requestData = [response JSONString];
-//    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"INSERT INTO requests (type, data) VALUES (?, ?)", requestType, requestData, nil];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-      if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
-        [self.delegate dataCenterDidFinishWithResponse:[response autorelease] andUserInfo:nil];
-      }
-    });
-  });
+- (void)dealloc {
+  [_placeQueue cancelAllOperations];
+  RELEASE_SAFELY(_placeQueue);
+  [super dealloc];
 }
-
 
 #pragma mark - Remote Fetch
 - (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSInteger)radius offset:(NSInteger)offset limit:(NSInteger)limit {
@@ -107,10 +83,9 @@ static NSLock *_placesToRemoveLock = nil;
   
   __block ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
   request.numberOfTimesToRetryOnTimeout = 1;
-//  [request setShouldContinueWhenAppEntersBackground:YES];
   [request addRequestHeader:@"Accept" value:@"application/json"];
-  
 //  [request setUserAgent:USER_AGENT];
+//  [request setShouldContinueWhenAppEntersBackground:YES];
   
   [request setCompletionBlock:^{
     // Check HTTP Status Code
@@ -118,7 +93,6 @@ static NSLock *_placesToRemoveLock = nil;
     if (responseCode == 403) {
       // we got a 403, probably because of parameters, try and fall back
       [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"fetchPlaces403"];
-      [[NSUserDefaults standardUserDefaults] setInteger:99 forKey:@"filterNumResults"];
       
       if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFailWithError:andUserInfo:)]) {
         [self.delegate dataCenterDidFailWithError:request.error andUserInfo:request.userInfo];
@@ -138,7 +112,6 @@ static NSLock *_placesToRemoveLock = nil;
   }];
   
   [_placeQueue addOperation:request];
-//  [[PSNetworkQueue sharedQueue] addOperation:request];
 }
 
 - (void)cancelRequests {

@@ -27,11 +27,16 @@
 - (void)setupToolbar;
 - (void)loadDetails;
 - (void)loadMap;
-- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer;
+
+// Utility
+- (void)showToolbar;
+
+// Actions
 - (void)call;
 - (void)yelp;
 - (void)share;
 - (void)directions;
+- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer;
 - (void)showLists;
 
 @end
@@ -51,10 +56,7 @@
       _place = [[NSMutableDictionary alloc] initWithDictionary:place];
     }
     
-    _imageSizeCache = [[NSMutableDictionary alloc] init];
     [[BizDataCenter defaultCenter] setDelegate:self];
-    
-    _photoCount = 0;
   }
   return self;
 }
@@ -77,7 +79,6 @@
   [[BizDataCenter defaultCenter] setDelegate:nil];
   RELEASE_SAFELY(_cachedTimestamp);
   RELEASE_SAFELY(_place);
-  RELEASE_SAFELY(_imageSizeCache);
   
   RELEASE_SAFELY(_mapView);
   RELEASE_SAFELY(_tabView);
@@ -296,82 +297,23 @@
   _footerView.top += _footerView.height; // hide footer
 }
 
-#pragma mark - Actions
-- (void)showLists {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
-  
-  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
-  UINavigationController *lnc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
-  lnc.viewControllers = [NSArray arrayWithObject:lvc];
-  [self presentModalViewController:lnc animated:YES];
-  [lvc release];
-  [lnc release];
-}
-
-- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showMap"];
-  
-  MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
-  [self.navigationController pushViewController:mvc animated:YES];
-  [mvc release];
-}
-
-- (void)call {
-  if ([_place objectForKey:@"phone"]) {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-    av.tag = kAlertCall;
-    [av show];
-  } else {
-    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"No Phone Number" message:[NSString stringWithFormat:@"%@ does not have a phone number listed.", [_place objectForKey:@"name"]] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
-    [av show];
-  }
-}
-
-- (void)yelp {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertYelp;
-  [av show];
-}
-
-- (void)directions {
-  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Driving Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
-  av.tag = kAlertDirections;
-  [av show];
-}
-
-- (void)share {
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#share"];
-  
-  // Construct Body
-  //  The Codmother Fish and Chips
-  //  4.5 star rating (70 reviews)
-  //  Category: Fish & Chips
-  //  Fisherman's Wharf
-  //  2824 Jones St (Map)
-  //  (b/t Beach St & Jefferson St)
-  //  San Francisco, CA
-  //  (415) 606-9349
-  //  2.25 miles
-  //  Price: $
-  NSMutableString *body = [NSMutableString string];
-
-  [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"yid"], [_place objectForKey:@"name"]];
-  if ([_place objectForKey:@"address"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"address"]];
-  if ([_place objectForKey:@"city"] && [_place objectForKey:@"state_code"] && [_place objectForKey:@"postal_code"]) [body appendFormat:@"%@, %@ %@<br/>", [_place objectForKey:@"city"], [_place objectForKey:@"state_code"], [_place objectForKey:@"postal_code"]];
-  if ([_place objectForKey:@"phone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"phone"]];
-  [body appendFormat:@"Rating: %@", [_place objectForKey:@"rating"]];
-  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
+#pragma mark - Utility Methods
+- (void)showToolbar {
+  [UIView animateWithDuration:0.4 animations:^{
+    _footerView.top -= _footerView.height;
+  }];
 }
 
 #pragma mark - Load Data
 - (void)loadMap {
   // zoom to place
   if ([_place objectForKey:@"latitude"] && [_place objectForKey:@"longitude"]) {
-    _mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
-    _mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
-    _mapRegion.span.latitudeDelta = 0.006;
-    _mapRegion.span.longitudeDelta = 0.006;
-    [_mapView setRegion:_mapRegion animated:NO];
+    MKCoordinateRegion mapRegion;
+    mapRegion.center.latitude = [[_place objectForKey:@"latitude"] floatValue];
+    mapRegion.center.longitude = [[_place objectForKey:@"longitude"] floatValue];
+    mapRegion.span.latitudeDelta = 0.006;
+    mapRegion.span.longitudeDelta = 0.006;
+    [_mapView setRegion:mapRegion animated:NO];
   }
   
   NSArray *oldAnnotations = [_mapView annotations];
@@ -434,6 +376,7 @@
   [self loadMap];
   
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
+  [self showToolbar];
 }
 
 - (void)reloadDataSource {
@@ -451,7 +394,7 @@
     [[BizDataCenter defaultCenter] fetchBusinessForYid:[_place objectForKey:@"yid"]];
     [[BizDataCenter defaultCenter] fetchPhotosForBiz:[_place objectForKey:@"biz"]];
   } else {
-    if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > WEEK_SECONDS) {
+    if (_cachedTimestamp && [[NSDate date] timeIntervalSinceDate:_cachedTimestamp] > DAY_SECONDS) {
       [[BizDataCenter defaultCenter] fetchBusinessForYid:[_place objectForKey:@"yid"]];
       [[BizDataCenter defaultCenter] fetchPhotosForBiz:[_place objectForKey:@"biz"]];
     }
@@ -461,34 +404,15 @@
     if (photos && [photos count] > 0) {
       [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
     } else {
-//      _isCachedPlace = NO;
-//      [self deletePlaceFromDatabaseWithYid:[_place objectForKey:@"yid"]];
       _cachedTimestamp = [[NSDate distantFuture] retain];
       [self dataSourceDidError];
     }
   }
-  
-  // Get ALL reviews for this place
-  // Only do this once, so check userDefaults
-//  if (![[NSUserDefaults standardUserDefaults] boolForKey:[_place objectForKey:@"alias"]]) {
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:[_place objectForKey:@"alias"]];
-//    [[NSUserDefaults standardUserDefaults] synchronize];
-//    
-//    NSInteger numReviews = [[_place objectForKey:@"numReviews"] notNil] ? [[_place objectForKey:@"numReviews"] integerValue] : 0;
-//    int i = 0;
-//    for (i = 0; i < numReviews; i = i + 400) {
-//      // Fire off requests for reviews 400 at a time
-//      [[BizDataCenter defaultCenter] fetchReviewsForAlias:[_place objectForKey:@"alias"] start:i rpp:400];
-//    }
-//  }
 }
 
-- (void)dataSourceDidLoad {    
+- (void)dataSourceDidLoad {
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
-  
-  [UIView animateWithDuration:0.4 animations:^{
-    _footerView.top -= _footerView.height;
-  }];
+  [self showToolbar];
   
   // Store into SQLite
   NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
@@ -526,68 +450,6 @@
 }
 
 #pragma mark - TableView
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 30)] autorelease];
-//  headerView.autoresizingMask = ~UIViewAutoresizingNone;
-//  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
-//  return headerView;
-//}
-//
-//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-//  return 30.0;
-//}
-
-//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//  if ([_sectionTitles count] == 0) return nil;
-//  
-//  NSString *sectionTitle = nil;
-//  sectionTitle = [_sectionTitles objectAtIndex:section];
-//  if (![sectionTitle notNil]) return nil;
-//  
-//  UIView *sectionHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 26)] autorelease];
-//  UIImageView *bg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_section_header.png"]] autorelease];
-//  bg.frame = sectionHeaderView.bounds;
-//  bg.autoresizingMask = ~UIViewAutoresizingNone;
-//  [sectionHeaderView addSubview:bg];
-//
-////  sectionHeaderView.backgroundColor = SECTION_HEADER_COLOR;
-//  
-//  UILabel *sectionHeaderLabel = [[[UILabel alloc] initWithFrame:CGRectMake(5, 0, 310, 24)] autorelease];
-//  sectionHeaderLabel.backgroundColor = [UIColor clearColor];
-//  sectionHeaderLabel.text = sectionTitle;
-//  sectionHeaderLabel.textColor = [UIColor whiteColor];
-//  sectionHeaderLabel.shadowColor = [UIColor blackColor];
-//  sectionHeaderLabel.shadowOffset = CGSizeMake(0, 1);
-//  sectionHeaderLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12.0];
-//  [sectionHeaderView addSubview:sectionHeaderLabel];
-//  
-//  return sectionHeaderView;
-//}
-
-//- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-//  if ([_sectionTitles count] == 0) return nil;
-//  
-//  NSString *sectionTitle = nil;
-//  sectionTitle = [_sectionTitles objectAtIndex:section];
-//  if ([sectionTitle notNil]) {
-//    return sectionTitle;
-//  } else {
-//    return nil;
-//  }
-//}
-
-//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-//  NSDictionary *product = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-//  NSString *sizeString = [_imageSizeCache objectForKey:[product objectForKey:@"src"]];
-//  if (sizeString) {
-//    CGSize size = CGSizeFromString(sizeString);
-//    CGFloat scaledHeight = floorf(size.height / (size.width / self.tableView.width));
-//    return scaledHeight;
-//  } else {
-//    return self.tableView.width;
-//  }
-//}
-
 - (void)tableView:(UITableView *)tableView configureCell:(id)cell atIndexPath:(NSIndexPath *)indexPath {
   NSDictionary *object = [[self.items objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
   [cell fillCellWithObject:object];
@@ -624,36 +486,71 @@
   [zvc release];
 }
 
-#pragma mark - UIGestureRecognizerDelegate
-//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-//  if ([touch.view isKindOfClass:[MKPinAnnotationView class]]) {
-//    return NO;
-//  } else {
-//    return YES;
-//  }
-//}
-
-#pragma mark - MKMapViewDelegate
-- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
-  static NSString *placeAnnotationIdentifier = @"placeAnnotationIdentifier";
+#pragma mark - Actions
+- (void)showLists {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showLists"];
   
-  MKPinAnnotationView *placePinView = (MKPinAnnotationView *)
-  [mapView dequeueReusableAnnotationViewWithIdentifier:placeAnnotationIdentifier];
-  if (!placePinView) {
-    placePinView = [[[MKPinAnnotationView alloc]
-                     initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
-    placePinView.pinColor = MKPinAnnotationColorRed;
-    placePinView.animatesDrop = YES;
-    placePinView.canShowCallout = NO;
-  } else {
-    placePinView.annotation = annotation;
-  }
-  
-  return placePinView;
+  ListViewController *lvc = [[ListViewController alloc] initWithListMode:ListModeAdd andBiz:[_place objectForKey:@"biz"]];
+  UINavigationController *lnc = [[[[NSBundle mainBundle] loadNibNamed:@"PSNavigationController" owner:self options:nil] lastObject] retain];
+  lnc.viewControllers = [NSArray arrayWithObject:lvc];
+  [self presentModalViewController:lnc animated:YES];
+  [lvc release];
+  [lnc release];
 }
 
-- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
-  [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
+- (void)showMap:(UITapGestureRecognizer *)gestureRecognizer {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#showMap"];
+  
+  MapViewController *mvc = [[MapViewController alloc] initWithPlace:_place];
+  [self.navigationController pushViewController:mvc animated:YES];
+  [mvc release];
+}
+
+- (void)call {
+  if ([_place objectForKey:@"phone"]) {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%@", [_place objectForKey:@"phone"]] message:[NSString stringWithFormat:@"Would you like to call %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+    av.tag = kAlertCall;
+    [av show];
+  } else {
+    UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"No Phone Number" message:[NSString stringWithFormat:@"%@ does not have a phone number listed.", [_place objectForKey:@"name"]] delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil] autorelease];
+    [av show];
+  }
+}
+
+- (void)yelp {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Yelp Reviews" message:@"Want to read reviews on Yelp?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertYelp;
+  [av show];
+}
+
+- (void)directions {
+  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"Driving Directions" message:[NSString stringWithFormat:@"Want to view driving directions to %@?", [_place objectForKey:@"name"]] delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil] autorelease];
+  av.tag = kAlertDirections;
+  [av show];
+}
+
+- (void)share {
+  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#share"];
+  
+  // Construct Body
+  //  The Codmother Fish and Chips
+  //  4.5 star rating (70 reviews)
+  //  Category: Fish & Chips
+  //  Fisherman's Wharf
+  //  2824 Jones St (Map)
+  //  (b/t Beach St & Jefferson St)
+  //  San Francisco, CA
+  //  (415) 606-9349
+  //  2.25 miles
+  //  Price: $
+  NSMutableString *body = [NSMutableString string];
+  
+  [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [_place objectForKey:@"yid"], [_place objectForKey:@"name"]];
+  if ([_place objectForKey:@"address"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"address"]];
+  if ([_place objectForKey:@"city"] && [_place objectForKey:@"state_code"] && [_place objectForKey:@"postal_code"]) [body appendFormat:@"%@, %@ %@<br/>", [_place objectForKey:@"city"], [_place objectForKey:@"state_code"], [_place objectForKey:@"postal_code"]];
+  if ([_place objectForKey:@"phone"]) [body appendFormat:@"%@<br/>", [_place objectForKey:@"phone"]];
+  [body appendFormat:@"Rating: %@", [_place objectForKey:@"rating"]];
+  [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", [_place objectForKey:@"name"]] andMessageBody:body];
 }
 
 #pragma mark - UIAlertView
@@ -668,9 +565,7 @@
                                     @"phone",
                                     nil];
     [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"detail#call" attributes:localyticsDict];
-    
-//    NSString *phoneNumber = [[[_place objectForKey:@"phone"] componentsSeparatedByCharactersInSet:[[NSCharacterSet decimalDigitCharacterSet] invertedSet]] componentsJoinedByString:@""];
-//    NSString *telString = [NSString stringWithFormat:@"tel:%@", phoneNumber];
+
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[_place objectForKey:@"phone"]]];
   } else if (alertView.tag == kAlertYelp) {
     NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -707,5 +602,38 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:mapsUrl]];
   }
 }
+
+#pragma mark - UIGestureRecognizerDelegate
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+//  if ([touch.view isKindOfClass:[MKPinAnnotationView class]]) {
+//    return NO;
+//  } else {
+//    return YES;
+//  }
+//}
+
+#pragma mark - MKMapViewDelegate
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id <MKAnnotation>)annotation {
+  static NSString *placeAnnotationIdentifier = @"placeAnnotationIdentifier";
+  
+  MKPinAnnotationView *placePinView = (MKPinAnnotationView *)
+  [mapView dequeueReusableAnnotationViewWithIdentifier:placeAnnotationIdentifier];
+  if (!placePinView) {
+    placePinView = [[[MKPinAnnotationView alloc]
+                     initWithAnnotation:annotation reuseIdentifier:placeAnnotationIdentifier] autorelease];
+    placePinView.pinColor = MKPinAnnotationColorRed;
+    placePinView.animatesDrop = YES;
+    placePinView.canShowCallout = NO;
+  } else {
+    placePinView.annotation = annotation;
+  }
+  
+  return placePinView;
+}
+
+- (void)mapView:(MKMapView *)mapView didAddAnnotationViews:(NSArray *)views {
+  [mapView selectAnnotation:[[mapView annotations] lastObject] animated:YES];
+}
+
 
 @end

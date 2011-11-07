@@ -13,10 +13,7 @@
 
 @interface DetailViewController : PSTableViewController <MKMapViewDelegate, UIGestureRecognizerDelegate, ProductCellDelegate> {
   NSMutableDictionary *_place;
-  NSMutableDictionary *_imageSizeCache;
   NSDate *_cachedTimestamp;
-  MKCoordinateRegion _mapRegion;
-  NSInteger _photoCount;
   BOOL _isCachedPlace;
   
   // Views

@@ -236,7 +236,7 @@
   _whereField.leftView = where;
   
   // RADIUS FILTER
-  _radiusControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]] autorelease];
+  _radiusControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]];
   _radiusControl.segmentedControlStyle = UISegmentedControlStyleBordered;
   _radiusControl.selectedSegmentIndex = _radiusFilter;
   _radiusControl.frame = CGRectMake(20, 7, searchWidth - 20, 30);

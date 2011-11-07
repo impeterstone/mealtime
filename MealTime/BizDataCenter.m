@@ -107,6 +107,7 @@ static NSLock *_placeLock = nil;
       }
     } else {
       NSDictionary *response = [request.responseData objectFromJSONData];
+      
       if (self.delegate && [self.delegate respondsToSelector:@selector(dataCenterDidFinishWithResponse:andUserInfo:)]) {
         [self.delegate dataCenterDidFinishWithResponse:response andUserInfo:request.userInfo];
       }

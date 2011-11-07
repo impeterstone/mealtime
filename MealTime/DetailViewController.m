@@ -17,11 +17,12 @@
 #import "PSOverlayImageView.h"
 #import "ListViewController.h"
 #import "PSMailCenter.h"
+#import "PSDatabaseCenter.h"
 
 @interface DetailViewController (Private)
 
-- (NSMutableDictionary *)loadPlaceFromDatabaseWithAlias:(NSString *)alias;
-- (void)deletePlaceFromDatabaseWithAlias:(NSString *)alias;
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithYid:(NSString *)yid;
+- (void)deletePlaceFromDatabaseWithYid:(NSString *)yid;
 
 - (void)setupMap;
 - (void)setupToolbar;
@@ -42,7 +43,7 @@
   self = [super initWithNibName:nil bundle:nil];
   if (self) {
     _cachedTimestamp = nil;
-    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithAlias:[place objectForKey:@"yid"]];
+    NSMutableDictionary *cachedPlace = [self loadPlaceFromDatabaseWithYid:[place objectForKey:@"yid"]];
     if (cachedPlace) {
       _isCachedPlace = YES;
       _place = [cachedPlace retain];
@@ -406,8 +407,8 @@
   _hoursScrollView.contentSize = CGSizeMake(desiredSize.width + 20, desiredSize.height + 10);
 }
 
-- (NSMutableDictionary *)loadPlaceFromDatabaseWithAlias:(NSString *)alias {
-  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE alias = ?", alias, nil];
+- (NSMutableDictionary *)loadPlaceFromDatabaseWithYid:(NSString *)yid {
+  EGODatabaseResult *res = [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"SELECT * FROM places WHERE yid = ?", yid, nil];
   
   if ([res count] > 0) {
     _cachedTimestamp = [[NSDate dateWithTimeIntervalSince1970:[[[res rows] lastObject] doubleForColumn:@"timestamp"]] retain];
@@ -418,8 +419,8 @@
   }
 }
 
-- (void)deletePlaceFromDatabaseWithAlias:(NSString *)alias {
-    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"DELETE FROM places WHERE alias = ?", alias, nil];
+- (void)deletePlaceFromDatabaseWithYid:(NSString *)yid {
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:@"DELETE FROM places WHERE yid = ?", yid, nil];
 }
 
 #pragma mark - State Machine
@@ -462,7 +463,7 @@
       [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
     } else {
 //      _isCachedPlace = NO;
-//      [self deletePlaceFromDatabaseWithAlias:[_place objectForKey:@"alias"]];
+//      [self deletePlaceFromDatabaseWithYid:[_place objectForKey:@"yid"]];
       _cachedTimestamp = [[NSDate distantFuture] retain];
       [self dataSourceDidError];
     }
@@ -502,6 +503,11 @@
     _footerView.top -= _footerView.height;
   }];
   
+  // Store into SQLite
+  NSNumber *timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+  NSData *placeData = [NSKeyedArchiver archivedDataWithRootObject:_place];
+  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (yid, biz, data, latitude, longitude, rating, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[_place objectForKey:@"yid"], [_place objectForKey:@"biz"], placeData, [_place objectForKey:@"latitude"], [_place objectForKey:@"longitude"], [_place objectForKey:@"rating"], timestamp, nil]];
+  
   [super dataSourceDidLoad];
 }
 
@@ -514,6 +520,8 @@
   if ([requestType isEqualToString:@"photos"]) {
     NSArray *photos = [response objectForKey:@"photos"];
     if (photos && [photos count] > 0) {
+      [_place setObject:photos forKey:@"photos"];
+      
       [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:photos] shouldAnimate:NO];
     } else {
       [self dataSourceDidError];

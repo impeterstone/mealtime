@@ -423,6 +423,7 @@
 		28DD65BA1405944600B42F20 /* yelpplaces50.html in Resources */ = {isa = PBXBuildFile; fileRef = 28DD65B91405944600B42F20 /* yelpplaces50.html */; };
 		28DD65BD140597E900B42F20 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65BB140597D600B42F20 /* MapKit.framework */; };
 		28DD65BF140599B800B42F20 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DD65BE140599B800B42F20 /* CoreLocation.framework */; };
+		28DDD0761467E77E007DD428 /* mealtime_v2.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 28DDD0751467E77E007DD428 /* mealtime_v2.sqlite */; };
 		28E4233B1423816A00F593CE /* nullview_empty.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423371423816A00F593CE /* nullview_empty.png */; };
 		28E4233C1423816A00F593CE /* nullview_empty@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423381423816A00F593CE /* nullview_empty@2x.png */; };
 		28E4233D1423816A00F593CE /* nullview_error.png in Resources */ = {isa = PBXBuildFile; fileRef = 28E423391423816A00F593CE /* nullview_error.png */; };
@@ -1010,6 +1011,7 @@
 		28DD65B91405944600B42F20 /* yelpplaces50.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = yelpplaces50.html; sourceTree = "<group>"; };
 		28DD65BB140597D600B42F20 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		28DD65BE140599B800B42F20 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		28DDD0751467E77E007DD428 /* mealtime_v2.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = mealtime_v2.sqlite; sourceTree = "<group>"; };
 		28E423371423816A00F593CE /* nullview_empty.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_empty.png; sourceTree = "<group>"; };
 		28E423381423816A00F593CE /* nullview_empty@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "nullview_empty@2x.png"; sourceTree = "<group>"; };
 		28E423391423816A00F593CE /* nullview_error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nullview_error.png; sourceTree = "<group>"; };
@@ -1848,6 +1850,7 @@
 			isa = PBXGroup;
 			children = (
 				282F92D9140B5E8C006F5132 /* sml.sqlite */,
+				28DDD0751467E77E007DD428 /* mealtime_v2.sqlite */,
 				28B014FF13F1E3E2004813B2 /* Constants.h */,
 				28B0150013F1E3F2004813B2 /* NetworkConstants.h */,
 				28A9FB2713F32F2C00EFB191 /* InitialDefaults.plist */,
@@ -2477,6 +2480,7 @@
 				288B1BE0144F7B45000A8220 /* facebook-connect.png in Resources */,
 				288B1BE1144F7B45000A8220 /* facebook-connect@2x.png in Resources */,
 				28A78FA71465D96400456279 /* powered_by_yelp.png in Resources */,
+				28DDD0761467E77E007DD428 /* mealtime_v2.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

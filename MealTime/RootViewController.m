@@ -887,7 +887,7 @@
   // Highly Rated
   BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
   if (filterHighlyRated) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND score > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_RATING]];
+    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND rating > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_RATING]];
   }
   
   // Category
@@ -912,7 +912,7 @@
 //      filterSortBy = @"distance";
 //      break;
 //    case 2:
-//      filterSortBy = @"score";
+//      filterSortBy = @"rating";
 //      break;
 //    default:
 //      filterSortBy = nil;

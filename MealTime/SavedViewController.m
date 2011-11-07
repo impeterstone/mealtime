@@ -379,7 +379,7 @@
       self.sortDirection = @"ASC";
       break;
     case 1: // rating
-      self.sortOrder = @"score";
+      self.sortOrder = @"rating";
       self.sortDirection = @"DESC";
       break;
     default:

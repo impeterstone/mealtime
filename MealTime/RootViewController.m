@@ -17,7 +17,6 @@
 #import "InfoViewController.h"
 #import "PSSearchField.h"
 #import "PSReachabilityCenter.h"
-#import "PSOverlayImageView.h"
 
 @interface RootViewController (Private)
 // View Setup
@@ -28,6 +27,7 @@
 // Actions
 - (void)showLists;
 - (void)showInfo;
+- (void)centerAction;
 
 // Utility
 - (void)findMyLocation;
@@ -236,8 +236,6 @@
   _whereField.leftView = where;
   
   // RADIUS FILTER
-#warning TODO: RADIUS FILTER UI
-  // Radius
   _radiusControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]] autorelease];
   _radiusControl.segmentedControlStyle = UISegmentedControlStyleBordered;
   _radiusControl.selectedSegmentIndex = _radiusFilter;
@@ -262,7 +260,7 @@
   [_tabView addSubview:list];
   
   // Center: Message
-  _centerButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
+  _centerButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(centerAction)] retain];
   [_centerButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
 //  [_centerButton setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
   [_centerButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
@@ -340,6 +338,10 @@
   [self presentModalViewController:inc animated:YES];
   [ivc release];
   [inc release];
+}
+
+- (void)centerAction {
+  // Nothing for now
 }
 
 #pragma mark - Fetching Data

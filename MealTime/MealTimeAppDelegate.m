@@ -66,14 +66,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
         // This eventually falls back to 99 if the server 403's
         [[NSUserDefaults standardUserDefaults] setInteger:999 forKey:@"filterNumPhotos"];
         
-#define SHOULD_RESET_NUX
-#ifdef SHOULD_RESET_NUX
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownRootOverlay"];
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownDetailOverlay"];
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownListOverlay"];
-        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"hasShownSavedOverlay"];
-#endif
-        
 //#define SHOULD_RESET_USER_DEFAULTS
 #ifdef SHOULD_RESET_USER_DEFAULTS
         // Clear all user defaults
@@ -135,15 +127,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 //  NSLog(@"fonts: %@",[UIFont familyNames]);
-  
-  // Reset Filters
-  [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
-  [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"filterRadius"];
-  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
-  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
-//  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
   
   if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isFirstLaunch"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"isFirstLaunch"];

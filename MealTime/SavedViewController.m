@@ -13,7 +13,6 @@
 #import "DetailViewController.h"
 #import "PSMailCenter.h"
 #import "PSDatabaseCenter.h"
-#import "PSOverlayImageView.h"
 #import "MapViewController.h"
 #import "NoteViewController.h"
 
@@ -95,18 +94,6 @@
   
   NSString *notesIcon = _hasNotes ? @"icon_tab_notepad_selected.png" : @"icon_tab_notepad.png";
   [_notesButton setImage:[UIImage imageNamed:notesIcon] forState:UIControlStateNormal];
-  
-  // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownSavedOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownSavedOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_saved_pad.png" : @"nux_overlay_saved.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {

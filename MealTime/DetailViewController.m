@@ -14,7 +14,6 @@
 #import "PSLocationCenter.h"
 #import "PlaceAnnotation.h"
 #import "PSDatabaseCenter.h"
-#import "PSOverlayImageView.h"
 #import "ListViewController.h"
 #import "PSMailCenter.h"
 #import "PSDatabaseCenter.h"
@@ -484,19 +483,7 @@
 //  }
 }
 
-- (void)dataSourceDidLoad {  
-//  // NUX
-//  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownDetailOverlay"]) {
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownDetailOverlay"];
-//    NSString *imgName = isDeviceIPad() ? @"nux_overlay_detail_pad.png" : @"nux_overlay_detail.png";
-//    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-//    nuxView.alpha = 0.0;
-//    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-//    [UIView animateWithDuration:0.4 animations:^{
-//      nuxView.alpha = 1.0;
-//    }];
-//  }
-  
+- (void)dataSourceDidLoad {    
   _tableView.tableHeaderView.alpha = 1.0; // Show header now
   
   [UIView animateWithDuration:0.4 animations:^{

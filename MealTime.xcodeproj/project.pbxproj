@@ -459,7 +459,6 @@
 		28F8B728142C094B000F5FEE /* LocalyticsDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B722142C094B000F5FEE /* LocalyticsDatabase.m */; };
 		28F8B729142C094B000F5FEE /* LocalyticsSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B724142C094B000F5FEE /* LocalyticsSession.m */; };
 		28F8B72A142C094B000F5FEE /* UploaderThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 28F8B726142C094B000F5FEE /* UploaderThread.m */; };
-		28FC5727143775A600B61C2B /* FilterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28FC5726143775A500B61C2B /* FilterViewController.m */; };
 		28FC9B30141235AC0047E11C /* places.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B2F141235AC0047E11C /* places.html */; };
 		28FC9B32141236970047E11C /* photos.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B31141236970047E11C /* photos.html */; };
 		28FC9B341412379A0047E11C /* biz.html in Resources */ = {isa = PBXBuildFile; fileRef = 28FC9B331412379A0047E11C /* biz.html */; };
@@ -1056,8 +1055,6 @@
 		28F8B725142C094B000F5FEE /* UploaderThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UploaderThread.h; sourceTree = "<group>"; };
 		28F8B726142C094B000F5FEE /* UploaderThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UploaderThread.m; sourceTree = "<group>"; };
 		28F8B727142C094B000F5FEE /* WebserviceConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebserviceConstants.h; sourceTree = "<group>"; };
-		28FC5725143775A500B61C2B /* FilterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterViewController.h; sourceTree = "<group>"; };
-		28FC5726143775A500B61C2B /* FilterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FilterViewController.m; sourceTree = "<group>"; };
 		28FC9B2F141235AC0047E11C /* places.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = places.html; sourceTree = "<group>"; };
 		28FC9B31141236970047E11C /* photos.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = photos.html; sourceTree = "<group>"; };
 		28FC9B331412379A0047E11C /* biz.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = biz.html; sourceTree = "<group>"; };
@@ -1119,8 +1116,6 @@
 				2837767B142C932C00E939EC /* ListViewController.m */,
 				2838585E1434851500262DD5 /* NoteViewController.h */,
 				2838585F1434851500262DD5 /* NoteViewController.m */,
-				28FC5725143775A500B61C2B /* FilterViewController.h */,
-				28FC5726143775A500B61C2B /* FilterViewController.m */,
 			);
 			name = Modals;
 			sourceTree = "<group>";
@@ -2532,7 +2527,6 @@
 				28377683142CA05500E939EC /* ListCell.m in Sources */,
 				28377691142CB4CA00E939EC /* TSAlertView.m in Sources */,
 				283858601434851500262DD5 /* NoteViewController.m in Sources */,
-				28FC5727143775A600B61C2B /* FilterViewController.m in Sources */,
 				288A7704143F958000CC48A2 /* TutorialViewController.m in Sources */,
 				288A7878143F95DD00CC48A2 /* PSImageCache.m in Sources */,
 				288A787A143F95DD00CC48A2 /* NSArray+SML.m in Sources */,

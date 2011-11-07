@@ -10,7 +10,6 @@
 #import "PSDatabaseCenter.h"
 #import "ListCell.h"
 #import "SavedViewController.h"
-#import "PSOverlayImageView.h"
 #import "PSFacebookCenter.h"
 
 @interface ListViewController (Private)
@@ -95,18 +94,6 @@
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
   [self loadDataSource];
-  
-  // NUX
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownListOverlay"]) {
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownListOverlay"];
-    NSString *imgName = isDeviceIPad() ? @"nux_overlay_list_pad.png" : @"nux_overlay_list.png";
-    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-    nuxView.alpha = 0.0;
-    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-    [UIView animateWithDuration:0.4 animations:^{
-      nuxView.alpha = 1.0;
-    }];
-  }
 }
 
 - (void)loadView {

@@ -15,7 +15,7 @@
 
 - (void)getPlacesFromFixtures;
 
-- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius offset:(NSInteger)offset limit:(NSInteger)limit;
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSInteger)radius offset:(NSInteger)offset limit:(NSInteger)limit;
 
 - (void)cancelRequests;
 

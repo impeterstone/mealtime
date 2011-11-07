@@ -80,6 +80,9 @@ static const NSInteger kGANDispatchPeriodSec = 10;
         [[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
 #endif
         
+        // IF we are going from v1 to v2, we need to perform DB MIGRATION
+#warning TODO: SQL DB MIGRATION CODE PATH
+        
         [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
         [[NSUserDefaults standardUserDefaults] synchronize];
       }

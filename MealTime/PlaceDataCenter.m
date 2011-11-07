@@ -61,7 +61,7 @@ static NSLock *_placesToRemoveLock = nil;
 
 
 #pragma mark - Remote Fetch
-- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSString *)radius offset:(NSInteger)offset limit:(NSInteger)limit {
+- (void)fetchPlacesForQuery:(NSString *)query location:(NSString *)location radius:(NSInteger)radius offset:(NSInteger)offset limit:(NSInteger)limit {
   
   // sortby options
   // best_match
@@ -78,8 +78,7 @@ static NSLock *_placesToRemoveLock = nil;
   
   NSString *offsetParam = [NSString stringWithFormat:@"offset=%d", offset];
   NSString *limitParam = [NSString stringWithFormat:@"limit=%d", limit];
-  
-  NSString *radiusParam = radius ? [NSString stringWithFormat:@"radius=%@", radius] : nil;
+  NSString *radiusParam = [NSString stringWithFormat:@"radius=%d", radius];
   NSString *termParam = query ? [NSString stringWithFormat:@"term=%@", [query stringByURLEncoding]] : nil;  
   
   // Construct URL

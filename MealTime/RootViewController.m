@@ -21,21 +21,24 @@
 
 @interface RootViewController (Private)
 // View Setup
+- (void)setupSearchTermController;
 - (void)setupHeader;
 - (void)setupToolbar;
 
-- (void)updateNumResults;
-
-- (void)editingDidBegin:(UITextField *)textField;
-- (void)editingDidEnd:(UITextField *)textField;
-
-- (void)distanceSelectedWithIndex:(NSNumber *)selectedIndex inView:(UIView *)view;
-
-- (void)filter;
+// Actions
 - (void)showLists;
 - (void)showInfo;
-- (void)searchNearby;
 
+// Utility
+- (void)findMyLocation;
+- (void)updateNumResults;
+
+// Search
+- (void)editingDidBegin:(UITextField *)textField;
+- (void)editingDidEnd:(UITextField *)textField;
+- (void)searchTermChanged:(UITextField *)textField;
+
+// Notifications
 - (void)locationAcquired:(NSNotification *)notification;
 
 @end
@@ -52,19 +55,21 @@
     [[PlaceDataCenter defaultCenter] setDelegate:self];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(locationAcquired:) name:kLocationAcquired object:nil];
     
+    _location = nil;
+    
+    // Search Variables
     _whatQuery = nil;
     _whereQuery = nil;
-    _numResults = 0;
-    _numShowing = 0;
-    _location = nil;
-
+    _radiusFilter = 2; // 2 mi
+    
+    // Paging
     _pagingStart = 0;
     _pagingCount = 20;
     _pagingTotal = 20;
+    _numResults = 0;
+    _numShowing = 0;
     
     _isSearchActive = NO;
-    
-    _scrollCount = 0;
   }
   return self;
 }
@@ -77,18 +82,14 @@
   _whatTermController.delegate = nil;
   _whereTermController.delegate = nil;
   
-  RELEASE_SAFELY(_currentAddress);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
-  RELEASE_SAFELY(_filterButton);
+  RELEASE_SAFELY(_centerButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
+  RELEASE_SAFELY(_radiusControl);
   RELEASE_SAFELY(_whatTermController);
   RELEASE_SAFELY(_whereTermController);
-}
-
-- (void)didReceiveMemoryWarning {
-  [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc
@@ -103,22 +104,18 @@
   _whatTermController.delegate = nil;
   _whereTermController.delegate = nil;
   
-  _reverseGeocoder.delegate = nil;
-  
   RELEASE_SAFELY(_location);
   RELEASE_SAFELY(_headerView);
   RELEASE_SAFELY(_tabView);
-  RELEASE_SAFELY(_filterButton);
+  RELEASE_SAFELY(_centerButton);
   RELEASE_SAFELY(_whatField);
   RELEASE_SAFELY(_whereField);
+  RELEASE_SAFELY(_radiusControl);
   RELEASE_SAFELY(_whatTermController);
   RELEASE_SAFELY(_whereTermController);
   
   RELEASE_SAFELY(_whatQuery);
   RELEASE_SAFELY(_whereQuery);
-  RELEASE_SAFELY(_sortBy);
-  RELEASE_SAFELY(_cachedItems);
-  RELEASE_SAFELY(_cachedCategories);
   [super dealloc];
 }
 
@@ -143,24 +140,16 @@
   [super viewWillAppear:animated];
   
   [self.navigationController setNavigationBarHidden:YES animated:animated];
-  
-  // NUX
-//  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"hasShownRootOverlay"]) {
-//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"hasShownRootOverlay"];
-//    NSString *imgName = isDeviceIPad() ? @"nux_overlay_root_pad.png" : @"nux_overlay_root.png";
-//    PSOverlayImageView *nuxView = [[[PSOverlayImageView alloc] initWithImage:[UIImage imageNamed:imgName]] autorelease];
-//    nuxView.alpha = 0.0;
-//    [[UIApplication sharedApplication].keyWindow addSubview:nuxView];
-//    [UIView animateWithDuration:0.4 animations:^{
-//      nuxView.alpha = 1.0;
-//    }];
-//  }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
   [super viewWillDisappear:animated];
   
-  [_whereField resignFirstResponder];
+  if ([_whatField isFirstResponder]) {
+    [_whatField resignFirstResponder];
+  } else if ([_whereField isFirstResponder]) {
+    [_whereField resignFirstResponder];
+  }
 }
 
 - (void)loadView {
@@ -177,9 +166,6 @@
   [_nullView setErrorImage:[UIImage imageNamed:imgError]];
   [_nullView setIsFullScreen:YES];
   [_nullView setDelegate:self];
-  
-  // iAd
-//  _adView = [self newAdBannerViewWithDelegate:self];
   
   // Table
   [self setupTableViewWithFrame:self.view.bounds andStyle:UITableViewStylePlain andSeparatorStyle:UITableViewCellSeparatorStyleNone];
@@ -213,6 +199,7 @@
   [super viewDidLoad];
 }
 
+#pragma mark - View Setup
 - (void)setupHeader {
   _headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
   UIImageView *bg = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"bg_navbar.png"] stretchableImageWithLeftCapWidth:0 topCapHeight:1]] autorelease];
@@ -223,42 +210,40 @@
   // Search Bar
   CGFloat searchWidth = _headerView.width - 20;
   
+  // WHAT
   _whatField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   //  _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.delegate = self;
   _whatField.autocorrectionType = UITextAutocorrectionTypeNo;
   _whatField.placeholder = @"Find: e.g. pizza, Tony's Burgers";
   [_whatField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
-  
-  //  _whatField.inputAccessoryView = tb;
-  
-  // Left/Right View
   _whatField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whatField.leftViewMode = UITextFieldViewModeAlways;
   UIImageView *mag = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_magnifier.png"]] autorelease];
   mag.contentMode = UIViewContentModeCenter;
   _whatField.leftView = mag;
   
+  // WHERE
   _whereField = [[PSSearchField alloc] initWithFrame:CGRectMake(10, 7, searchWidth, 30)];
   _whereField.delegate = self;
   _whereField.autocorrectionType = UITextAutocorrectionTypeNo;
   _whereField.placeholder = @"Current Location";
   [_whereField addTarget:self action:@selector(searchTermChanged:) forControlEvents:UIControlEventEditingChanged];
-  
-  // Left/Right View
+  _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
   _whereField.leftViewMode = UITextFieldViewModeAlways;
   UIImageView *where = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_where.png"]] autorelease];
   where.contentMode = UIViewContentModeCenter;
   _whereField.leftView = where;
   
-//  _whereField.rightViewMode = UITextFieldViewModeUnlessEditing;
-//  UIButton *distanceButton = [UIButton buttonWithFrame:CGRectMake(0, 0, 40, 16) andStyle:@"whereRightView" target:nil action:nil];
-//  [distanceButton setTitle:[NSString stringWithFormat:@"%.1fmi", _distance] forState:UIControlStateNormal];
-//  [distanceButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-//  _whereField.rightView = distanceButton;
+  // RADIUS FILTER
+#warning TODO: RADIUS FILTER UI
+  // Radius
+  _radiusControl = [[[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]] autorelease];
+  _radiusControl.segmentedControlStyle = UISegmentedControlStyleBordered;
+  _radiusControl.selectedSegmentIndex = _radiusFilter;
+  _radiusControl.frame = CGRectMake(20, 7, searchWidth - 20, 30);
   
-  _whereField.clearButtonMode = UITextFieldViewModeWhileEditing;
-  
+  [_headerView addSubview:_radiusControl];
   [_headerView addSubview:_whereField];
   [_headerView addSubview:_whatField];
   
@@ -270,46 +255,29 @@
   
   _tabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 49.0)];
   
-  UIButton *star = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
-  [star setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [star setImage:[UIImage imageNamed:@"icon_tab_list.png"] forState:UIControlStateNormal];
-  [_tabView addSubview:star];
+  // Left: List
+  UIButton *list = [UIButton buttonWithFrame:CGRectMake(0, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showLists)];
+  [list setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_left.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [list setImage:[UIImage imageNamed:@"icon_tab_list.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:list];
   
-  // Center
-  _filterButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
-  [_filterButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [_filterButton setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
-//  [_filterButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
-//  _filterButton.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
-//  _filterButton.titleLabel.textAlignment = UITextAlignmentCenter;
-//  _filterButton.titleLabel.numberOfLines = 2;
-  [_tabView addSubview:_filterButton];
+  // Center: Message
+  _centerButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(filter)] retain];
+  [_centerButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+//  [_centerButton setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
+  [_centerButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
+//  _centerButton.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
+//  _centerButton.titleLabel.textAlignment = UITextAlignmentCenter;
+//  _centerButton.titleLabel.numberOfLines = 2;
+  [_tabView addSubview:_centerButton];
   
-  UIButton *heart = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
-  [heart setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-  [heart setImage:[UIImage imageNamed:@"icon_tab_info.png"] forState:UIControlStateNormal];
-  [_tabView addSubview:heart];
+  // Right: Info
+  UIButton *info = [UIButton buttonWithFrame:CGRectMake(_tabView.width - tabWidth, 0, tabWidth, 49) andStyle:@"detailTab" target:self action:@selector(showInfo)];
+  [info setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_right.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
+  [info setImage:[UIImage imageNamed:@"icon_tab_info.png"] forState:UIControlStateNormal];
+  [_tabView addSubview:info];
   
   [self setupFooterWithView:_tabView];
-  
-//  _toolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 44.0)];
-//  
-//  // Toolbar Items
-//  NSMutableArray *toolbarItems = [NSMutableArray arrayWithCapacity:1];
-//
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_star_silver.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showLists)] autorelease]];
-//  
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  
-//  _filterButton = [[UIBarButtonItem barButtonWithTitle:[NSString stringWithFormat:@"Searching within %.1f miles", [[NSUserDefaults standardUserDefaults] floatForKey:@"distanceRadius"]] withTarget:self action:@selector(changeDistance) width:(_toolbar.width - 80) height:30 buttonType:BarButtonTypeGray style:@"detailToolbarButton"] retain];
-//  [toolbarItems addObject:_filterButton];
-//  
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease]];
-//  
-//  [toolbarItems addObject:[[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"icon_heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(showInfo)] autorelease]];
-//  
-//  [_toolbar setItems:toolbarItems];
-//  [self setupFooterWithView:_toolbar];
 }
 
 - (void)setupSearchTermController {
@@ -331,7 +299,7 @@
 //  [self.view addSubview:_whereTermController.view];
 }
 
-#pragma mark - Button Actios
+#pragma mark - Utility Methods
 - (void)findMyLocation {
   if ([[PSReachabilityCenter defaultCenter] isNetworkReachable]) {
     [[PSLocationCenter defaultCenter] getMyLocation];
@@ -340,6 +308,17 @@
   }
 }
 
+- (void)updateNumResults {
+  NSString *distanceTitle = nil;
+  if (_numShowing > 0) {
+    distanceTitle = [NSString stringWithFormat:@"Showing %d Places", _numShowing];
+  } else {
+    distanceTitle = [NSString stringWithFormat:@"No Places Found"];
+  }
+  [_centerButton setTitle:distanceTitle forState:UIControlStateNormal];
+}
+
+#pragma mark - Actions
 - (void)showLists {
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#showLists"];
   
@@ -363,41 +342,6 @@
   [inc release];
 }
 
-- (void)filter {
-#warning disable filters
-  return;
-  
-  if ([self dataIsLoading]) return;
-  
-  NSDictionary *options = nil;
-//  options = [NSDictionary dictionaryWithObject:_cachedCategories forKey:@"categories"];
-  FilterViewController *fvc = [[FilterViewController alloc] initWithOptions:options];
-  fvc.delegate = self;
-  fvc.modalTransitionStyle = UIModalTransitionStylePartialCurl;
-  [self presentModalViewController:fvc animated:YES];
-  [fvc release];
-  
-  [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#filter"];
-  return;
-}
-
-- (void)searchNearby {
-  _whereField.text = nil;
-  self.whereQuery = nil;
-  [self loadDataSource];
-}
-
-- (void)updateNumResults {
-//  NSString *where = [_whereField.text length] > 0 ? _whereField.text : @"Current Location";
-  NSString *distanceTitle = nil;
-  if (_numShowing > 0) {
-    distanceTitle = [NSString stringWithFormat:@"Showing %d Places", _numShowing];
-  } else {
-    distanceTitle = [NSString stringWithFormat:@"No Places Found"];
-  }
-//  [_filterButton setTitle:distanceTitle forState:UIControlStateNormal];
-}
-
 #pragma mark - Fetching Data
 - (void)fetchDataSource {
   [[PlaceDataCenter defaultCenter] cancelRequests];
@@ -406,30 +350,51 @@
   
   if (isReload) {
     // Update distance button label
-//    [_filterButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
+    [_centerButton setTitle:[NSString stringWithFormat:@"Searching for Places"] forState:UIControlStateNormal];
     
     // Update location param
     _location = self.whereQuery ? [[NSString stringWithFormat:@"location=%@", [self.whereQuery stringByURLEncoding]] retain] : [[NSString stringWithFormat:@"ll=%f,%f", [[PSLocationCenter defaultCenter] latitude], [[PSLocationCenter defaultCenter] longitude], [[PSLocationCenter defaultCenter] accuracy]] retain];
   }
   
+  // Configure Radius Filter
+  // 1608m/mi
+  // 8046 - 5mi
+  // 4828 - 3mi
+  // 3218 - 2mi
+  NSInteger radius = 3218; // in meters
+  switch (_radiusControl.selectedSegmentIndex) {
+    case 0: // 0.5
+      radius = 804;
+      break;
+    case 1: // 1.0
+      radius = 1609;
+      break;
+    case 2: // 2.0
+      radius = 3218;
+      break;
+    case 3: // 5.0
+      radius = 8046;
+      break;
+    default: // 2.0
+      radius = 3218;
+      break;
+  }
+  
+  // Localytics
   NSDictionary *localyticsDict = [NSDictionary dictionaryWithObjectsAndKeys:
                                   self.whatQuery ? self.whatQuery : @"",
                                   @"what",
                                   self.whereQuery ? self.whereQuery : @"",
                                   @"where",
-                                  [NSString stringWithFormat:@"%d", [[NSUserDefaults standardUserDefaults] integerForKey:@"filterNumResults"]],
-                                  @"numResults",
                                   _location,
                                   @"location",
+                                  [NSNumber numberWithInteger:radius],
+                                  @"radius",
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#fetch" attributes:localyticsDict];
-  
-  // 1608m/mi
-  // 8046 - 5mi
-  // 4828 - 3mi
-  // 3218 - 2mi
 
-  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:nil offset:_pagingStart limit:_pagingCount];
+  // Perform the fetch
+  [[PlaceDataCenter defaultCenter] fetchPlacesForQuery:_whatQuery location:_location radius:radius offset:_pagingStart limit:_pagingCount];
 }
 
 #pragma mark - State Machine
@@ -492,7 +457,7 @@
   // Num results
   _numResults = [response objectForKey:@"total"] ? [[response objectForKey:@"total"] integerValue] : 0;
   [self updateNumResults];
-  DLog(@"Yelp got %d results, %d showibg", _numResults, _numShowing);
+  DLog(@"Yelp got %d results, %d showing", _numResults, _numShowing);
   
   // Check hasMore
   if (_numResults > _pagingTotal) {
@@ -501,80 +466,32 @@
     _hasMore = NO;
   }
   
-  NSMutableArray *places = [response objectForKey:@"places"];
+  // Make places mutable
+  NSMutableArray *places = [NSMutableArray arrayWithArray:[response objectForKey:@"places"]];
   
-  RELEASE_SAFELY(_cachedItems);
-  _cachedItems = [[NSMutableArray alloc] initWithArray:places];
-
-  NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
-  
-  BOOL isReload = (_pagingStart == 0);
-  if (isReload) {
-    [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
+  if (places && [places count] > 0) {
+    BOOL isReload = (_pagingStart == 0);
+    if (isReload) {
+      [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:places] shouldAnimate:NO];
+    } else {
+      [self dataSourceShouldLoadMoreObjects:places forSection:0 shouldAnimate:YES];
+    }
   } else {
-    [self dataSourceShouldLoadMoreObjects:filteredPlaces forSection:0 shouldAnimate:YES];
+    [_centerButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
+    [self dataSourceDidError];
   }
   
 }
 
 - (void)dataCenterDidFailWithError:(NSError *)error andUserInfo:(NSDictionary *)userInfo {
+  [_centerButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
   [self dataSourceDidError];
-//  [_filterButton setTitle:@"GPS/Network Error" forState:UIControlStateNormal];
 }
 
 #pragma mark - Actions
 - (void)locationAcquired:(NSNotification *)notification {
   [self loadDataSource];
 }
-
-- (void)reverseGeocode {
-  if (_reverseGeocoder && _reverseGeocoder.querying) {
-    return;
-  } else {
-    // NYC (Per Se): 40.76848, -73.98264
-    // Paris: 48.86930, 2.37151
-    // London (Gordon Ramsay): 51.48476, -0.16308
-    // Alexanders: 37.32798, -122.01382
-    // Bouchon: 38.40153, -122.36049
-    CGFloat latitude = [[PSLocationCenter defaultCenter] latitude];
-    CGFloat longitude = [[PSLocationCenter defaultCenter] longitude];
-    
-    DLog(@"Attempting Reverse Geocode for lat: %f, lng: %f", latitude, longitude);
-    
-    RELEASE_SAFELY(_reverseGeocoder);
-    _reverseGeocoder = [[MKReverseGeocoder alloc] initWithCoordinate:CLLocationCoordinate2DMake(latitude, longitude)];    
-    _reverseGeocoder.delegate = self;
-    [_reverseGeocoder start];
-  }
-}
-
-#pragma mark - MKReverseGeocoderDelegate
-- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark {
-  NSDictionary *address = placemark.addressDictionary;
-  DLog(@"Reverse Geocode got address: %@", address);
-  
-  // Create some edge cases for weird stuff
-  
-  RELEASE_SAFELY(_currentAddress);
-  _currentAddress = [[NSArray arrayWithObjects:[[address objectForKey:@"FormattedAddressLines"] objectAtIndex:0], [[address objectForKey:@"FormattedAddressLines"] objectAtIndex:1], nil] retain];
-  
-  // fetch Yelp Places
-  [self fetchDataSource];
-}
-
-- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
-  DLog(@"Reverse Geocoding for lat: %f lng: %f FAILED!", geocoder.coordinate.latitude, geocoder.coordinate.longitude);
-  
-//  UIAlertView *av = [[[UIAlertView alloc] initWithTitle:@"GPS" message:@"Error finding your location" delegate:self cancelButtonTitle:nil otherButtonTitles:@"Try Again", nil] autorelease];
-//  av.tag = kAlertGPSError;
-//  [av show];
-  
-  [self dataCenterDidFailWithError:nil andUserInfo:nil];
-}
-
-- (void)updateCurrentLocation {
-}
-
 
 #pragma mark - TableView
 //- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -602,6 +519,7 @@
   return 23.0;
 }
 
+// Setting table cell height instead
 //- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 //  return [PlaceCell rowHeight];
 //}
@@ -646,26 +564,14 @@
 }
 
 - (void)executeSearch {
-  // Determine if this is a search around current location or a specific city
-  // If current location, sort by distance
-  // If specific location, sort by popularity
-  
+  // Determine if this is a search around current location or a specific city  
   if ([_whereField.text length] > 0) {
-    // Popularity
-    [[NSUserDefaults standardUserDefaults] setInteger:1 forKey:@"filterSortBy"]; 
+    // Searching a Specific Location
   } else {
-    // Distance
-    [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterSortBy"];
+    // Searching Current Location
   }
   
-  // Reset Filters
-  [[NSUserDefaults standardUserDefaults] setObject:@"All Categories" forKey:@"filterCategory"];
-  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:@"filterPrice"];
-  [[NSUserDefaults standardUserDefaults] setInteger:2 forKey:@"filterRadius"];
-  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterOpenNow"];
-  [[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"filterHighlyRated"];
-//  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:@"filterWhat"];
-  
+  // Hide the search UI
   [self dismissSearch];
   
   // What
@@ -700,9 +606,8 @@
                                   nil];
   [[LocalyticsSession sharedLocalyticsSession] tagEvent:@"root#search" attributes:localyticsDict];
 
-  // Reload dataSource
-  _pagingStart = 0;
-  _pagingTotal = _pagingCount;
+  // Reset paging and Reload dataSource
+  [self resetPaging];
   [self loadDataSource];
 }
 
@@ -715,8 +620,9 @@
                      _whatTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _whereTermController.view.frame = CGRectMake(0, 44, self.view.width, self.view.height - 44);
                      _headerView.height = 44;
-                     _nullView.frame = CGRectMake(0, 44, _nullView.width, _nullView.height + 36);
+                     _nullView.hidden = NO;
                      _whereField.top = 7;
+                     _radiusControl.top = 7;
                    }
                    completion:^(BOOL finished) {
                    }];
@@ -762,11 +668,12 @@
     // Animate Search Fields
     [UIView animateWithDuration:0.4
                      animations:^{
-                       _whatTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
-                       _whereTermController.view.frame = CGRectMake(0, 80, self.view.width, self.view.height - 80);
-                       _headerView.height = 80;
-                       _nullView.frame = CGRectMake(0, 80, _nullView.width, _nullView.height - 36);
+                       _whatTermController.view.frame = CGRectMake(0, 116, self.view.width, self.view.height - 116);
+                       _whereTermController.view.frame = CGRectMake(0, 116, self.view.width, self.view.height - 116);
+                       _headerView.height = 116;
+                       _nullView.hidden = YES;
                        _whereField.top = 42;
+                       _radiusControl.top = 79;
                      }
                      completion:^(BOOL finished) {
                      }];
@@ -798,142 +705,6 @@
   [self executeSearch];
   
   return YES;
-}
-
-#pragma mark - UIScrollViewDelegate
-//- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-//  [super scrollViewDidScroll:scrollView];
-//  
-//  if (_scrollCount == 0) {
-//    _scrollCount++;
-//    [_cellCache makeObjectsPerformSelector:@selector(pauseAnimations)];
-//  }
-//}
-//
-//- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-//  [super scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
-//  
-//  if (!decelerate && (_scrollCount == 1)) {
-//    _scrollCount--;
-//    [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
-//  }
-//  
-//}
-//
-//- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-//  [super scrollViewDidEndDecelerating:scrollView];
-//  
-//  if (_scrollCount == 1) {
-//    _scrollCount--;
-//    [_cellCache makeObjectsPerformSelector:@selector(resumeAnimations)];
-//  }
-//}
-
-#pragma mark - UIAlertView
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-  if (buttonIndex == alertView.cancelButtonIndex) return;
-  
-  if (alertView.tag == kAlertGPSError) {
-    [self loadDataSource];
-  }
-  
-}
-
-- (void)filter:(id)sender didSelectWithOptions:(NSDictionary *)options reload:(BOOL)reload {
-  if (reload) {
-    // Fire a refetch if openNow was toggled to ON
-    [self loadDataSource];
-    return;
-  }
-  
-  NSMutableArray *filteredPlaces = [NSMutableArray arrayWithArray:_cachedItems];
-  
-  // Predicate array
-  NSMutableArray *predicateArray = [NSMutableArray arrayWithCapacity:3];
-  
-  // What
-//  NSString *filterWhat = [[NSUserDefaults standardUserDefaults] stringForKey:@"filterWhat"];
-//  if ([filterWhat length] > 0) {
-//    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(name CONTAINS[cd] %@ OR category CONTAINS[cd] %@)", filterWhat, filterWhat]];
-//  }
-  
-  // Price
-  NSString *filterPrice = nil;
-  NSInteger priceIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterPrice"];
-  switch (priceIndex) {
-    case 0:
-      filterPrice = nil;
-      break;
-    case 1:
-      filterPrice = @"$";
-      break;
-    case 2:
-      filterPrice = @"$$";
-      break;
-    case 3:
-      filterPrice = @"$$$";
-      break;
-    case 4:
-      filterPrice = @"$$$$";
-      break;
-    default:
-      filterPrice = nil;
-      break;
-  }
-  if (filterPrice) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(price like %@)", filterPrice]];
-  }
-  
-  // Highly Rated
-  BOOL filterHighlyRated = [[NSUserDefaults standardUserDefaults] boolForKey:@"filterHighlyRated"];
-  if (filterHighlyRated) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"(numReviews > %d AND rating > %d)", HIGHLY_RATED_REVIEWS, HIGHLY_RATED_RATING]];
-  }
-  
-  // Category
-  NSString *filterCategory = [[NSUserDefaults standardUserDefaults] objectForKey:@"filterCategory"];
-  if (filterCategory && ![filterCategory isEqualToString:@"All Categories"]) {
-    [predicateArray addObject:[NSPredicate predicateWithFormat:@"category CONTAINS[cd] %@", filterCategory]];
-  }
-  
-  // Compound Predicate
-  if ([predicateArray count] > 0) {
-    [filteredPlaces filterUsingPredicate:[NSCompoundPredicate andPredicateWithSubpredicates:predicateArray]];
-  }
-  
-  // Sort places based on filter
-//  NSInteger sortByIndex = [[NSUserDefaults standardUserDefaults] integerForKey:@"filterSortBy"];
-//  NSString *filterSortBy = nil;
-//  switch (sortByIndex) {
-//    case 0:
-//      filterSortBy = nil;
-//      break;
-//    case 1:
-//      filterSortBy = @"distance";
-//      break;
-//    case 2:
-//      filterSortBy = @"rating";
-//      break;
-//    default:
-//      filterSortBy = nil;
-//      break;
-//  }
-//  if (filterSortBy) {
-//    BOOL ascending = [filterSortBy isEqualToString:@"distance"];
-//    [filteredPlaces sortUsingDescriptors:[NSArray arrayWithObject:[NSSortDescriptor sortDescriptorWithKey:filterSortBy ascending:ascending]]];
-//  }
-  
-  // Calculate number of places shown
-  NSString *numPlaces = nil;
-  if ([filteredPlaces count] > 0) {
-    numPlaces = [NSString stringWithFormat:@"Showing %d Places", [filteredPlaces count]];
-  } else {
-    numPlaces = [NSString stringWithFormat:@"No Places Found"];
-  }
-//  [_filterButton setTitle:numPlaces forState:UIControlStateNormal];
-  
-  [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-  [self dataSourceShouldLoadObjects:[NSMutableArray arrayWithObject:filteredPlaces] shouldAnimate:NO];
 }
 
 @end

@@ -49,6 +49,45 @@ static const NSInteger kGANDispatchPeriodSec = 10;
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:initialDefaults];
     
+    // Prepare SQLite Database File
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"]) {
+      // No schemaVersion found, reset the DB anyways
+      NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
+      NSError *error = nil;
+      [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
+      
+      [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+    } else {
+      NSString *savedSchemaVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"];
+      if (![savedSchemaVersion isEqualToString:SCHEMA_VERSION]) {
+        // SQL schema changed
+        // Reset the SQLite DB
+        NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
+        
+        [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+      }
+    }
+    
+    // Copy SQLite to Documents if necessary
+    NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
+    
+    BOOL sqliteExists = [[NSFileManager defaultManager] fileExistsAtPath:sqliteDocumentsPath];
+    
+    if (!sqliteExists) {
+      NSString *sqliteBundlePath = [[NSBundle mainBundle] pathForResource:SQLITE_DB ofType:@"sqlite"];
+      assert(sqliteBundlePath != nil);
+      
+      NSError *error = nil;
+      [[NSFileManager defaultManager] copyItemAtPath:sqliteBundlePath 
+                                              toPath:sqliteDocumentsPath 
+                                               error:&error];
+      assert(sqliteDocumentsPath != nil);
+    }
+    
     // Set app version if first launch
     NSString *appVersion = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"];
     if (![[NSUserDefaults standardUserDefaults] objectForKey:@"appVersion"]) {
@@ -81,40 +120,6 @@ static const NSInteger kGANDispatchPeriodSec = 10;
         [[NSUserDefaults standardUserDefaults] synchronize];
       }
     }
-    
-    if (![[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"]) {
-      // No schema found, reset the DB anyways
-      NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
-      NSError *error = nil;
-      [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
-      
-      [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
-      [[NSUserDefaults standardUserDefaults] synchronize];
-    } else {
-      NSString *savedSchemaVersion = [[NSUserDefaults standardUserDefaults] objectForKey:@"schemaVersion"];
-      if (![savedSchemaVersion isEqualToString:SCHEMA_VERSION]) {
-        // SQL schema changed
-        // Reset the SQLite DB
-        NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
-        NSError *error = nil;
-        [[NSFileManager defaultManager] removeItemAtPath:sqliteDocumentsPath error:&error];
-        
-        [[NSUserDefaults standardUserDefaults] setObject:SCHEMA_VERSION forKey:@"schemaVersion"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
-      }
-    }
-    
-    // Copy SQLite to Documents
-    NSString *sqlitePath = [[NSBundle mainBundle] pathForResource:SQLITE_DB ofType:@"sqlite"];
-    assert(sqlitePath != nil);
-    
-    NSString *sqliteDocumentsPath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.sqlite", SQLITE_DB]];
-    
-    NSError *error = nil;
-    [[NSFileManager defaultManager] copyItemAtPath:sqlitePath 
-                                            toPath:sqliteDocumentsPath 
-                                             error:&error];
-    assert(sqliteDocumentsPath != nil);
   }
 }
 

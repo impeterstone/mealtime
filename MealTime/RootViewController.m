@@ -176,6 +176,12 @@
     _tableView.rowHeight = 160.0;
   }
   
+  UIButton *pby = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 30)] autorelease];
+  pby.userInteractionEnabled = NO;
+  [pby setBackgroundImage:[[UIImage imageNamed:@"tab_btn_single.png"] stretchableImageWithLeftCapWidth:8 topCapHeight:0] forState:UIControlStateNormal];
+  [pby setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
+  _tableView.tableHeaderView = pby;
+  
   // Setup Header
   [self setupHeader];
   
@@ -234,12 +240,16 @@
   UIImageView *where = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_where.png"]] autorelease];
   where.contentMode = UIViewContentModeCenter;
   _whereField.leftView = where;
+  _whereField.hidden = YES;
   
   // RADIUS FILTER
   _radiusControl = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"1/2 mi", @"1 mi", @"2 mi", @"5 mi", nil]];
-  _radiusControl.segmentedControlStyle = UISegmentedControlStyleBordered;
+  _radiusControl.segmentedControlStyle = UISegmentedControlStyleBar;
+  _radiusControl.tintColor = RGBCOLOR(60, 60, 60);
+  
   _radiusControl.selectedSegmentIndex = _radiusFilter;
-  _radiusControl.frame = CGRectMake(20, 7, searchWidth - 20, 30);
+  _radiusControl.frame = CGRectMake(17, 7, searchWidth - 14, 30);
+  _radiusControl.hidden = YES;
   
   [_headerView addSubview:_radiusControl];
   [_headerView addSubview:_whereField];
@@ -262,11 +272,11 @@
   // Center: Message
   _centerButton = [[UIButton buttonWithFrame:CGRectMake(tabWidth, 0, _tabView.width - (tabWidth * 2), 49) andStyle:@"filterButton" target:self action:@selector(centerAction)] retain];
   [_centerButton setBackgroundImage:[UIImage stretchableImageNamed:@"tab_btn_center_selected.png" withLeftCapWidth:9 topCapWidth:0] forState:UIControlStateNormal];
-//  [_centerButton setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
   [_centerButton setTitle:@"Determining Your Location" forState:UIControlStateNormal];
 //  _centerButton.titleLabel.lineBreakMode = UILineBreakModeWordWrap;
 //  _centerButton.titleLabel.textAlignment = UITextAlignmentCenter;
 //  _centerButton.titleLabel.numberOfLines = 2;
+  _centerButton.userInteractionEnabled = NO;
   [_tabView addSubview:_centerButton];
   
   // Right: Info
@@ -500,26 +510,26 @@
 //  return [NSString stringWithFormat:@"Showing %d Places", _numShowing];
 //}
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 23)] autorelease];
-  headerView.autoresizingMask = ~UIViewAutoresizingNone;
-  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
-  
-  UILabel *headerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(MARGIN_X, 0, headerView.width - MARGIN_X * 2, headerView.height)] autorelease];
-  headerLabel.backgroundColor = [UIColor clearColor];
-  headerLabel.text = [NSString stringWithFormat:@"Showing %d Results from Yelp", _numShowing];
-  headerLabel.font = [PSStyleSheet fontForStyle:@"rootSectionHeader"];
-  headerLabel.textColor = [PSStyleSheet textColorForStyle:@"rootSectionHeader"];
-  headerLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"rootSectionHeader"];
-  headerLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"rootSectionHeader"];
-  [headerView addSubview:headerLabel];
-  
-  return headerView;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-  return 23.0;
-}
+//- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+//  UIView *headerView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.width, 23)] autorelease];
+//  headerView.autoresizingMask = ~UIViewAutoresizingNone;
+//  headerView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_section_header.png"]];
+//  
+//  UILabel *headerLabel = [[[UILabel alloc] initWithFrame:CGRectMake(MARGIN_X, 0, headerView.width - MARGIN_X * 2, headerView.height)] autorelease];
+//  headerLabel.backgroundColor = [UIColor clearColor];
+//  headerLabel.text = [NSString stringWithFormat:@"Showing %d Results from Yelp", _numShowing];
+//  headerLabel.font = [PSStyleSheet fontForStyle:@"rootSectionHeader"];
+//  headerLabel.textColor = [PSStyleSheet textColorForStyle:@"rootSectionHeader"];
+//  headerLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"rootSectionHeader"];
+//  headerLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"rootSectionHeader"];
+//  [headerView addSubview:headerLabel];
+//  
+//  return headerView;
+//}
+//
+//- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+//  return 23.0;
+//}
 
 // Setting table cell height instead
 //- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -627,6 +637,8 @@
                      _radiusControl.top = 7;
                    }
                    completion:^(BOOL finished) {
+                     _whereField.hidden = YES;
+                     _radiusControl.hidden = YES;
                    }];
   
   [_whatField resignFirstResponder];
@@ -668,6 +680,8 @@
     }
     
     // Animate Search Fields
+    _whereField.hidden = NO;
+    _radiusControl.hidden = NO;
     [UIView animateWithDuration:0.4
                      animations:^{
                        _whatTermController.view.frame = CGRectMake(0, 116, self.view.width, self.view.height - 116);

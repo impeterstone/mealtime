@@ -111,6 +111,7 @@ static const NSInteger kGANDispatchPeriodSec = 10;
         [[NSUserDefaults standardUserDefaults] setPersistentDomain:[NSDictionary dictionary] forName:[[NSBundle mainBundle] bundleIdentifier]];
 #endif
         
+#warning TEST THIS AGAIN BEFORE SHIPPING
         // IF we are going from v1 to v2, we need to perform DB MIGRATION
         if ([savedAppVersion floatValue] < 2.0 && [appVersion floatValue] >= 2.0) {
           [[self class] migrateDatabaseV1toV2];

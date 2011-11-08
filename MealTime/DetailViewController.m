@@ -180,8 +180,15 @@
   // Table Header View
   UIView *tableHeaderView = [[[UIView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight + 30)] autorelease];
   
+  // Powered by Yelp
+  UIButton *pby = [[[UIButton alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, 30)] autorelease];
+  pby.userInteractionEnabled = NO;
+  [pby setBackgroundImage:[[UIImage imageNamed:@"tab_btn_single.png"] stretchableImageWithLeftCapWidth:8 topCapHeight:0] forState:UIControlStateNormal];
+  [pby setImage:[UIImage imageNamed:@"powered_by_yelp.png"] forState:UIControlStateNormal];
+  [tableHeaderView addSubview:pby];
+  
   // Map
-  _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, _tableView.width, mapHeight)];
+  _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, pby.bottom, _tableView.width, mapHeight)];
   _mapView.delegate = self;
   _mapView.zoomEnabled = NO;
   _mapView.scrollEnabled = NO;
@@ -203,30 +210,42 @@
   [_mapView addGestureRecognizer:mapTap];
   
   // Address
-  _addressView = [[UIView alloc] initWithFrame:CGRectMake(0, mapHeight, tableHeaderView.width, 30)];
+  NSString *addressText = nil;
+  if ([_place objectForKey:@"formatted_address"]) {
+    addressText = [_place objectForKey:@"formatted_address"];
+  } else {
+    addressText = @"No address listed";
+  }
+  
+  _addressView = [[UIView alloc] initWithFrame:CGRectZero];
   _addressView.backgroundColor = [UIColor clearColor];
-  UIImageView *abg = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_section_header.png"]] autorelease];
-  abg.frame = _addressView.bounds;
-  abg.autoresizingMask = ~UIViewAutoresizingNone;
+  UIImageView *abg = [[[UIImageView alloc] initWithImage:[[UIImage imageNamed:@"tab_btn_single.png"] stretchableImageWithLeftCapWidth:8 topCapHeight:0]] autorelease];
   [_addressView addSubview:abg];
   [tableHeaderView addSubview:_addressView];
   
   // Address Label
   _addressLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-  _addressLabel.numberOfLines = 1;
+  _addressLabel.numberOfLines = 3;
   _addressLabel.backgroundColor = [UIColor clearColor];
   _addressLabel.textAlignment = UITextAlignmentCenter;
   _addressLabel.font = [PSStyleSheet fontForStyle:@"addressLabel"];
   _addressLabel.textColor = [PSStyleSheet textColorForStyle:@"addressLabel"];
   _addressLabel.shadowColor = [PSStyleSheet shadowColorForStyle:@"addressLabel"];
   _addressLabel.shadowOffset = [PSStyleSheet shadowOffsetForStyle:@"addressLabel"];
-  _addressLabel.frame = _addressView.bounds;
+  _addressLabel.text = addressText;
   [_addressView addSubview:_addressLabel];
   
+  // Readjust address size
+  CGSize addressSize = [UILabel sizeForText:addressText width:tableHeaderView.width font:_addressLabel.font numberOfLines:3 lineBreakMode:UILineBreakModeWordWrap];
+  tableHeaderView.height += addressSize.height + 10;
+  _addressView.frame = CGRectMake(0, _mapView.bottom, tableHeaderView.width, addressSize.height + 10);
+  _addressLabel.frame = _addressView.bounds;;
+  abg.frame = _addressView.bounds;
+  
   // Powered by Yelp
-  UIImageView *pby = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"powered_by_yelp.png"]] autorelease];
-  pby.left = tableHeaderView.width - pby.width;
-  [tableHeaderView addSubview:pby];
+//  UIImageView *pby = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"powered_by_yelp.png"]] autorelease];
+//  pby.left = tableHeaderView.width - pby.width;
+//  [tableHeaderView addSubview:pby];
   
   // Hours
   _hoursView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -322,12 +341,6 @@
   PlaceAnnotation *placeAnnotation = [[PlaceAnnotation alloc] initWithPlace:_place];
   [_mapView addAnnotation:placeAnnotation];
   [placeAnnotation release];
-  
-  if ([_place objectForKey:@"formatted_address"]) {
-    _addressLabel.text = [_place objectForKey:@"formatted_address"];
-  } else {
-    _addressLabel.text = @"No address listed";
-  }
 }
 
 - (void)loadDetails {  

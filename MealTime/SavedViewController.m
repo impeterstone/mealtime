@@ -253,7 +253,7 @@
     [body appendFormat:@"<a href=\"http://www.yelp.com/biz/%@\">%@</a><br/>", [place objectForKey:@"biz"], [place objectForKey:@"name"]];
     [body appendFormat:@"%@<br/>", [place objectForKey:@"formatted_address"]];
     if ([[place objectForKey:@"phone"] notNil]) [body appendFormat:@"%@<br/>", [place objectForKey:@"phone"]];
-    [body appendFormat:@"Price: %@, Rating: %@<br/>", [place objectForKey:@"price"], [place objectForKey:@"rating"]];
+    [body appendFormat:@"Rating: %@<br/>", [place objectForKey:@"rating"]];
     [body appendString:@"<br/>"];
   }
   [[PSMailCenter defaultCenter] controller:self sendMailTo:nil withSubject:[NSString stringWithFormat:@"MealTime: %@", _listName] andMessageBody:body];

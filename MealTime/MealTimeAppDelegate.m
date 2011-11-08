@@ -73,7 +73,9 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 #endif
         
         // IF we are going from v1 to v2, we need to perform DB MIGRATION
-#warning TODO: SQL DB MIGRATION CODE PATH
+        if ([savedAppVersion floatValue] < 2.0 && [appVersion floatValue] >= 2.0) {
+          [[self class] migrateDatabaseV1toV2];
+        }
         
         [[NSUserDefaults standardUserDefaults] setObject:appVersion forKey:@"appVersion"];
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -116,6 +118,99 @@ static const NSInteger kGANDispatchPeriodSec = 10;
   }
 }
 
+#pragma mark - Migration
++ (void)migrateDatabaseV1toV2 {
+  NSLog(@"Migrading Databse from V1 to V2");
+  
+  // Read old lists, write into new lists
+  EGODatabase *oldDatabase = [EGODatabase databaseWithPath:[[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:[NSString stringWithFormat:@"sml.sqlite"]]];
+  
+  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+                              
+  EGODatabaseResult *oldListsRes = [oldDatabase executeQueryWithParameters:@"SELECT * FROM lists", nil];
+  for (EGODatabaseRow *row in oldListsRes) {
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO lists (sid, name, position, timestamp, notes) VALUES (?, ?, ?, ?, ?)"];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [row stringForColumn:@"sid"], [row stringForColumn:@"name"], [NSNumber numberWithInt:[row intForColumn:@"position"]], [NSDate dateWithTimeIntervalSince1970:[row doubleForColumn:@"timestamp"]], [row stringForColumn:@"notes"], nil];
+  }
+  
+  // Read old lists_places, write into new lists_places
+  NSMutableArray *oldPlacesBiz = [NSMutableArray arrayWithCapacity:1];
+  
+  EGODatabaseResult *oldListsPlacesRes = [oldDatabase executeQueryWithParameters:@"SELECT * FROM lists_places", nil];
+  
+//  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"BEGIN TRANSACTION"];
+  for (EGODatabaseRow *row in oldListsPlacesRes) {
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO lists_places (list_sid, place_biz) VALUES (?, ?)"];
+    [[[PSDatabaseCenter defaultCenter] database] executeQueryWithParameters:query, [row stringForColumn:@"list_sid"], [row stringForColumn:@"place_biz"], nil];
+    [oldPlacesBiz addObject:[row stringForColumn:@"place_biz"]];
+  }
+  
+  // Convert old places to new format
+  NSMutableString *q = [NSMutableString string];
+  [q appendString:@"SELECT * FROM places WHERE biz IN ("];
+  if ([oldPlacesBiz count] > 0) {
+    [q appendString:@"?"];
+  }
+  for (int i = 1; i < [oldPlacesBiz count]; i++) {
+    [q appendString:@","];
+    [q appendString:@"?"];
+  }
+  [q appendString:@")"];
+  
+  EGODatabaseResult *oldPlacesRes = [oldDatabase executeQuery:q parameters:oldPlacesBiz];
+  for (EGODatabaseRow *row in oldPlacesRes) {
+    NSData *oldPlaceData = [row dataForColumn:@"data"];
+    NSMutableDictionary *oldPlaceDict = [NSMutableDictionary dictionaryWithDictionary:[NSKeyedUnarchiver unarchiveObjectWithData:oldPlaceData]];
+    NSLog(@"place: %@", oldPlaceDict);
+    
+    // Manipulate this into the new format and write it back into the DB
+    NSMutableDictionary *newPlaceDict = [NSMutableDictionary dictionary];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"alias"] forKey:@"yid"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"biz"] forKey:@"biz"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"name"] forKey:@"name"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"category"] forKey:@"categories"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"coverPhoto"] forKey:@"cover_photo"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"numReviews"] forKey:@"review_count"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"formattedAddress"] forKey:@"formatted_address"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"latitude"] forKey:@"latitude"];
+    [newPlaceDict setObject:[oldPlaceDict objectForKey:@"longitude"] forKey:@"longitude"];
+    
+    // Convert Rating (round)
+    NSNumber *oldRatingNum = [oldPlaceDict objectForKey:@"rating"];
+    CGFloat oldRating = [oldRatingNum floatValue];
+    CGFloat newRating = 0.0;
+    if (oldRating > 4.75 && oldRating <= 5.0) {
+      newRating = 5.0;
+    } else if (oldRating > 4.25 && oldRating <= 4.75) {
+      newRating = 4.5;
+    } else if (oldRating > 3.75 && oldRating <= 4.25) {
+      newRating = 4.0;
+    } else if (oldRating > 3.25 && oldRating <= 3.75) {
+      newRating = 3.5;
+    } else if (oldRating > 2.75 && oldRating <= 3.25) {
+      newRating = 3.0;
+    } else if (oldRating > 2.25 && oldRating <= 2.75) {
+      newRating = 2.5;
+    } else if (oldRating > 1.75 && oldRating <= 2.25) {
+      newRating = 2.0;
+    } else if (oldRating > 1.25 && oldRating <= 1.75) {
+      newRating = 1.5;
+    } else if (oldRating > 0.75 && oldRating <= 1.25) {
+      newRating = 1.0;
+    } else if (oldRating > 0.25 && oldRating <= 0.75) {
+      newRating = 0.5;
+    } else {
+      newRating = 0.0;
+    }
+    [newPlaceDict setObject:[NSNumber numberWithFloat:newRating] forKey:@"rating"];
+    
+    NSData *newPlaceData = [NSKeyedArchiver archivedDataWithRootObject:newPlaceDict];
+    [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"INSERT OR REPLACE INTO places (yid, biz, data, latitude, longitude, rating, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?)" parameters:[NSArray arrayWithObjects:[newPlaceDict objectForKey:@"yid"], [newPlaceDict objectForKey:@"biz"], newPlaceData, [newPlaceDict objectForKey:@"latitude"], [newPlaceDict objectForKey:@"longitude"], [newPlaceDict objectForKey:@"rating"], [NSDate distantPast], nil]];
+  }
+  
+  [[[PSDatabaseCenter defaultCenter] database] executeQuery:@"COMMIT"];
+}
+
 - (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
   return [[PSFacebookCenter defaultCenter] handleOpenURL:url];
 }
@@ -127,6 +222,9 @@ static const NSInteger kGANDispatchPeriodSec = 10;
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 //  NSLog(@"fonts: %@",[UIFont familyNames]);
+  
+//#warning DEBUG always migrate
+//  [[self class] migrateDatabaseV1toV2];
   
   if ([[NSUserDefaults standardUserDefaults] boolForKey:@"isFirstLaunch"]) {
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"isFirstLaunch"];

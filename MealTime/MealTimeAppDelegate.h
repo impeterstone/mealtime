@@ -18,6 +18,8 @@
   BOOL _isBackgrounded;
 }
 
++ (void)migrateDatabaseV1toV2;
+
 @property (nonatomic, retain) IBOutlet UIWindow *window;
 
 @end
